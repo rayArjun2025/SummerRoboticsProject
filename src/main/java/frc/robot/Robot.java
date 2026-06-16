@@ -137,7 +137,7 @@ public class Robot extends LoggedRobot {
     public void robotPeriodic() {
         // Switch thread to high priority to improve loop timing
         Threads.setCurrentThreadPriority(true, 99);
-        elevator.handleStateMachine();
+        elevator.periodic();
         PerfTracker.periodic();
         Threads.setCurrentThreadPriority(false, 10);
     }

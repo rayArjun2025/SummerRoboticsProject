@@ -21,14 +21,14 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
 
     @Override
     public void outputPeriodic() {
-        io.updateInputs(inputs);
         Logger.recordOutput("Elevator/ElevatorState", getState().toString());
+        Logger.recordOutput("Elevator/TargetPosition", targetPosition);
     }
 
     @Override
     public void inputPeriodic() {
-        Logger.processInputs("Elevator/ElevatorIOInputs", inputs);
-            Logger.recordOutput("Elevator/TargetPosition", targetPosition);
+        io.updateInputs(inputs);
+        Logger.processInputs("Elevator", inputs);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
                 }
                 else{
                     targetPosition = ElevatorConstants.ELEVATOR_MAX_HEIGHT;
-                    moveUp();
+                    moveElevator();
                 }
                 break;
             case MOVING_DOWN:
@@ -70,23 +70,21 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
                 }
                 else {
                     targetPosition = ElevatorConstants.ELEVATOR_MIN_HEIGHT;
-                    moveDown();
+                    moveElevator();
                 }
                 break;
             case IDLE:
-                io.stopMoving();
+                targetPosition = inputs.elevatorPositionMeters;
                 break;
         }
      
     }
     
-    public void moveUp() {
-        double volts = pid.calculate(inputs.elevatorPositionMeters, targetPosition);
-        io.setMotorVoltage(volts);
-    }
-
-    public void moveDown() {
-        double volts = pid.calculate(inputs.elevatorPositionMeters, targetPosition);
+    public void moveElevator(){
+        double currentPosition = inputs.elevatorPositionMeters;
+        double pidOut = pid.calculate(currentPosition, targetPosition);
+        double ff = ElevatorConstants.GRAVITY_FF;
+        double volts = pidOut + ff;
         io.setMotorVoltage(volts);
     }
 }
