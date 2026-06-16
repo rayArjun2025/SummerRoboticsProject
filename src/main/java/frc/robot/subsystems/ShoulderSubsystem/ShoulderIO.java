@@ -1,15 +1,22 @@
 package frc.robot.subsystems.ShoulderSubsystem;
 import org.littletonrobotics.junction.AutoLog;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 
 public interface ShoulderIO {
+
+    @AutoLog
    public static class ShoulderIOInputs{
         public double shoulderPosition = 0;
-
-        
+        public double swivelAngle = 0;
+        public double angularVelocityRad = 0;
+        public double shoulderCurrent = 0;
+        public double shoulderVoltage = 0;
+        public boolean atMaxAngle = false;
+        public boolean atMinAngle = false;
     }
 
     public default void updateInputs(ShoulderIOInputs inputs){}
+    public default void setShoulderVoltage(double volts){}
+    public default void setShoulderVelocity(double velocity){}
     
 }

@@ -14,9 +14,7 @@
 
 package frc.robot;
 
-import frc.robot.subsystems.Elevator.Elevator;
-import frc.robot.subsystems.Elevator.ElevatorIO;
-import frc.robot.subsystems.Elevator.ElevatorSim;
+
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Threads;
@@ -46,7 +44,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
  */
 public class Robot extends LoggedRobot {
 
-    private Elevator elevator;
+    
     private boolean lastState = false;
 
     private MTimer pipelineSwitch = new MTimer();
@@ -60,7 +58,7 @@ public class Robot extends LoggedRobot {
     @Override
     public void robotInit() {
 
-        elevator = new Elevator(new ElevatorSim());
+        
 
         Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
         Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
@@ -137,7 +135,7 @@ public class Robot extends LoggedRobot {
     public void robotPeriodic() {
         // Switch thread to high priority to improve loop timing
         Threads.setCurrentThreadPriority(true, 99);
-        elevator.handleStateMachine();
+        
         PerfTracker.periodic();
         Threads.setCurrentThreadPriority(false, 10);
     }
