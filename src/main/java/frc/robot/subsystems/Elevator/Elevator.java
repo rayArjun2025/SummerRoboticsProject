@@ -3,7 +3,6 @@ package frc.robot.subsystems.Elevator;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
@@ -27,31 +26,12 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
 
     @Override
     public void inputPeriodic() {
-        io.updateInputs(inputs);
         Logger.processInputs("Elevator", inputs);
     }
 
     @Override
     public void handleStateMachine() {
-       SmartDashboard.putNumber(
-        "Elevator Position",
-        inputs.elevatorPositionMeters);
-
-        SmartDashboard.putNumber(
-        "Elevator Velocity",
-        inputs.elevatorVelocityMetersPerSec);
-
-        SmartDashboard.putNumber(
-        "Elevator Voltage",
-        inputs.elevatorMotorVolts);
-
-        SmartDashboard.putBoolean(
-        "Elevator At Top",
-        inputs.atTop);
-
-        SmartDashboard.putBoolean(
-        "Elevator At Bottom",
-        inputs.atBottom);
+        io.updateInputs(inputs);
 
         switch (getState()) {
 
