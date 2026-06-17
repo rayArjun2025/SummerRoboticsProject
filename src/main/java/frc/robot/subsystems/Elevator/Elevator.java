@@ -2,20 +2,21 @@ package frc.robot.subsystems.Elevator;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 
 
 public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
     private final ElevatorIO io;
-    private final PIDController pid;
+    private PIDController pid;
     ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
     private double targetPosition = 0;
 
     public Elevator(ElevatorIO io) {
         super("Elevator");
         this.io = io;
-        queueState(ElevatorStates.IDLE);
-        pid = new PIDController(1.0, 0.0, 0.0);
+        queueState(ElevatorStates.MOVING_UP);
+        pid = new PIDController(1.0, 0.0, 0.2);
     }
 
     @Override
@@ -26,15 +27,13 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
 
     @Override
     public void inputPeriodic() {
+        io.updateInputs(inputs);
         Logger.processInputs("Elevator", inputs);
     }
 
     @Override
     public void handleStateMachine() {
-        io.updateInputs(inputs);
-
         switch (getState()) {
-
             case MOVING_UP:
                 if (inputs.atTop) {
                     queueState(ElevatorStates.IDLE);
@@ -54,7 +53,7 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
                 }
                 break;
             case IDLE:
-                targetPosition = inputs.elevatorPositionMeters;
+                io.stopMoving();
                 break;
         }
      
@@ -62,9 +61,9 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
     
     public void moveElevator(){
         double currentPosition = inputs.elevatorPositionMeters;
+        //double ff = 12 * inputs.elevatorVelocityMetersPerSec / ElevatorConstants.MAX_RPS;
         double pidOut = pid.calculate(currentPosition, targetPosition);
-        double ff = ElevatorConstants.GRAVITY_FF;
-        double volts = pidOut + ff;
+        double volts = MathUtil.clamp(pidOut, -12, 12);
         io.setMotorVoltage(volts);
     }
 }

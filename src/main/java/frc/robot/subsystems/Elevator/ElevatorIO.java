@@ -20,6 +20,5 @@ public interface ElevatorIO {
         
     }
     public default void setMotorVoltage(double volts) {}
-    public default void setMoveVelocity(double velocity)  {}
     public default void stopMoving() {}
 }
