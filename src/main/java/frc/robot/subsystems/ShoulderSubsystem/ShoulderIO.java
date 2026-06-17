@@ -6,8 +6,7 @@ public interface ShoulderIO {
 
     @AutoLog
    public static class ShoulderIOInputs{
-        public double shoulderPosition = 0;
-        public double swivelAngle = 0;
+        public double shoulderSwivelAngle = 0;
         public double angularVelocityRad = 0;
         public double shoulderCurrent = 0;
         public double shoulderVoltage = 0;
