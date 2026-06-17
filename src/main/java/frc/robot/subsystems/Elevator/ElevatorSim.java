@@ -33,6 +33,7 @@ public class ElevatorSim implements ElevatorIO{
 
         inputs.elevatorPositionMeters = elevatorMotorSim.getAngularPositionRad() * ElevatorConstants.DRUM_RADIUS;
         inputs.elevatorMotorCurrent = elevatorMotorSim.getCurrentDrawAmps();
+        
         inputs.atTop = inputs.elevatorPositionMeters >= ElevatorConstants.ELEVATOR_MAX_HEIGHT;
         inputs.atBottom = inputs.elevatorPositionMeters <= ElevatorConstants.ELEVATOR_MIN_HEIGHT;
     }
