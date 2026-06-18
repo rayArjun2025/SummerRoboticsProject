@@ -14,7 +14,7 @@ public class ShoulderSubsystem extends StateMachineSubsystemBase<ShoulderState>{
         super("Shoulder");
         this.io = io;
         queueState(ShoulderState.IDLE);
-        pid = new PIDController(1, 0, 0);
+        pid = new PIDController(1, 0, 0.02);
     }
 
     @Override
@@ -58,7 +58,8 @@ public class ShoulderSubsystem extends StateMachineSubsystemBase<ShoulderState>{
     }
 
     public void swivelAngle(){
-        double volts = pid.calculate(inputs.shoulderSwivelAngle, targetAngle);
+        double currentAngle = inputs.shoulderSwivelAngle;
+        double volts = pid.calculate(currentAngle, targetAngle);
         io.setShoulderVoltage(volts + ShoulderConstants.GRAVITY_FF);
     }
 
