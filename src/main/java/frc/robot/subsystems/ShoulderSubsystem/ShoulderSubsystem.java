@@ -13,8 +13,8 @@ public class ShoulderSubsystem extends StateMachineSubsystemBase<ShoulderState>{
     public ShoulderSubsystem(ShoulderIO io){
         super("Shoulder");
         this.io = io;
-        queueState(ShoulderState.IDLE);
-        pid = new PIDController(1, 0, 0.02);
+        queueState(ShoulderState.INCREASE_SHOOTING_ANGLE);
+        pid = new PIDController(1, 0, ShoulderConstants.CHANGE_IN_TIME);
     }
 
     @Override
@@ -39,8 +39,13 @@ public class ShoulderSubsystem extends StateMachineSubsystemBase<ShoulderState>{
                 }
                 break;
             case IDLE:
-                targetAngle = inputs.shoulderSwivelAngle;
-                swivelAngle();
+                if(inputs.atMaxAngle){
+                    targetAngle = inputs.shoulderSwivelAngle;
+                    swivelAngle();
+                }
+                else{
+                    io.stopMotor();
+                }
                 break;
         }
     }

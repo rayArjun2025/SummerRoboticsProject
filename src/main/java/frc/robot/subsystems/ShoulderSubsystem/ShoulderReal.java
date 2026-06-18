@@ -1,5 +1,5 @@
 package frc.robot.subsystems.ShoulderSubsystem;
 
-public class ShoulderReal {
+public class ShoulderReal implements ShoulderIO {
     
 }

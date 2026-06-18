@@ -8,6 +8,7 @@ public class ShoulderConstants {
     public static final double GEAR_RATIO = 150;
     public static final double ARM_LENGTH = 0.7366;
     public static final double ARM_MASS = 5.669;
+    public static final double CHANGE_IN_TIME = 0.02;
 
 
     

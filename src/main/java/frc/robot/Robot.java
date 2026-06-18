@@ -18,10 +18,12 @@ package frc.robot;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Threads;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.ShoulderSubsystem.ShoulderReal;
+import frc.robot.subsystems.ShoulderSubsystem.ShoulderSim;
+import frc.robot.subsystems.ShoulderSubsystem.ShoulderSubsystem;
 import frc.robot.util.MTimer;
 
 import org.littletonrobotics.junction.LogFileUtil;
@@ -44,7 +46,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
  */
 public class Robot extends LoggedRobot {
 
-    
+    private ShoulderSubsystem shoulder;
     private boolean lastState = false;
 
     private MTimer pipelineSwitch = new MTimer();
@@ -82,17 +84,20 @@ public class Robot extends LoggedRobot {
         switch (Constants.currentMode) {
             case REAL:
                 // Running on a real robot, log to a USB stick ("/U/logs")
+                shoulder = new ShoulderSubsystem(new ShoulderReal());
                 Logger.addDataReceiver(new WPILOGWriter("U/logs/" + BuildConstants.GIT_BRANCH));
                 Logger.addDataReceiver(new NT4Publisher());
                 break;
 
             case SIM:
                 // Running a physics simulator, log to NT
+                shoulder = new ShoulderSubsystem(new ShoulderSim());
                 Logger.addDataReceiver(new NT4Publisher());
                 break;
 
             case REPLAY:
                 // Replaying a log, set up replay source
+                shoulder = new ShoulderSubsystem(new ShoulderSim());
                 setUseTiming(false); // Run as fast as possible
                 String logPath = LogFileUtil.findReplayLog();
                 Logger.setReplaySource(new WPILOGReader(logPath));
@@ -135,7 +140,7 @@ public class Robot extends LoggedRobot {
     public void robotPeriodic() {
         // Switch thread to high priority to improve loop timing
         Threads.setCurrentThreadPriority(true, 99);
-        
+        shoulder.periodic();
         PerfTracker.periodic();
         Threads.setCurrentThreadPriority(false, 10);
     }
