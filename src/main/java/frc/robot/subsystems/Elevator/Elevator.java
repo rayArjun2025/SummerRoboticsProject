@@ -56,7 +56,7 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
                 io.stopMoving();
                 break;
         }
-     
+    
     }
     
     public void moveElevator(){
