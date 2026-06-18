@@ -15,9 +15,7 @@ public interface ElevatorIO {
     }
 
 
-    public default void updateInputs(ElevatorIOInputs inputs) {
-        
-    }
+    public default void updateInputs(ElevatorIOInputs inputs) {}
     public default void setMotorVoltage(double volts) {}
     public default void stopMoving() {}
 }

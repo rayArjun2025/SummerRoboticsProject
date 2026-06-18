@@ -15,12 +15,11 @@
 package frc.robot;
 
 import frc.robot.subsystems.Elevator.Elevator;
-import frc.robot.subsystems.Elevator.ElevatorIO;
+import frc.robot.subsystems.Elevator.ElevatorReal;
 import frc.robot.subsystems.Elevator.ElevatorSimulation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Threads;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
@@ -51,7 +50,7 @@ public class Robot extends LoggedRobot {
 
     private MTimer pipelineSwitch = new MTimer();
 
-    private CommandXboxController cmdController = new CommandXboxController(0);
+    //private CommandXboxController cmdController = new CommandXboxController(0);
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -59,8 +58,6 @@ public class Robot extends LoggedRobot {
      */
     @Override
     public void robotInit() {
-
-        elevator = new Elevator(new ElevatorSimulation());
 
         Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
         Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
@@ -80,21 +77,23 @@ public class Robot extends LoggedRobot {
                 break;
         }
 
-        // Set up data receivers & replay source
         switch (Constants.currentMode) {
             case REAL:
                 // Running on a real robot, log to a USB stick ("/U/logs")
+                elevator = new Elevator(new ElevatorReal());
                 Logger.addDataReceiver(new WPILOGWriter("U/logs/" + BuildConstants.GIT_BRANCH));
                 Logger.addDataReceiver(new NT4Publisher());
                 break;
 
             case SIM:
                 // Running a physics simulator, log to NT
+                elevator = new Elevator(new ElevatorSimulation());
                 Logger.addDataReceiver(new NT4Publisher());
                 break;
 
             case REPLAY:
                 // Replaying a log, set up replay source
+                elevator = new Elevator(new ElevatorSimulation());
                 setUseTiming(false); // Run as fast as possible
                 String logPath = LogFileUtil.findReplayLog();
                 Logger.setReplaySource(new WPILOGReader(logPath));
@@ -102,7 +101,7 @@ public class Robot extends LoggedRobot {
                 break;
 
         }
-
+        
         // See http://bit.ly/3YIzFZ6 for more information on timestamps in AdvantageKit.
         // Logger.disableDeterministicTimestamps()
 

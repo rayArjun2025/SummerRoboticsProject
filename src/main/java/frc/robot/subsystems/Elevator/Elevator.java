@@ -4,6 +4,7 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import frc.robot.Constants;
 
 
 public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
@@ -11,6 +12,7 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
     private PIDController pid;
     ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
     private double targetPosition = 0;
+    private static Elevator instance;
 
     public Elevator(ElevatorIO io) {
         super("Elevator");
@@ -29,6 +31,23 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
     public void inputPeriodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Elevator", inputs);
+    }
+
+    public static Elevator getInstance() {
+        if (instance == null) {
+            switch (Constants.currentMode) {
+                case SIM:
+                    instance = new Elevator(new ElevatorSimulation());
+                    break;
+                case REAL:
+                    instance = new Elevator(new ElevatorReal());
+                    break;
+                default:
+                    instance = new Elevator(new ElevatorSimulation());
+                    break;
+            }
+        }   
+        return instance;
     }
 
     @Override
