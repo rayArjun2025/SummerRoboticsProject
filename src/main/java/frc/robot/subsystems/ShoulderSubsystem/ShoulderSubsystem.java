@@ -1,5 +1,7 @@
 package frc.robot.subsystems.ShoulderSubsystem;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.controller.PIDController;
 
 public class ShoulderSubsystem extends StateMachineSubsystemBase<ShoulderState>{
@@ -43,10 +45,16 @@ public class ShoulderSubsystem extends StateMachineSubsystemBase<ShoulderState>{
         }
     }
 
+    @Override
+    public void inputPeriodic(){
+        io.updateInputs(inputs);
+        Logger.processInputs("Shoulder", inputs);
+    }
 
     @Override
     protected void outputPeriodic(){
-        
+        Logger.recordOutput("Shoulder/State", getState());
+        Logger.recordOutput("Shoulder/TargetAngle", targetAngle);
     }
 
     public void swivelAngle(){

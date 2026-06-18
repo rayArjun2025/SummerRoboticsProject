@@ -16,6 +16,4 @@ public interface ShoulderIO {
 
     public default void updateInputs(ShoulderIOInputs inputs){}
     public default void setShoulderVoltage(double volts){}
-    public default void setShoulderVelocity(double velocity){}
-    
 }
