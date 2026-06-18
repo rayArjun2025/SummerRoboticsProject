@@ -16,7 +16,7 @@ package frc.robot;
 
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorIO;
-import frc.robot.subsystems.Elevator.ElevatorSim;
+import frc.robot.subsystems.Elevator.ElevatorSimulation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Threads;
@@ -60,7 +60,7 @@ public class Robot extends LoggedRobot {
     @Override
     public void robotInit() {
 
-        elevator = new Elevator(new ElevatorSim());
+        elevator = new Elevator(new ElevatorSimulation());
 
         Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
         Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);

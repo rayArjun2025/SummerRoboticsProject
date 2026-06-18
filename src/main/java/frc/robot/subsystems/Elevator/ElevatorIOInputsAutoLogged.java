@@ -9,7 +9,7 @@ public class ElevatorIOInputsAutoLogged extends ElevatorIO.ElevatorIOInputs
 
   @Override
   public void toLog(LogTable table) {
-    table.put("elevatorMotor_rps", elevatorMotor_rps);
+    
     table.put("elevatorMotorVolts", elevatorMotorVolts);
     table.put("elevatorMotorCurrent", elevatorMotorCurrent);
 
@@ -22,8 +22,6 @@ public class ElevatorIOInputsAutoLogged extends ElevatorIO.ElevatorIOInputs
 
   @Override
   public void fromLog(LogTable table) {
-    elevatorMotor_rps =
-        table.get("elevatorMotor_rps", elevatorMotor_rps);
 
     elevatorMotorVolts =
         table.get("elevatorMotorVolts", elevatorMotorVolts);
@@ -48,7 +46,6 @@ public class ElevatorIOInputsAutoLogged extends ElevatorIO.ElevatorIOInputs
     ElevatorIOInputsAutoLogged copy =
         new ElevatorIOInputsAutoLogged();
 
-    copy.elevatorMotor_rps = elevatorMotor_rps;
     copy.elevatorMotorVolts = elevatorMotorVolts;
     copy.elevatorMotorCurrent = elevatorMotorCurrent;
 

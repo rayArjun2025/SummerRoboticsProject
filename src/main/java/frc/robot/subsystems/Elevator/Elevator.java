@@ -53,7 +53,12 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
                 }
                 break;
             case IDLE:
-                io.stopMoving();
+                if(inputs.atBottom){
+                    io.stopMoving();
+                }
+                else{
+                    moveElevator();
+                }
                 break;
         }
     
@@ -61,9 +66,10 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
     
     public void moveElevator(){
         double currentPosition = inputs.elevatorPositionMeters;
-        //double ff = 12 * inputs.elevatorVelocityMetersPerSec / ElevatorConstants.MAX_RPS;
+        double ff = ElevatorConstants.GRAVITY_FF;
         double pidOut = pid.calculate(currentPosition, targetPosition);
-        double volts = MathUtil.clamp(pidOut, -12, 12);
+        double volts = MathUtil.clamp(pidOut + ff, -12, 12);
         io.setMotorVoltage(volts);
     }
+
 }
