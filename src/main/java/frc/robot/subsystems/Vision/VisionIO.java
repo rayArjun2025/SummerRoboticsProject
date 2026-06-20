@@ -1,5 +1,6 @@
 package frc.robot.subsystems.Vision;
 
-public class VisionIO {
+public interface VisionIO {
+
     
 }
