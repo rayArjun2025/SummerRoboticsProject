@@ -5,13 +5,13 @@
 package frc.robot.subsystems.Climber;
 
 public final class ClimberConstants {
-    public static final int motor1ID = 0;
-    public static final int motor2ID = 1;
+    public static final int hookMotorID = 0;
+    public static final int wheelMotorID = 1;
 
-    public static final double kP = 1.0;
-    public static final double kI = 0.0;
-    public static final double kD = 0.0;
-    public static final double kS = 0.0;
-    public static final double kV = 0.0;
-    public static final double kA = 0.0;
+    public static final double hookKP = 1.0, wheelKP = 1.0;
+    public static final double hookKI = 0.0, wheelKI = 0.0;
+    public static final double hookKD = 0.0, wheelKD = 0.0;
+    public static final double hookKS = 0.0, wheelKS = 0.0;
+    public static final double hookKV = 0.0, wheelKV = 0.0;
+    public static final double hookKA = 0.0, wheelKA = 0.0;
 }

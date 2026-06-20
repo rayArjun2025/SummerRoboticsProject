@@ -9,26 +9,26 @@ import org.littletonrobotics.junction.AutoLog;
 public interface ClimberIO {
   @AutoLog
   public static class ClimberIOInputs {
-        public double motor1OutputCurrent = 0.0;
-        public double motor1OutputVoltage = 0.0;
-        public double motor1Position = 0.0;
-        public double motor1Velocity = 0.0;
+        public double hookOutputCurrent = 0.0;
+        public double hookOutputVoltage = 0.0;
+        public double hookPosition = 0.0;
+        public double hookVelocity = 0.0;
 
-        public double motor2OutputCurrent = 0.0;
-        public double motor2OutputVoltage = 0.0;
-        public double motor2Position = 0.0;
-        public double motor2Velocity = 0.0;
+        public double wheelOutputCurrent = 0.0;
+        public double wheelOutputVoltage = 0.0;
+        public double wheelPosition = 0.0;
+        public double wheelVelocity = 0.0;
     }
 
   public default void updateInputs(ClimberIOInputs inputs) {}
 
-    public default void setMotor1Voltage(double volts_V, double ff_V) {}
+    public default void setHookVoltage(double volts_V, double ff_V) {}
 
-    public default void setMotor1Velocity(double velocity_rps) {}
+    public default void setHookVelocity(double velocity_rps) {}
 
-    public default void setMotor2Voltage(double volts_V, double ff_V) {}
+    public default void setWheelVoltage(double volts_V, double ff_V) {}
 
-    public default void setMotor2Velocity(double velocity_rps) {}
+    public default void setWheelVelocity(double velocity_rps) {}
 
     public default void stopClimb() {}
 

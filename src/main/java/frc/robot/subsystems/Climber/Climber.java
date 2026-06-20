@@ -13,9 +13,9 @@ import frc.robot.util.*;
 
 public class Climber extends StateMachineSubsystemBase<ClimberStates> {private static Climber instance;
 private final ClimberIO io;
-private final ClimberIO.ClimberIOInputs inputs =
-    new ClimberIO.ClimberIOInputs();
-private double targetDegrees=0.0;
+private final ClimberIO.ClimberIOInputs inputs = new ClimberIO.ClimberIOInputs();
+private double targetDegrees=90.0;
+private double homeDegrees=0.0;
 
 Climber(ClimberIO io) {
     super("Climber");
@@ -26,9 +26,10 @@ Climber(ClimberIO io) {
 public static Climber getInstance() {
     if (instance == null) {
     switch (Constants.currentMode) {
-        //case REAL:
-        //instance = new Climber(new ClimberIOReal());
-        //break;
+        case REAL:
+        instance = new Climber(new ClimberIOReal());
+        break;
+        
         case REPLAY:
         instance = new Climber(new ClimberIO() {});
         break;
@@ -51,10 +52,11 @@ public void handleStateMachine() {switch (getState()) {
         break;
 
     case SHALLOW_CLIMBING:
+        io.climbTo(targetDegrees);
         break;
 
     case SHALLOW_UNCLIMBING:
-        
+        io.climbTo(homeDegrees);
         break;
 
     case WAITING:
