@@ -60,7 +60,7 @@ public class Elbow extends StateMachineSubsystemBase<ElbowStates>{
     public void swivelAngle(){
         double currentAngle = inputs.elbowRotateAngle;
         double volts = pid.calculate(currentAngle, targetAngle);
-        io.setShoulderVoltage(volts + ElbowConstants.GRAVITY_FF);
+        io.setElbowVoltage(volts + ElbowConstants.GRAVITY_FF);
     }
 }
 
