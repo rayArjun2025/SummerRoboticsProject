@@ -9,6 +9,7 @@ public class ShoulderConstants {
     public static final double ARM_LENGTH = 0.7366;
     public static final double ARM_MASS = 5.669;
     public static final double CHANGE_IN_TIME = 0.02;
+    public static final int MOTOR_ID = 1;
 
 
     
