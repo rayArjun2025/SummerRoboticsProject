@@ -2,7 +2,6 @@ package frc.robot.subsystems.Elbow;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.units.measure.Angle;
@@ -14,12 +13,11 @@ import frc.robot.generated.TunerConstants;
 public class ElbowReal implements ElbowIO {
 
     private final TalonFX elbowMotor;
-    private final CANcoder elbowEncoder;
 
-    private final StatusSignal<Angle> encoderPosition;
-    private final StatusSignal<AngularVelocity> motorVelocity;
-    private final StatusSignal<Voltage> motorVoltage;
-    private final StatusSignal<Current> motorCurrent;
+    private final StatusSignal<Angle> elbowPosition;
+    private final StatusSignal<AngularVelocity> elbowVelocity;
+    private final StatusSignal<Voltage> elbowVoltage;
+    private final StatusSignal<Current> elbowCurrent;
 
     public ElbowReal() {
         elbowMotor = new TalonFX(
@@ -27,23 +25,17 @@ public class ElbowReal implements ElbowIO {
             TunerConstants.kCANBus
         );
 
-        elbowEncoder = new CANcoder(
-            ElbowConstants.CANCODER_ID,
-            TunerConstants.kCANBus
-        );
-
-        encoderPosition = elbowEncoder.getAbsolutePosition();
-
-        motorVelocity = elbowMotor.getVelocity();
-        motorVoltage = elbowMotor.getMotorVoltage();
-        motorCurrent = elbowMotor.getStatorCurrent();
+        elbowPosition = elbowMotor.getPosition();
+        elbowVelocity = elbowMotor.getVelocity();
+        elbowVoltage = elbowMotor.getMotorVoltage();
+        elbowCurrent = elbowMotor.getStatorCurrent();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
             50,
-            encoderPosition,
-            motorVelocity,
-            motorVoltage,
-            motorCurrent
+            elbowPosition,
+            elbowVelocity,
+            elbowVoltage,
+            elbowCurrent
         );
     }
 
@@ -51,35 +43,33 @@ public class ElbowReal implements ElbowIO {
     public void updateInputs(ElbowIOInputs inputs) {
 
         BaseStatusSignal.refreshAll(
-            encoderPosition,
-            motorVelocity,
-            motorVoltage,
-            motorCurrent
+            elbowPosition,
+            elbowVelocity,
+            elbowVoltage,
+            elbowCurrent
         );
 
-        inputs.elbowRotateAngle = getElbowAngleRadians();
-
-        inputs.angularVelocityRad =
-            motorVelocity.getValueAsDouble()
+        inputs.elbowRotateAngle =
+            elbowPosition.getValueAsDouble()
             / ElbowConstants.GEAR_RATIO
             * 2.0 * Math.PI;
 
-        inputs.elbowCurrent =
-            motorCurrent.getValueAsDouble();
+        inputs.angularVelocityRad =
+            elbowVelocity.getValueAsDouble()
+            / ElbowConstants.GEAR_RATIO
+            * 2.0 * Math.PI;
 
         inputs.elbowVoltage =
-            motorVoltage.getValueAsDouble();
+            elbowVoltage.getValueAsDouble();
+
+        inputs.elbowCurrent =
+            elbowCurrent.getValueAsDouble();
 
         inputs.atMaxAngle =
             inputs.elbowRotateAngle >= ElbowConstants.MAX_ANGLE;
 
         inputs.atMinAngle =
             inputs.elbowRotateAngle <= ElbowConstants.MIN_ANGLE;
-    }
-
-    private double getElbowAngleRadians() {
-        double rotations = encoderPosition.getValueAsDouble();
-        return (rotations - ElbowConstants.CANCODER_OFFSET) * 2.0 * Math.PI;
     }
 
     @Override
