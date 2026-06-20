@@ -14,16 +14,15 @@
 
 package frc.robot;
 
-import frc.robot.subsystems.Elevator.Elevator;
-import frc.robot.subsystems.Elevator.ElevatorIO;
-import frc.robot.subsystems.Elevator.ElevatorSim;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Threads;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
+//import frc.robot.subsystems.Hand.Hand;
+//import frc.robot.subsystems.Hand.HandIO;
+//import frc.robot.subsystems.Hand.HandSim;
 import frc.robot.util.MTimer;
 
 import org.littletonrobotics.junction.LogFileUtil;
@@ -46,7 +45,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
  */
 public class Robot extends LoggedRobot {
 
-    private Elevator elevator;
+    //private Hand hand;
     private boolean lastState = false;
 
     private MTimer pipelineSwitch = new MTimer();
@@ -60,7 +59,7 @@ public class Robot extends LoggedRobot {
     @Override
     public void robotInit() {
 
-        elevator = new Elevator(new ElevatorSim());
+        //hand = new Hand(new HandSim());
 
         Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
         Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
@@ -137,7 +136,7 @@ public class Robot extends LoggedRobot {
     public void robotPeriodic() {
         // Switch thread to high priority to improve loop timing
         Threads.setCurrentThreadPriority(true, 99);
-        elevator.handleStateMachine();
+        //hand.handleStateMachine();
         PerfTracker.periodic();
         Threads.setCurrentThreadPriority(false, 10);
     }

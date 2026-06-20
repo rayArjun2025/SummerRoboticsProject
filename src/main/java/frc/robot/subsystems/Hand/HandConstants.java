@@ -1,6 +1,6 @@
-package frc.robot.subsystems.Elevator;
+package frc.robot.subsystems.Hand;
 
-public class ElevatorConstants {
+public class HandConstants {
     public static final double ELEVATOR_MAX_HEIGHT = 2.0;
     public static final double ELEVATOR_MIN_HEIGHT = 0.0;
     public static final double CHANGE_IN_TIME = 0.02;
