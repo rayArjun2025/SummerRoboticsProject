@@ -3,6 +3,7 @@ package frc.robot.subsystems.Vision;
 import org.littletonrobotics.junction.AutoLog;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 public interface VisionIO {
@@ -24,6 +25,15 @@ public interface VisionIO {
       
         public double avgTagDistance = 0.0;
 
+         public PoseObservation[] poseObservations = new PoseObservation[0];
+
+        public static record PoseObservation(double timestamp, Pose3d pose, double ambiguity,
+            int tagCount, double avgTagDistance, PoseObservationType type) {
+        }
+
+        public enum PoseObservationType {
+            MEGATAG_1, MEGATAG_2, PHOTONVISION
+        }
     }
 
     
