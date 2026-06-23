@@ -11,12 +11,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.subsystems.Vision.VisionIO.VisionIOInputs.PoseObservation;
 import frc.robot.subsystems.Vision.VisionIO.VisionIOInputs.PoseObservationType;
 
-public class VisionIOReal implements VisionIO {
+public class VisionIOLimelight implements VisionIO {
 
     private final String leftCamera;
     private final String rightCamera;
 
-    public VisionIOReal() {
+    public VisionIOLimelight() {
         leftCamera = "left-limelight";
         rightCamera = "right-limelight";
     }
