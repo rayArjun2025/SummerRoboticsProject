@@ -32,6 +32,8 @@ public class ShoulderReal implements ShoulderIO {
             voltage,
             current
         );
+
+        motor.optimizeBusUtilization();
     }
 
     @Override

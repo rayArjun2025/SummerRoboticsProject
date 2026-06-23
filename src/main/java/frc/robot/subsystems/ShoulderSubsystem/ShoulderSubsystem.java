@@ -19,37 +19,37 @@ public class ShoulderSubsystem extends StateMachineSubsystemBase<ShoulderState>{
 
     @Override
     public void handleStateMachine() {
-        switch(getState()){
+        switch (getState()) {
             case INCREASE_SHOOTING_ANGLE:
-                if(inputs.atMaxAngle) {
-                    queueState(ShoulderState.IDLE);
-                }
-                else{
-                    targetAngle = ShoulderConstants.MAX_ANGLE;
-                    swivelAngle();
-                }
-                break;
-            case DECREASE_SHOOTING_ANGLE:
-                if(inputs.atMinAngle) {
-                    queueState(ShoulderState.IDLE);
-                }
-                else{
-                    targetAngle = ShoulderConstants.MIN_ANGLE;
-                    swivelAngle();
-                }
-                break;
-            case IDLE:
-                if(inputs.atMaxAngle){
-                    targetAngle = inputs.shoulderSwivelAngle;
-                    swivelAngle();
-                }
-                else{
+                if (inputs.atMaxAngle) {
                     io.stopMotor();
+                    queueState(ShoulderState.IDLE);
+                    break;
                 }
+                swivelAngle();
+                if (inputs.shoulderSwivelAngle >= targetAngle - 1.0) {
+                    queueState(ShoulderState.IDLE);
+                }
+                break;
+
+            case DECREASE_SHOOTING_ANGLE:
+
+                if (inputs.atMinAngle) {
+                    io.stopMotor();
+                    queueState(ShoulderState.IDLE);
+                    break;
+                }
+                swivelAngle();
+                if (inputs.shoulderSwivelAngle <= targetAngle + 1.0) {
+                    queueState(ShoulderState.IDLE);
+                }
+                break;
+
+            case IDLE:
+                swivelAngle();
                 break;
         }
     }
-
     @Override
     public void inputPeriodic(){
         io.updateInputs(inputs);
@@ -68,5 +68,19 @@ public class ShoulderSubsystem extends StateMachineSubsystemBase<ShoulderState>{
         io.setShoulderVoltage(volts + ShoulderConstants.GRAVITY_FF);
     }
 
-    
+    public void setTargetAngle(double angle) {
+        targetAngle = angle;
+        double error = targetAngle - inputs.shoulderSwivelAngle;
+        if (error > 1.0) {
+            queueState(
+                ShoulderState.INCREASE_SHOOTING_ANGLE);
+        }
+        else if (error < -1.0) {
+            queueState(
+                ShoulderState.DECREASE_SHOOTING_ANGLE);
+        }
+        else {
+            queueState(ShoulderState.IDLE);
+        }
+    }
 }
