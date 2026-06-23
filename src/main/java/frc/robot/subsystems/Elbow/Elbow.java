@@ -18,39 +18,52 @@ public class Elbow extends StateMachineSubsystemBase<ElbowStates>{
         pid = new PIDController(1, 0, ElbowConstants.CHANGE_IN_TIME);
     }
     
+    @Override
     public void handleStateMachine() {
-        switch(getState()){
+        switch (getState()) {
             case INCREASING_ELEVATION_ANGLE:
-                if(inputs.atMaxAngle) {
+                if (inputs.atMaxAngle) {
+                    io.stopMotor();
                     queueState(ElbowStates.IDLE);
+                    break;
                 }
-                else{
-                    targetAngle = ElbowConstants.MAX_ANGLE;
-                    swivelAngle();
+                swivelAngle();
+                if (inputs.elbowRotateAngle >= targetAngle - 1.0) {
+                    queueState(ElbowStates.IDLE);
                 }
                 break;
             case DECREASING_ELEVATION_ANGLE:
-                if(inputs.atMinAngle) {
+                if (inputs.atMinAngle) {
+                    io.stopMotor();
                     queueState(ElbowStates.IDLE);
+                    break;
                 }
-                else{
-                    targetAngle = ElbowConstants.MIN_ANGLE;
-                    swivelAngle();
+                swivelAngle();
+                if (inputs.elbowRotateAngle <= targetAngle + 1.0) {
+                    queueState(ElbowStates.IDLE);
                 }
                 break;
             case IDLE:
-                if(inputs.atMaxAngle){
-                    targetAngle = inputs.elbowRotateAngle;
-                    swivelAngle();
-                }
-                else{
-                    io.stopMotor();
-                }
+                swivelAngle();
                 break;
         }
-            
     }
 
+    public void setTargetAngle(double angle) {
+
+        targetAngle = angle;
+        double error = targetAngle - inputs.elbowRotateAngle;
+
+        if (error > 1.0) {
+            queueState(ElbowStates.INCREASING_ELEVATION_ANGLE);
+        }
+        else if (error < -1.0) {
+            queueState(ElbowStates.DECREASING_ELEVATION_ANGLE);
+        }
+        else {
+            queueState(ElbowStates.IDLE);
+        }
+    }
     @Override
     protected void outputPeriodic(){
         Logger.recordOutput("Elbow/State", getState());

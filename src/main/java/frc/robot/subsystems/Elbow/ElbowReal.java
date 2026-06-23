@@ -37,17 +37,24 @@ public class ElbowReal implements ElbowIO {
             elbowVoltage,
             elbowCurrent
         );
+
+        elbowMotor.optimizeBusUtilization();
+
+        
+        
     }
 
     @Override
     public void updateInputs(ElbowIOInputs inputs) {
 
-        BaseStatusSignal.refreshAll(
+        var status = BaseStatusSignal.refreshAll(
             elbowPosition,
             elbowVelocity,
             elbowVoltage,
             elbowCurrent
         );
+
+        inputs.connected = status.isOK();
 
         inputs.elbowRotateAngle =
             elbowPosition.getValueAsDouble()

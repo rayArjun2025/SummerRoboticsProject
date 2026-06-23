@@ -11,6 +11,7 @@ public interface ElbowIO {
         public double elbowVoltage = 0;
         public boolean atMaxAngle = false;
         public boolean atMinAngle = false;
+        public boolean connected = false;
     }
 
     public default void updateInputs(ElbowIOInputs inputs){}
