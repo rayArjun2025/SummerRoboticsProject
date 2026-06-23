@@ -38,12 +38,14 @@ public class ShoulderReal implements ShoulderIO {
 
     @Override
     public void updateInputs(ShoulderIOInputs inputs) {
-        BaseStatusSignal.refreshAll(
+        var status = BaseStatusSignal.refreshAll(
             position,
             velocity,
             voltage,
             current
         );
+
+        inputs.connected = status.isOK();
 
         inputs.shoulderSwivelAngle =
             rotationsToRadians(position.getValueAsDouble());

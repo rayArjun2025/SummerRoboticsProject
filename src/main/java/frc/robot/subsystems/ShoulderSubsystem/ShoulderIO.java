@@ -12,6 +12,7 @@ public interface ShoulderIO {
         public double shoulderVoltage = 0;
         public boolean atMaxAngle = false;
         public boolean atMinAngle = false;
+        public boolean connected = false;
     }
 
     public default void updateInputs(ShoulderIOInputs inputs){}
