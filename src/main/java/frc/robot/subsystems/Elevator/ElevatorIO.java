@@ -12,6 +12,7 @@ public interface ElevatorIO {
         public double elevatorVelocityMetersPerSec = 0.0;
         public boolean atTop = false;
         public boolean atBottom = false;
+        public boolean connected = false;
     }
 
 

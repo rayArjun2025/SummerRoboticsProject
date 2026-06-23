@@ -24,24 +24,28 @@ public class ElevatorReal implements ElevatorIO{
         elevatorVelocity = elevatorMotor.getVelocity();
         elevatorPosition = elevatorMotor.getPosition();
 
+        BaseStatusSignal.setUpdateFrequencyForAll(50,elevatorCurrent,elevatorVoltage,elevatorVelocity,elevatorPosition);
+        elevatorMotor.optimizeBusUtilization();
+
     }
    
     @Override 
     public void updateInputs(ElevatorIOInputs inputs){
         BaseStatusSignal.refreshAll(elevatorCurrent, elevatorVoltage, elevatorVelocity, elevatorPosition);
+        inputs.connected = BaseStatusSignal.refreshAll(elevatorCurrent,elevatorVoltage,elevatorVelocity,elevatorPosition).isOK();
         inputs.elevatorMotorCurrent = elevatorCurrent.getValueAsDouble();
         inputs.elevatorMotorVolts = elevatorVoltage.getValueAsDouble();
         inputs.elevatorVelocityMetersPerSec = convertToLinearVel(elevatorVelocity.getValueAsDouble());
         inputs.elevatorPositionMeters = convertToMeters(elevatorPosition.getValueAsDouble());
-        inputs.atTop = inputs.elevatorPositionMeters >= ElevatorConstants.ELEVATOR_MAX_HEIGHT;
-        inputs.atBottom = inputs.elevatorPositionMeters <= ElevatorConstants.ELEVATOR_MIN_HEIGHT;
+        inputs.atTop = inputs.elevatorPositionMeters >= ElevatorConstants.ELEVATOR_MAX_HEIGHT - 0.001;
+        inputs.atBottom = inputs.elevatorPositionMeters <= ElevatorConstants.ELEVATOR_MIN_HEIGHT + 0.001;
     }
 
-    public double convertToLinearVel(double aVelocity){
+    private double convertToLinearVel(double aVelocity){
         return aVelocity / ElevatorConstants.GEAR_RATIO * 2 * Math.PI * ElevatorConstants.DRUM_RADIUS;
     }
 
-    public double convertToMeters(double aPos){
+    private double convertToMeters(double aPos){
          return aPos / ElevatorConstants.GEAR_RATIO * 2 * Math.PI * ElevatorConstants.DRUM_RADIUS;
     }
 

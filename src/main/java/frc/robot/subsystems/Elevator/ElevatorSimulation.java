@@ -22,8 +22,8 @@ public class ElevatorSimulation implements ElevatorIO{
         inputs.elevatorPositionMeters = elevatorSim.getPositionMeters();
         inputs.elevatorMotorCurrent = elevatorSim.getCurrentDrawAmps();
         
-        inputs.atTop = inputs.elevatorPositionMeters >= ElevatorConstants.ELEVATOR_MAX_HEIGHT;
-        inputs.atBottom = inputs.elevatorPositionMeters <= ElevatorConstants.ELEVATOR_MIN_HEIGHT;
+        inputs.atTop = inputs.elevatorPositionMeters >= ElevatorConstants.ELEVATOR_MAX_HEIGHT - 0.001;
+        inputs.atBottom = inputs.elevatorPositionMeters <= ElevatorConstants.ELEVATOR_MIN_HEIGHT + 0.001;
     }
 
     @Override

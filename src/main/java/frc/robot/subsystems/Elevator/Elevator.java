@@ -55,29 +55,29 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
         switch (getState()) {
             case MOVING_UP:
                 if (inputs.atTop) {
+                    io.stopMoving();
                     queueState(ElevatorStates.IDLE);
+                    break;
                 }
-                else{
-                    targetPosition = ElevatorConstants.ELEVATOR_MAX_HEIGHT;
-                    moveElevator();
+
+                moveElevator();
+                if (inputs.elevatorPositionMeters >= targetPosition - 0.02) {
+                    queueState(ElevatorStates.IDLE);
                 }
                 break;
             case MOVING_DOWN:
                 if (inputs.atBottom) {
+                    io.stopMoving();
                     queueState(ElevatorStates.IDLE);
+                    break;
                 }
-                else {
-                    targetPosition = ElevatorConstants.ELEVATOR_MIN_HEIGHT;
-                    moveElevator();
+                moveElevator();
+                if (inputs.elevatorPositionMeters <= targetPosition + 0.02) {
+                    queueState(ElevatorStates.IDLE);
                 }
                 break;
             case IDLE:
-                if(inputs.atBottom){
-                    io.stopMoving();
-                }
-                else{
-                    moveElevator();
-                }
+                moveElevator();
                 break;
         }
     
@@ -89,6 +89,19 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
         double pidOut = pid.calculate(currentPosition, targetPosition);
         double volts = MathUtil.clamp(pidOut + ff, -12, 12);
         io.setMotorVoltage(volts);
+    }
+
+    public void setTargetPosition(double position) {
+        targetPosition = position;
+
+        if (position > inputs.elevatorPositionMeters) {
+            queueState(ElevatorStates.MOVING_UP);
+        } else if (position < inputs.elevatorPositionMeters) {
+            queueState(ElevatorStates.MOVING_DOWN);
+        }
+        else{
+            queueState(ElevatorStates.IDLE);
+        }
     }
 
 }
