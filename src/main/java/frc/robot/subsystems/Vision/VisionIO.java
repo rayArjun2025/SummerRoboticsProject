@@ -41,5 +41,6 @@ public interface VisionIO {
     public default void setPipeline(int mode) {}
     public default void updatePose(Pose2d robotPose) {}
     public default void setRobotOrientation(Rotation2d rotation) {}
+    public default void setFiducialFilters(int[] ids) {}
     
 }

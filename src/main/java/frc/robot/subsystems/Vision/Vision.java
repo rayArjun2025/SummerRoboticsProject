@@ -51,7 +51,8 @@ public class Vision {
         if (instance == null) {
             switch (Constants.currentMode) {
                 case REAL:
-                    throw new RuntimeException("VisionIOLimelight not implemented");
+                    instance = new Vision(new VisionIOSim(LEFT_ROBOT_TO_CAMERA, RIGHT_ROBOT_TO_CAMERA));
+                    break;
                 case SIM:
                     instance = new Vision(new VisionIOSim(LEFT_ROBOT_TO_CAMERA, RIGHT_ROBOT_TO_CAMERA));
                     break;

@@ -96,6 +96,9 @@ public class VisionIOSim implements VisionIO{
             inputs.hasTarget = false;
             inputs.visibleTagIds = new int[0];
             inputs.poseObservations = new PoseObservation[0];
+            inputs.targetXDegrees = 0.0;
+            inputs.targetYDegrees = 0.0;
+            inputs.targetAreaPercent = 0.0;
             return;
         }
 
@@ -172,7 +175,7 @@ public class VisionIOSim implements VisionIO{
             observations.toArray(PoseObservation[]::new);
     }
 
-    public void addObservation(List<PoseObservation> observations, EstimatedRobotPose est) {
+    private void addObservation(List<PoseObservation> observations, EstimatedRobotPose est) {
 
         if (est == null || est.targetsUsed.isEmpty()) {
             return;
