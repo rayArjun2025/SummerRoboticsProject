@@ -1,0 +1,72 @@
+package frc.robot.subsystems.Hand;
+
+
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.inputs.LoggableInputs;
+
+import edu.wpi.first.wpilibj.util.Color8Bit;
+import frc.robot.Constants;
+import frc.robot.util.StateMachineSubsystemBase;
+
+public class Hand extends StateMachineSubsystemBase<HandStates> {private static Hand instance;
+private final HandIO io;
+private final HandIO.HandIOInputs inputs =
+    new HandIO.HandIOInputs();
+private double targetDegrees=90.0;
+private double homeDegrees=0.0;
+
+Hand(HandIO io) {
+    super("Hand");
+    this.io = io;
+    queueState(HandStates.IDLE);
+}
+
+@Override
+public void handleStateMachine() {switch (getState()) {
+    case DISABLED:
+        io.stopMoving();
+        break;
+
+    case IDLE:
+        io.stopMoving();
+        break;
+
+    case GRIPPING_CORAL:
+        if ((inputs.handPositionDeg - targetDegrees) <= 1.0) 
+        queueState(HandStates.IDLE);
+        else 
+        io.grip(targetDegrees);
+        
+        break;
+    case GRIPPING_ALGAE:
+        if ((inputs.handPositionDeg - targetDegrees) > 1.0) 
+        queueState(HandStates.IDLE);
+        else
+        io.grip(targetDegrees);
+        
+        break;
+
+    case RELEASING:
+        if ((inputs.handPositionDeg - homeDegrees) <= 1.0)
+        queueState(HandStates.IDLE);
+        else
+        io.grip(homeDegrees);
+        break;
+        
+    default:
+        io.stopMoving();
+        break;
+    }
+}
+
+public void inputPeriodic() {
+    io.updateInputs(inputs);
+    Logger.processInputs("Hand", (LoggableInputs) inputs);
+}
+
+@Override
+protected void outputPeriodic() {
+    Logger.recordOutput("Hand/TargetDegrees", targetDegrees);
+}
+
+}
