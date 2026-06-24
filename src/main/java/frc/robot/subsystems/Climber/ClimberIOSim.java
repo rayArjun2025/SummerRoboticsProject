@@ -16,21 +16,31 @@ public class ClimberIOSim implements ClimberIO {
 
     private LinearSystem<N2, N1, N2> climberSystem;
     private final DCMotorSim hookMotorSim;
+    private final DCMotorSim wheelMotorSim;
 
     public ClimberIOSim() {
         climberSystem = LinearSystemId.createDCMotorSystem(1.0, 1.0);
         hookMotorSim = new DCMotorSim(climberSystem, DCMotor.getKrakenX60Foc(1));
+        wheelMotorSim = new DCMotorSim(climberSystem, DCMotor.getKrakenX60Foc(1));
     }
 
     @Override
     public void updateInputs(ClimberIOInputs inputs) {
         hookMotorSim.update(0.02);
-        double motorRadPerSec = hookMotorSim.getAngularVelocityRadPerSec();
+        double hookMotorRadPerSec = hookMotorSim.getAngularVelocityRadPerSec();
 
         inputs.hookOutputCurrent = hookMotorSim.getCurrentDrawAmps();
         inputs.hookOutputVoltage = motorVoltage;
-        inputs.hookPosition = Math.toDegrees(hookMotorSim.getAngularPositionRad());
-        inputs.hookVelocity = Math.toDegrees(motorRadPerSec);
+        inputs.hookPositionDeg = Math.toDegrees(hookMotorSim.getAngularPositionRad());
+        inputs.hookVelocity = Math.toDegrees(hookMotorRadPerSec);
+
+        wheelMotorSim.update(0.02);
+        double wheelMotorRadPerSec = wheelMotorSim.getAngularVelocityRadPerSec();
+
+        inputs.wheelOutputCurrent = wheelMotorSim.getCurrentDrawAmps();
+        inputs.wheelOutputVoltage = motorVoltage;
+        inputs.wheelPositionDeg = Math.toDegrees(wheelMotorSim.getAngularPositionRad());
+        inputs.wheelVelocity = Math.toDegrees(wheelMotorRadPerSec);
     }
 
     @Override
@@ -49,6 +59,6 @@ public class ClimberIOSim implements ClimberIO {
     }
 
     @Override
-    public void climbTo(double position_deg) {
+    public void climbTo(double hook_position_deg, double wheel_position_deg) {
     }
 }

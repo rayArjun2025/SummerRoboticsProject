@@ -9,6 +9,7 @@ import org.littletonrobotics.junction.inputs.LoggableInputs;
 
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.Constants;
+import frc.robot.subsystems.Hand.HandStates;
 import frc.robot.util.*;
 
 public class Climber extends StateMachineSubsystemBase<ClimberStates> {private static Climber instance;
@@ -52,11 +53,17 @@ public void handleStateMachine() {switch (getState()) {
         break;
 
     case SHALLOW_CLIMBING:
-        io.climbTo(targetDegrees);
+        if ((inputs.hookPositionDeg - targetDegrees) > 1.0 && (inputs.wheelPositionDeg - targetDegrees) < 1.0)
+            queueState(ClimberStates.IDLE);
+        else
+            io.climbTo(targetDegrees, targetDegrees);
         break;
 
-    case SHALLOW_UNCLIMBING:
-        io.climbTo(homeDegrees);
+    case RELEASING:
+        if (((inputs.hookPositionDeg - homeDegrees) <= 1.0) && ((inputs.wheelPositionDeg - homeDegrees) <= 1.0))
+            queueState(ClimberStates.IDLE);
+        else
+            io.climbTo(homeDegrees, homeDegrees);
         break;
 
     case WAITING:

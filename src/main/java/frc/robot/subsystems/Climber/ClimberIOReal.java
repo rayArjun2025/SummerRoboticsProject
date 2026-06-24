@@ -26,7 +26,7 @@ import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 public class ClimberIOReal implements ClimberIO {
     private final TalonFX hookMotor;
-
+    private final TalonFX wheelMotor;
     public final StatusSignal<Current> climbCurrent_A;
     public final StatusSignal<Voltage> climbVolts_V;
     public final StatusSignal<AngularVelocity> climbVel_rps;
@@ -35,6 +35,16 @@ public class ClimberIOReal implements ClimberIO {
     private final VoltageOut climbVoltOut_V;
     private final VelocityVoltage climbVelOut;
     private final PositionVoltage climbPosCtrl;
+
+
+    public final StatusSignal<Current> wheelCurrent_A;
+    public final StatusSignal<Voltage> wheelVolts_V;
+    public final StatusSignal<AngularVelocity> wheelVel_rps;
+    public final StatusSignal<Angle> wheelPos_r;
+
+    private final VoltageOut wheelVoltOut_V;
+    private final VelocityVoltage wheelVelOut;
+    private final PositionVoltage wheelPosCtrl;
 
     public ClimberIOReal()
     {
@@ -45,6 +55,8 @@ public class ClimberIOReal implements ClimberIO {
         climbVel_rps = hookMotor.getVelocity();
         climbPos_r = hookMotor.getPosition();
 
+
+        //Hook Motor
         var hookMotorConfig = new TalonFXConfiguration();
 
         hookMotorConfig.CurrentLimits.SupplyCurrentLimit = 60.0;
@@ -69,6 +81,39 @@ public class ClimberIOReal implements ClimberIO {
         climbVoltOut_V = new VoltageOut(0).withEnableFOC(true);
         climbVelOut = new VelocityVoltage(0.0).withEnableFOC(true);
         climbPosCtrl = new PositionVoltage(0.0).withEnableFOC(true);
+
+        //Wheel Motor
+        wheelMotor = new TalonFX(ClimberConstants.wheelMotorID, TunerConstants.kCANBus);
+
+        wheelCurrent_A = wheelMotor.getStatorCurrent();
+        wheelVolts_V = wheelMotor.getMotorVoltage();
+        wheelVel_rps = wheelMotor.getVelocity();
+        wheelPos_r = wheelMotor.getPosition();
+
+        var wheelMotorConfig = new TalonFXConfiguration();
+
+        wheelMotorConfig.CurrentLimits.SupplyCurrentLimit = 60.0;
+        wheelMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        wheelMotorConfig.CurrentLimits.StatorCurrentLimit = 82.0;
+        wheelMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+
+        wheelMotorConfig.Feedback.SensorToMechanismRatio = 1.0;
+        wheelMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        wheelMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+        wheelMotorConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.02;
+        wheelMotorConfig.Slot0.kP = ClimberConstants.wheelKP;
+        wheelMotorConfig.Slot0.kI = ClimberConstants.wheelKI;
+        wheelMotorConfig.Slot0.kD = ClimberConstants.wheelKD;
+        wheelMotorConfig.Slot0.kS = ClimberConstants.wheelKS;
+        wheelMotorConfig.Slot0.kV = ClimberConstants.wheelKV;
+        wheelMotorConfig.Slot0.kA = ClimberConstants.wheelKA;
+
+        tryUntilOk(5, () -> wheelMotor.getConfigurator().apply(wheelMotorConfig));
+
+        wheelVoltOut_V = new VoltageOut(0).withEnableFOC(true);
+        wheelVelOut = new VelocityVoltage(0.0).withEnableFOC(true);
+        wheelPosCtrl = new PositionVoltage(0.0).withEnableFOC(true);
     }
 
     @Override
@@ -77,12 +122,22 @@ public class ClimberIOReal implements ClimberIO {
                 climbCurrent_A,
                 climbVolts_V,
                 climbVel_rps,
-                climbPos_r);
+                climbPos_r,
+                
+                wheelCurrent_A,
+                wheelVolts_V,
+                wheelVel_rps,
+                wheelPos_r);
 
         inputs.hookOutputCurrent = climbCurrent_A.getValueAsDouble();
         inputs.hookOutputVoltage = climbVolts_V.getValueAsDouble();
-        inputs.hookPosition = climbPos_r.getValueAsDouble() * 360.0;
+        inputs.hookPositionDeg = climbPos_r.getValueAsDouble() * 360.0;
         inputs.hookVelocity = climbVel_rps.getValueAsDouble() * 360.0;
+
+        inputs.wheelOutputCurrent = wheelCurrent_A.getValueAsDouble();
+        inputs.wheelOutputVoltage = wheelVolts_V.getValueAsDouble();
+        inputs.wheelPositionDeg = wheelPos_r.getValueAsDouble() * 360.0;
+        inputs.wheelVelocity = wheelVel_rps.getValueAsDouble() * 360.0;
     }
 
     @Override
@@ -93,19 +148,31 @@ public class ClimberIOReal implements ClimberIO {
 
     @Override
     public void setHookVelocity(double velocity_rps) {
-        // Onboard TalonFX closed-loop — runs at the motor controller's update
-        // rate, not the 50Hz robot loop, so it tracks load disturbances faster.
         hookMotor.setControl(climbVelOut.withVelocity(velocity_rps));
+    }
+
+    @Override
+    public void setWheelVoltage(double volts_V, double ff_V) {
+        volts_V = MathUtil.clamp(volts_V + ff_V, -12.0, 12);
+        wheelMotor.setControl(wheelVoltOut_V.withOutput(volts_V));
+    }
+
+    @Override
+    public void setWheelVelocity(double velocity_rps) {
+        wheelMotor.setControl(wheelVelOut.withVelocity(velocity_rps));
     }
 
     @Override
     public void stopClimb() {
         setHookVoltage(0.0, 0.0);
+        setWheelVoltage(0.0, 0.0);
     }
 
     @Override
-    public void climbTo(double position_deg) {
-        double pos_r = position_deg / 360.0;
-        hookMotor.setControl(climbPosCtrl.withPosition(pos_r));
+    public void climbTo(double hook_position_deg, double wheel_position_deg) {
+        double hook_pos_r = hook_position_deg / 360.0;
+        double wheel_pos_r = wheel_position_deg / 360.0;
+        hookMotor.setControl(climbPosCtrl.withPosition(hook_pos_r));
+        wheelMotor.setControl(wheelPosCtrl.withPosition(wheel_pos_r));
     }
 }

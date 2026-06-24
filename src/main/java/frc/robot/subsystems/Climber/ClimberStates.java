@@ -10,6 +10,6 @@ public enum ClimberStates implements IState {
     DISABLED,
     IDLE,
     SHALLOW_CLIMBING,
-    SHALLOW_UNCLIMBING,
+    RELEASING,
     WAITING
 }

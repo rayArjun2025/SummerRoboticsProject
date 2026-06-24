@@ -11,12 +11,12 @@ public interface ClimberIO {
   public static class ClimberIOInputs {
         public double hookOutputCurrent = 0.0;
         public double hookOutputVoltage = 0.0;
-        public double hookPosition = 0.0;
+        public double hookPositionDeg = 0.0;
         public double hookVelocity = 0.0;
 
         public double wheelOutputCurrent = 0.0;
         public double wheelOutputVoltage = 0.0;
-        public double wheelPosition = 0.0;
+        public double wheelPositionDeg = 0.0;
         public double wheelVelocity = 0.0;
     }
 
@@ -32,7 +32,7 @@ public interface ClimberIO {
 
     public default void stopClimb() {}
 
-    public default void climbTo(double position) {}
+    public default void climbTo(double hook_position, double wheel_position) {}
 
     public default void putUpTheWheels(double position) {}
 
