@@ -236,4 +236,5 @@ public class SS extends StateMachineSubsystemBase<SuperstructureStates>{
         String[] activeFlags = flags.stream().map(Enum::name).toArray(String[]::new);
         Logger.recordOutput("Superstructure/Flags", activeFlags);
     }
+    
 }
