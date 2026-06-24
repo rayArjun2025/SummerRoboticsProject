@@ -1,4 +1,4 @@
-package frc.robot.subsystems.ShoulderSubsystem;
+package frc.robot.subsystems.Shoulder;
 
 public class ShoulderConstants {
     public static final double MAX_ANGLE = Math.toRadians(180);

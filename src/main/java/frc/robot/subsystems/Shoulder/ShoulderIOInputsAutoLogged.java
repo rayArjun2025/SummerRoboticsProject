@@ -1,4 +1,4 @@
-package frc.robot.subsystems.ShoulderSubsystem;
+package frc.robot.subsystems.Shoulder;
 
 import org.littletonrobotics.junction.LogTable;
 import org.littletonrobotics.junction.inputs.LoggableInputs;

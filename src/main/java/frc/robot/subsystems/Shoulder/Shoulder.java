@@ -1,20 +1,39 @@
-package frc.robot.subsystems.ShoulderSubsystem;
+package frc.robot.subsystems.Shoulder;
 
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.controller.PIDController;
+import frc.robot.Constants;
 
-public class ShoulderSubsystem extends StateMachineSubsystemBase<ShoulderState>{
+public class Shoulder extends StateMachineSubsystemBase<ShoulderState>{
+    private static Shoulder instance;
     private ShoulderIO io;
     private ShoulderIOInputsAutoLogged inputs = new ShoulderIOInputsAutoLogged();
     private PIDController pid;
     private double targetAngle;
 
-    public ShoulderSubsystem(ShoulderIO io){
+    public Shoulder(ShoulderIO io){
         super("Shoulder");
         this.io = io;
         queueState(ShoulderState.INCREASE_SHOOTING_ANGLE);
         pid = new PIDController(1, 0, ShoulderConstants.CHANGE_IN_TIME);
+    }
+
+    public static Shoulder getInstance() {
+        if (instance == null) {
+            switch (Constants.currentMode) {
+                case SIM:
+                    instance = new Shoulder(new ShoulderSim());
+                    break;
+                case REAL:
+                    instance = new Shoulder(new ShoulderReal());
+                    break;
+                default:
+                    instance = new Shoulder(new ShoulderIO() {});
+                    break;
+            }
+        }
+        return instance;
     }
 
     @Override

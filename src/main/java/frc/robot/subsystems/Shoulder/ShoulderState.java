@@ -1,4 +1,4 @@
-package frc.robot.subsystems.ShoulderSubsystem;
+package frc.robot.subsystems.Shoulder;
 
 import frc.robot.util.IState;
 

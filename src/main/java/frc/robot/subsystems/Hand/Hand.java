@@ -9,6 +9,7 @@ import frc.robot.Constants;
 import frc.robot.util.StateMachineSubsystemBase;
 
 public class Hand extends StateMachineSubsystemBase<HandStates> {private static Hand instance;
+
 private final HandIO io;
 private final HandIO.HandIOInputs inputs =
     new HandIO.HandIOInputs();
@@ -19,6 +20,27 @@ Hand(HandIO io) {
     super("Hand");
     this.io = io;
     queueState(HandStates.IDLE);
+}
+
+public static Hand getInstance() {
+    if (instance == null) {
+        switch (Constants.currentMode) {
+            case SIM:
+                instance = new Hand(new HandIOSim());
+                break;
+            case REAL:
+                instance = new Hand(new HandIOReal());
+                break;
+            default:
+                instance = new Hand(new HandIO() {});
+                break;
+        }
+    }
+    return instance;
+}
+
+public void requestState(HandStates state) {
+    queueState(state);
 }
 
 @Override

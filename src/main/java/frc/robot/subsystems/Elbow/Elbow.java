@@ -3,8 +3,10 @@ package frc.robot.subsystems.Elbow;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.controller.PIDController;
+import frc.robot.Constants;
 
 public class Elbow extends StateMachineSubsystemBase<ElbowStates>{
+    private static Elbow instance;
     private ElbowIO io;
     private double targetAngle;
     private ElbowIOInputsAutoLogged inputs = new ElbowIOInputsAutoLogged();
@@ -17,7 +19,24 @@ public class Elbow extends StateMachineSubsystemBase<ElbowStates>{
         queueState(ElbowStates.IDLE);
         pid = new PIDController(1, 0, ElbowConstants.CHANGE_IN_TIME);
     }
-    
+
+    public static Elbow getInstance() {
+        if (instance == null) {
+            switch (Constants.currentMode) {
+                case SIM:
+                    instance = new Elbow(new ElbowSim());
+                    break;
+                case REAL:
+                    instance = new Elbow(new ElbowReal());
+                    break;
+                default:
+                    instance = new Elbow(new ElbowIO() {});
+                    break;
+            }
+        }
+        return instance;
+    }
+
     @Override
     public void handleStateMachine() {
         switch (getState()) {

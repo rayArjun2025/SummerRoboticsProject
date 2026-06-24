@@ -30,7 +30,11 @@ public static Climber getInstance() {
         case REAL:
         instance = new Climber(new ClimberIOReal());
         break;
-        
+
+        case SIM:
+        instance = new Climber(new ClimberIOSim());
+        break;
+
         case REPLAY:
         instance = new Climber(new ClimberIO() {});
         break;
@@ -40,6 +44,10 @@ public static Climber getInstance() {
 
     }
     return instance;
+}
+
+public void requestState(ClimberStates state) {
+    queueState(state);
 }
 
 @Override

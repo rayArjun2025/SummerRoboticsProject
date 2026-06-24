@@ -1,4 +1,4 @@
-package frc.robot.subsystems.ShoulderSubsystem;
+package frc.robot.subsystems.Shoulder;
 
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
