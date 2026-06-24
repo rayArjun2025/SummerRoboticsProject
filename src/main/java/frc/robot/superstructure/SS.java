@@ -134,6 +134,8 @@ public class SS extends StateMachineSubsystemBase<SuperstructureStates>{
         } else if (has(Flag.MANUAL_UP) || has(Flag.MANUAL_DOWN)) {
             
             queueState(SuperstructureStates.STOWED);
+
+            
         } else if (has(Flag.SCORE_HIGH) || has(Flag.SCORE_LOW)) {
             queueState(SuperstructureStates.SCORE);
         } else {
