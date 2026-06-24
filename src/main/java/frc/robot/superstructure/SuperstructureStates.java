@@ -7,9 +7,10 @@ package frc.robot.superstructure;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.IState;
 
+
 public enum SuperstructureStates implements IState {
     STOWED,
     INTAKE_CORAL,
     SCORE,
-    CLIMBING
+    CLIMBING,
 }
