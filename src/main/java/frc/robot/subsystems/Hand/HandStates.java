@@ -7,7 +7,5 @@ public enum HandStates implements IState {
     IDLE,
     GRIPPING_CORAL,
     GRIPPING_ALGAE,
-    RELEASING,
-    HOLDING,
-    GOONING
+    RELEASING
 }

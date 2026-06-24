@@ -89,8 +89,6 @@ public class HandIOReal implements HandIO {
 
     @Override
     public void setHandVelocity(double velocity_rps) {
-        // Onboard TalonFX closed-loop — runs at the motor controller's update
-        // rate, not the 50Hz robot loop, so it tracks load disturbances faster.
         handMotor.setControl(handVelOut.withVelocity(velocity_rps));
     }
 

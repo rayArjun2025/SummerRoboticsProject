@@ -8,18 +8,17 @@ public interface HandIO {
     public static class HandIOInputs{
         public double handMotorVolts = 0.0;
         public double handMotorCurrent = 0.0;
-        public double handMotorPosition = 0.0;
+        public double handPositionDeg = 0.0;
         public double handMotorVelocity = 0.0;
         public boolean fullClose = false;
         public boolean fullOpen = false;
     }
 
-
     public default void updateInputs(HandIOInputs inputs) {}
 
-    public default void setVoltage(double volts_V, double ff_V) {}
+    public default void setHandVoltage(double volts_V, double ff_V) {}
 
-    public default void setVelocity(double velocity_rps) {}
+    public default void setHandVelocity(double velocity_rps) {}
 
     public default void stopMoving() {}
 
