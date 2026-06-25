@@ -1,3 +1,5 @@
+// Raymond: lowercase package - frc.robot.subsystems.vision.
+// Raymond: this is the reference's VisionIOSimPhoton renamed to VisionIOSim and reworked for two cameras. the rename is fine as long as it's consistent (Vision.java references VisionIOSim), just flagging so you know where it came from.
 package frc.robot.subsystems.Vision;
 
 import java.util.ArrayList;
@@ -46,6 +48,7 @@ public class VisionIOSim implements VisionIO{
         this.leftTransform3d = leftTransform3d;
         this.rightTransform3d = rightTransform3d;
 
+        // Raymond: you hardcoded k2025ReefscapeAndyMark. reference loads kDefaultField (and ships a 2026-rebuilt-andymark.json you didn't copy over). fine for now since we're on reefscape, but know it's pinned to one field.
         visionSys = new VisionSystemSim("mainVis");
         reefField = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
         visionSys.addAprilTags(reefField);
@@ -54,6 +57,7 @@ public class VisionIOSim implements VisionIO{
         rightCamera = new PhotonCamera("right-Camera");
 
         SimCameraProperties props = new SimCameraProperties();
+        // Raymond: 880 - reference is 1280x800. did you mean 800? if you copied a real camera's res that's fine, but if it's a typo your sim calibration is off.
         props.setCalibration(1280, 880, Rotation2d.fromDegrees(70));
         props.setFPS(90);
         props.setAvgLatencyMs(11);
@@ -85,6 +89,7 @@ public class VisionIOSim implements VisionIO{
         PhotonPipelineResult rightResult = rightCamera.getLatestResult();
 
         
+        // Raymond: double semicolon - drop the extra one.
         inputs.connected = (leftResult != null || rightResult != null);;
 
 

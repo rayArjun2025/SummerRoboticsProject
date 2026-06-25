@@ -11,6 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
+// Raymond: lowercase package - frc.robot.subsystems.drive (rename the folder). otherwise a clean copy of the reference, nothing else here.
 package frc.robot.subsystems.Drive;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;

@@ -1,3 +1,4 @@
+// Raymond: lowercase package. and this file is nearly identical to ClimberIOReal - same current limits, same FOC setup, same boilerplate. fine for now, but at some point we factor the shared TalonFX setup into a helper instead of copy-pasting it into every IOReal.
 package frc.robot.subsystems.Hand;
 
 import com.ctre.phoenix6.StatusSignal;
@@ -23,6 +24,7 @@ import static frc.robot.util.PhoenixUtil.tryUntilOk;
 public class HandIOReal implements HandIO {
     private final TalonFX handMotor;
 
+    // Raymond: status signals should be private, not public.
     public final StatusSignal<Current> handCurrent_A;
     public final StatusSignal<Voltage> handVolts_V;
     public final StatusSignal<AngularVelocity> handVel_rps;
@@ -32,6 +34,7 @@ public class HandIOReal implements HandIO {
     private final VelocityVoltage handVelOut;
     private final PositionVoltage handPosCtrl;
 
+    // Raymond: brace on the same line as the signature.
     public HandIOReal()
     {
         handMotor = new TalonFX(HandConstants.motorID, TunerConstants.kCANBus);
@@ -43,6 +46,7 @@ public class HandIOReal implements HandIO {
 
         var handMotorConfig = new TalonFXConfiguration();
 
+        // Raymond: same hardcoded 60/82 current limits as Climber. constants.
         handMotorConfig.CurrentLimits.SupplyCurrentLimit = 60.0;
         handMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         handMotorConfig.CurrentLimits.StatorCurrentLimit = 82.0;
@@ -83,7 +87,7 @@ public class HandIOReal implements HandIO {
 
     @Override
     public void setHandVoltage(double volts_V, double ff_V) {
-        volts_V = MathUtil.clamp(volts_V + ff_V, -12.0, 12);
+        volts_V = MathUtil.clamp(volts_V + ff_V, -12.0, 12); // Raymond: 12 should be 12.0 and ideally a named max-voltage constant.
         handMotor.setControl(handVoltOut_V.withOutput(volts_V));
     }
 

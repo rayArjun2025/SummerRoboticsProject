@@ -7,6 +7,7 @@ public class OI extends XboxController {
     // config
     static {
         DR = new OI(0);
+        // Raymond: we run 0.15 here, you dropped it to 0.01. 0.01 is basically no deadband - controller stick drift will leak straight into the drivetrain and the robot creeps when nobody's touching it. put it back to 0.15 unless you've got a real reason.
         DEADBAND_RADIUS = 0.01;
     }
 

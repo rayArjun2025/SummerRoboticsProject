@@ -1,3 +1,4 @@
+// Raymond: lowercase package - frc.robot.subsystems.vision.
 package frc.robot.subsystems.Vision;
 
 import org.littletonrobotics.junction.AutoLog;
@@ -19,10 +20,11 @@ public interface VisionIO {
         public int[] visibleTagIds = new int[0];
         public int tagCount = 0;
 
+        // Raymond: you added estimatedPose/timestampSeconds/avgTagDistance/tagCount on top of the reference inputs, but nothing fills them in and they're not in VisionIOInputsAutoLogged's toLog/fromLog. so they never log and never replay - dead fields. either wire them up everywhere or drop them. the data you actually use already lives in poseObservations.
         public Pose2d estimatedPose = new Pose2d();
         public double timestampSeconds = 0.0;
 
-      
+
         public double avgTagDistance = 0.0;
 
          public PoseObservation[] poseObservations = new PoseObservation[0];

@@ -2,6 +2,8 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+// Raymond: delete this whole file. there's ONE shared base at frc.robot.subsystems.StateMachineSubsystemBase and every subsystem extends that - you do not copy it per folder. having a second copy means bug fixes to the real one never reach Elbow. just import the shared one.
+// Raymond: and this copy is already stale: the real base has an MTimer that resets on every queueState and logs name + "/StateTimer" each loop. yours has neither, so Elbow loses the state timing we rely on. another reason to drop it.
 package frc.robot.subsystems.Elbow;
 
 import frc.robot.PerfTracker;

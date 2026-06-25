@@ -26,12 +26,15 @@ public final class Constants {
   private static boolean isRed = true;
 
     public static boolean isRedAlliance() {
+        // Raymond: bug - you set allianceFound = false after reading it. reference sets it true. the whole point of the flag is to latch the alliance once DS reports it; leaving it false means it never latches and you keep re-reading every call. set it to true.
         if (!allianceFound && DriverStation.getAlliance().isPresent()) {
             isRed = DriverStation.getAlliance().get() == Alliance.Red;
             allianceFound = false;
         }
         return isRed;
     }
+
+    // Raymond: reference Constants also has isBlueAlliance() and FIELD_LENGTH_M / FIELD_WIDTH_M. you'll want those the moment you do anything field-relative or alliance-flipped. fine to leave for now, just know they're missing.
 
     public static final boolean verboseLogging = true;
 

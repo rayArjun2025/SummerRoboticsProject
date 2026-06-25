@@ -1,3 +1,4 @@
+// Raymond: this is the WPILib template subsystem that got dragged in with the folder copy. nothing uses it and it's not part of vision. delete the whole file.
 package frc.robot.subsystems.Vision;
 
 // Copyright (c) FIRST and other WPILib contributors.

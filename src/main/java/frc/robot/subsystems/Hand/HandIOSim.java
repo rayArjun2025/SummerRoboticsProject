@@ -1,3 +1,4 @@
+// Raymond: lowercase package.
 package frc.robot.subsystems.Hand;
 
 import edu.wpi.first.math.numbers.N1;
@@ -44,6 +45,7 @@ public class HandIOSim implements HandIO {
         setHandVoltage(0.0, 0.0);
     }
 
+    // Raymond: grip() is empty in sim, so the hand position never changes when you command a grip. that means GRIPPING_CORAL/ALGAE in Hand.java can never hit their target in sim - you can't test the state machine. drive the sim position toward the commanded position like the real one does.
     @Override
     public void grip(double position_deg) {
     }

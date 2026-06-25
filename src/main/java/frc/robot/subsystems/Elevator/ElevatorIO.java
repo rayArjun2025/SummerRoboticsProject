@@ -1,3 +1,4 @@
+// Raymond: lowercase package here too (and every file in this folder) - frc.robot.subsystems.elevator.
 package frc.robot.subsystems.Elevator;
 
 import org.littletonrobotics.junction.AutoLog;

@@ -10,6 +10,7 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
+// Raymond: capitalized package again - it's frc.robot.subsystems.drive in the reference. rename the Drive/ folder to drive/ to match. heads up: this whole folder is a stripped-down copy of the reference drive (vision, shooting, pose filtering all ripped out), so most of my notes are about where you diverged from it.
 package frc.robot.subsystems.Drive;
 
 import com.ctre.phoenix6.CANBus;
@@ -282,6 +283,7 @@ public class Drive extends StateMachineSubsystemBase<PathingMode> {
                     y_ = y_ / inputMagnitude;
                 }
 
+                // Raymond: the reference doesn't call fromFieldRelativeSpeeds directly here - it goes through getAllianceFieldRelativeSpeeds() which flips x/y when we're on red. you deleted that, so on the red alliance the driver's stick directions are inverted. add the alliance flip back.
                 inputSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(x_, y_, w_, getRotation());
 
                 switch (override) {
@@ -294,6 +296,7 @@ public class Drive extends StateMachineSubsystemBase<PathingMode> {
                     case NONE:
                         break;
                     case SHOOTING:
+                        // Raymond: this whole case is commented-out dead code now - it just logs and does nothing. in the reference SHOOTING actually drives rotation toward a target angle. if this robot doesn't shoot, drop SHOOTING from PathingOverride instead of leaving a hollow case.
                         //ChassisSpeeds trackingSpeeds = (Tracking.getInstance().getTrackingSpeeds(getRotation().getDegrees()));
                         //inputSpeeds = inputSpeeds.plus(trackingSpeeds);
                         Logger.recordOutput("Tracking/Shooter/Speeds", inputSpeeds);
@@ -305,8 +308,10 @@ public class Drive extends StateMachineSubsystemBase<PathingMode> {
 
                 break;
             case POSE_FOLLOWING:
+                // Raymond: reference passes the current pose into process(currentPose). yours calls process() with no args and the follower reaches back into Drive.getInstance().getPose() itself - circular and harder to test. pass the pose in like the reference does.
                 inputSpeeds = poseFollower.process();
                 break;
+            // Raymond: you swapped the reference's PATH_FOLLOWING + SHOOTING states for this TRACKING one, but it's dead - it never sets inputSpeeds, just logs whatever was there. either wire it up or delete it (and the matching enum value in PathingMode).
             case TRACKING:
                 //inputSpeeds = Tracking.getInstance().getTrackingSpeeds(getRotation().getDegrees(), 720);
                 Logger.recordOutput("Tracking/Speeds", inputSpeeds);
@@ -427,6 +432,7 @@ public class Drive extends StateMachineSubsystemBase<PathingMode> {
         braked = !braked;
     }
 
+    // Raymond: reference zero takes a target angle (zero(deg)) so you can set heading per alliance. you stripped the param, so this can only ever zero to one fixed heading - see my note in GyroIOPigeon2 where that fixed heading is hardcoded to 180.
     public void zeroGyro() {
         gyroIO.zero();
     }

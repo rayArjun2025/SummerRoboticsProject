@@ -8,6 +8,7 @@ package frc.robot.subsystems.Elevator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+// Raymond: this is the WPILib template file, dead code. nothing uses it and it's got nothing to do with the elevator. delete the whole file.
 public class ExampleSubsystem extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
   public ExampleSubsystem() {}

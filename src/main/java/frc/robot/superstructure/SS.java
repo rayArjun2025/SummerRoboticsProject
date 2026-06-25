@@ -9,6 +9,7 @@ import java.util.EnumSet;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.Timer;
+// Raymond: IState is never used in here, delete it.
 import frc.robot.util.IState;
 import frc.robot.util.StateMachineSubsystemBase;
 import frc.robot.subsystems.Elevator.Elevator;
@@ -16,15 +17,18 @@ import frc.robot.subsystems.Elevator.ElevatorStates;
 import frc.robot.subsystems.Elbow.Elbow;
 import frc.robot.subsystems.Elbow.ElbowStates;
 import frc.robot.subsystems.Shoulder.Shoulder;
+// Raymond: ShoulderState is singular but everything else is plural - ElbowStates, HandStates, ClimberStates, ElevatorStates. rename it ShoulderStates so it matches.
 import frc.robot.subsystems.Shoulder.ShoulderState;
 import frc.robot.subsystems.Hand.Hand;
 import frc.robot.subsystems.Hand.HandStates;
 import frc.robot.subsystems.Climber.Climber;
 import frc.robot.subsystems.Climber.ClimberStates;
 
+// Raymond: run spotlessApply - missing space before the brace, and there's stray double blank lines and trailing whitespace all through this file.
 public class SS extends StateMachineSubsystemBase<SuperstructureStates>{
     private static SS instance;
 
+    // Raymond: these setpoints belong in each subsystem's own Constants file (see how the reference pulls ShooterConstants/ClimberConstants), not dumped in SS. and _POS isn't a unit - name it _m or whatever the elevator actually reads in.
     public static final double STOWED_ELEVATOR_POS = 0.0;
     public static final double STOWED_SHOULDER_DEG = 0.0;
     public static final double STOWED_ELBOW_DEG = 0.0;
@@ -49,6 +53,7 @@ public class SS extends StateMachineSubsystemBase<SuperstructureStates>{
     private boolean scoringSubstateFirstLoop;
     private final Timer substateTimer = new Timer();
 
+    // Raymond: this whole Flag-bag isn't how we do it. look at the reference - it splits Intention (what the driver asks for) from InternalState (what the machine's actually doing), and intend(Intention) + handleIntention() maps one to the other. here you've got a pile of booleans you cascade through, so two flags can be set at once and whoever's first in the if-chain wins. switch to the intention pattern.
     private final EnumSet<Flag> flags = EnumSet.noneOf(Flag.class);
 
     public enum Flag {
@@ -127,15 +132,18 @@ public class SS extends StateMachineSubsystemBase<SuperstructureStates>{
     @Override
     public void handleStateMachine() {
         
+        // Raymond: nothing in this cascade ever queues INTAKE_CORAL, so that case in the switch below is dead - you can't reach it. wire a flag/intention to it or drop it.
         if (has(Flag.CLIMB)) {
             queueState(SuperstructureStates.CLIMBING);
         } else if (has(Flag.HOME)) {
             queueState(SuperstructureStates.STOWED);
+        // Raymond: this branch just queues STOWED and does nothing - manual up/down are wired to nothing. either implement them or delete the flags. and kill the random blank lines inside.
         } else if (has(Flag.MANUAL_UP) || has(Flag.MANUAL_DOWN)) {
             
             queueState(SuperstructureStates.STOWED);
 
             
+        // Raymond: SCORE_HIGH and SCORE_LOW both go to SCORE, and scoreElevatorTarget is always SCORE_ELEVATOR_POS - so high vs low is identical, the distinction does nothing. the reference parameterizes the setpoint off the intention. do that instead of two flags that behave the same.
         } else if (has(Flag.SCORE_HIGH) || has(Flag.SCORE_LOW)) {
             queueState(SuperstructureStates.SCORE);
         } else {
@@ -153,6 +161,7 @@ public class SS extends StateMachineSubsystemBase<SuperstructureStates>{
                 elevator.setTargetPosition(INTAKE_ELEVATOR_POS);
                 shoulder.setTargetAngle(INTAKE_SHOULDER_DEG);
                 elbow.setTargetAngle(INTAKE_ELBOW_DEG);
+                // Raymond: you drive hand with requestState() but elevator/shoulder/elbow with setTargetPosition/setTargetAngle - pick one way to talk to subsystems. the reference just calls queueState() on the subsystem directly, the requestState wrapper is pointless indirection.
                 hand.requestState(HandStates.GRIPPING_CORAL);
                 break;
 
@@ -174,6 +183,7 @@ public class SS extends StateMachineSubsystemBase<SuperstructureStates>{
         shoulder.setTargetAngle(STOWED_SHOULDER_DEG);
         elbow.setTargetAngle(STOWED_ELBOW_DEG);
 
+        // Raymond: using isState(IDLE) to mean "got there" is fragile - a subsystem sits in IDLE for other reasons too. the reference checks isValueReached(tolerance). use that here and in atScorePosition().
         boolean clearToClimb = elevator.isState(ElevatorStates.IDLE)
                 && shoulder.isState(ShoulderState.IDLE)
                 && elbow.isState(ElbowStates.IDLE);
@@ -209,6 +219,7 @@ public class SS extends StateMachineSubsystemBase<SuperstructureStates>{
                 }
                 break;
 
+            // Raymond: READY just holds position - nothing ever tells the hand to release/score the piece. so SCORE never actually scores anything. finish it.
             case READY:
                 driveToScorePosition();
                 if (!atScorePosition()) {
@@ -218,7 +229,7 @@ public class SS extends StateMachineSubsystemBase<SuperstructureStates>{
         }
     }
 
-    //67
+    // Raymond: what's //67? leftover junk, delete it.
 
     private void driveToScorePosition() {
         elevator.setTargetPosition(scoreElevatorTarget);

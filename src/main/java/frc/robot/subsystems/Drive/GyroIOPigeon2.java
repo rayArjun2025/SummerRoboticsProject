@@ -11,6 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
+// Raymond: lowercase package - frc.robot.subsystems.drive, rename the folder.
 package frc.robot.subsystems.Drive;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -71,6 +72,7 @@ public class GyroIOPigeon2 implements GyroIO {
     yawPositionQueue.clear();
   }
 
+  // Raymond: this is the real bug. reference is zero(double angle) { pigeon.setYaw(angle); }. you hardcoded 180, so every zeroGyro() snaps the robot's heading to 180deg no matter what you actually want it to be. take the angle param back and setYaw(angle).
   @Override
   public void zero() {
     pigeon.setYaw(180);

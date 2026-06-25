@@ -2,6 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+// Raymond: delete this whole file. there's already a shared StateMachineSubsystemBase in frc.robot.util that Climber and Hand extend - a second copy living in the shoulder package means two different base classes floating around the codebase. point Shoulder at frc.robot.util.StateMachineSubsystemBase instead. on top of that this copy is missing the timer (MTimer/StateTimer) the real base has, so any state-time logic won't exist here.
 package frc.robot.subsystems.Shoulder;
 
 import frc.robot.PerfTracker;

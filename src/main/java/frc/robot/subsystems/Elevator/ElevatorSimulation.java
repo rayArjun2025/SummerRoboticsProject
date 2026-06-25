@@ -3,6 +3,7 @@ package frc.robot.subsystems.Elevator;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 
+// Raymond: rename to ElevatorIOSim to match the IO naming. and good - this is an actual ElevatorSim, position/velocity move, so the state machine can reach targets in sim. that's exactly what we want.
 public class ElevatorSimulation implements ElevatorIO{
     private double motorVoltage = 0;
     private final ElevatorSim elevatorSim;
@@ -22,6 +23,7 @@ public class ElevatorSimulation implements ElevatorIO{
         inputs.elevatorPositionMeters = elevatorSim.getPositionMeters();
         inputs.elevatorMotorCurrent = elevatorSim.getCurrentDrawAmps();
         
+        // Raymond: same 0.001 magic tolerance as the real IO - move it to a shared constant so sim and real stay in sync.
         inputs.atTop = inputs.elevatorPositionMeters >= ElevatorConstants.ELEVATOR_MAX_HEIGHT - 0.001;
         inputs.atBottom = inputs.elevatorPositionMeters <= ElevatorConstants.ELEVATOR_MIN_HEIGHT + 0.001;
     }

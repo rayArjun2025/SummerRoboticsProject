@@ -7,6 +7,7 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.RobotController;
 
+// Raymond: byte-for-byte the same as our PerfTracker, copied clean. good, leave it alone.
 public class PerfTracker {
 
     private static List<Long> perfmap;

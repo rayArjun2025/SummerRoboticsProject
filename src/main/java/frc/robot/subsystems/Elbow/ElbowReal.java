@@ -1,3 +1,4 @@
+// Raymond: lowercase package - frc.robot.subsystems.elbow.
 package frc.robot.subsystems.Elbow;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -10,6 +11,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.generated.TunerConstants;
 
+// Raymond: name it ElbowIOReal to match the convention (ClimberIOReal, ServoIOReal) - it's an IO impl.
 public class ElbowReal implements ElbowIO {
 
     private final TalonFX elbowMotor;
@@ -40,8 +42,7 @@ public class ElbowReal implements ElbowIO {
 
         elbowMotor.optimizeBusUtilization();
 
-        
-        
+        // Raymond: you never actually configure the motor. apply a TalonFXConfiguration with stator/supply current limits (the 60/82 numbers belong in ElbowConstants), neutral mode (brake for an arm), and inverted. without it the motor runs uncapped and unsafe.
     }
 
     @Override
@@ -81,6 +82,7 @@ public class ElbowReal implements ElbowIO {
 
     @Override
     public void setElbowVoltage(double voltage) {
+        // Raymond: clamp to +/-12 (constant) before commanding it.
         elbowMotor.setVoltage(voltage);
     }
 

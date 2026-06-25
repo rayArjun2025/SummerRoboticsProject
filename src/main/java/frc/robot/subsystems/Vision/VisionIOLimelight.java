@@ -1,3 +1,4 @@
+// Raymond: lowercase package - frc.robot.subsystems.vision.
 package frc.robot.subsystems.Vision;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public class VisionIOLimelight implements VisionIO {
     private final String leftCamera;
     private final String rightCamera;
 
+    // Raymond: these camera names have to match what's actually configured on the limelights or you get nothing back. pull them into VisionConstants instead of hardcoding strings here. also note nothing builds this class yet (see the REAL case in Vision.java) so it's untested.
     public VisionIOLimelight() {
         leftCamera = "left-limelight";
         rightCamera = "right-limelight";
@@ -60,6 +62,7 @@ public class VisionIOLimelight implements VisionIO {
                 bestCamera = rightCamera;
             } else {
 
+                // Raymond: you call it leftArea but you're reading getTA(bestCamera). it happens to be the left one here so it works, but name it bestArea so it doesn't trip up the next reader.
                 double leftArea = LimelightHelpers.getTA(bestCamera);
                 double rightArea = LimelightHelpers.getTA(rightCamera);
 

@@ -1,3 +1,4 @@
+// Raymond: capitalized package - frc.robot.subsystems.shoulder, rename the folder.
 package frc.robot.subsystems.Shoulder;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -18,6 +19,7 @@ public class ShoulderReal implements ShoulderIO {
     private final StatusSignal<Current> current;
 
     public ShoulderReal() {
+        // Raymond: no TalonFXConfiguration anywhere in here - you never set stator/supply current limits (60 supply / 82 stator). a Kraken with no current limit will brown out the bus or cook itself.
         motor = new TalonFX(ShoulderConstants.MOTOR_ID);
 
         position = motor.getPosition();
@@ -26,6 +28,7 @@ public class ShoulderReal implements ShoulderIO {
         current = motor.getStatorCurrent();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
+            // Raymond: 50 is a magic number, put the update rate in ShoulderConstants.
             50,
             position,
             velocity,
@@ -59,6 +62,7 @@ public class ShoulderReal implements ShoulderIO {
         inputs.shoulderCurrent =
             current.getValueAsDouble();
         
+        // Raymond: spotlessApply - the next line is indented one space off. bigger issue: this uses ZERO_REF + MAX/MIN, but the real encoder position starts at 0 here while ShoulderSim starts at ZERO_REF. the two IOs don't agree on where zero is, so atMax/atMin fire at different real angles between sim and real. nail down what zero means and offset it once.
         inputs.atMaxAngle = inputs.shoulderSwivelAngle >= ShoulderConstants.ZERO_REF + ShoulderConstants.MAX_ANGLE;
          inputs.atMinAngle = inputs.shoulderSwivelAngle <= ShoulderConstants.ZERO_REF + ShoulderConstants.MIN_ANGLE;
     }
@@ -72,4 +76,5 @@ public class ShoulderReal implements ShoulderIO {
     public void setShoulderVoltage(double volts) {
         motor.setVoltage(volts);
     }
+    // Raymond: you never override stopMotor() here, so on the real robot it falls through to the empty default in the interface and does nothing - the motor won't actually stop. implement it (motor.setVoltage(0) or a NeutralOut). sim has it, real doesn't.
 }

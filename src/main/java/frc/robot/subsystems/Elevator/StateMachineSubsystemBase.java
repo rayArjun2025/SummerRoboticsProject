@@ -2,6 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+// Raymond: this is a duplicate of the shared base. there's one StateMachineSubsystemBase in subsystems/ that everything extends - delete this copy and have Elevator extend that one. on top of being a dup, this copy is missing the MTimer/timer the real base has (timer.reset() in queueState, the StateTimer log in periodic), so any state that needs timing won't work. one base, no forks.
 package frc.robot.subsystems.Elevator;
 
 import frc.robot.PerfTracker;

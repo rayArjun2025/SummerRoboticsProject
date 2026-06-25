@@ -1,3 +1,4 @@
+// Raymond: lowercase package.
 package frc.robot.subsystems.Hand;
 
 import org.littletonrobotics.junction.AutoLog;
@@ -5,11 +6,12 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface HandIO {
     @AutoLog
-    public static class HandIOInputs{
+    public static class HandIOInputs{ // Raymond: space before the brace - HandIOInputs {
         public double handMotorVolts = 0.0;
         public double handMotorCurrent = 0.0;
         public double handPositionDeg = 0.0;
-        public double handMotorVelocity = 0.0;
+        public double handMotorVelocity = 0.0; // Raymond: unit suffix - _dps. you convert to degrees in the IO.
+        // Raymond: fullClose/fullOpen are populated by neither IOReal nor IOSim - they're always false. either read the real sensors (limit switches?) or remove them. and "full" booleans usually read better as a sensor name like coralDetected/limitSwitchPressed.
         public boolean fullClose = false;
         public boolean fullOpen = false;
     }

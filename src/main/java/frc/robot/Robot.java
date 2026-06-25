@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController; // Raymond: never used (only the commented-out cmdController line below). delete it.
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.MTimer;
 
@@ -45,6 +45,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
  */
 public class Robot extends LoggedRobot {
 
+    // Raymond: this is the big problem. Elevator is the ONLY subsystem the robot knows about. you wrote Climber, Hand, Elbow and Shoulder but none of them are declared, created, or periodic'd here. a subsystem whose periodic() never gets called is dead code - it logs nothing, runs no state machine, moves nothing. add fields for all of them and wire them up (Climber/Hand have getInstance(), so climber = Climber.getInstance(); etc).
     private Elevator elevator;
     private boolean lastState = false;
 
@@ -111,7 +112,9 @@ public class Robot extends LoggedRobot {
         
 
         // init subsystems
-  
+        // Raymond: "init subsystems" but nothing's here except the elevator new'd up in the switch above. this is where Climber/Hand/Elbow/Shoulder need to be created. look at how reference Robot does it - drive = Drive.getInstance(); shooter = Shooter.getInstance(); one line per subsystem.
+        // Raymond: also the elevator is built with `new Elevator(...)` in the mode switch while Climber/Hand are singletons with getInstance(). pick one pattern and use it everywhere - mixing them is how you end up with two of something.
+
         // Check for valid swerve config
         var modules = new SwerveModuleConstants[] {
                 TunerConstants.FrontLeft,
@@ -136,6 +139,7 @@ public class Robot extends LoggedRobot {
     public void robotPeriodic() {
         // Switch thread to high priority to improve loop timing
         Threads.setCurrentThreadPriority(true, 99);
+        // Raymond: only elevator.periodic() runs. every other subsystem you built needs its periodic() called right here too or it does literally nothing all match. once you add the fields above, add climber.periodic(), hand.periodic(), etc.
         elevator.periodic();
         PerfTracker.periodic();
         Threads.setCurrentThreadPriority(false, 10);

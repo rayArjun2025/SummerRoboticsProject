@@ -1,3 +1,4 @@
+// Raymond: lowercase package - frc.robot.subsystems.drive, rename the folder. this file diverges a lot from the reference follower (no accel limiting / ramping / hang mode) - that's fine if this robot doesn't need it, but a couple real problems below.
 package frc.robot.subsystems.Drive;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -16,6 +17,7 @@ public class PoseFollower {
     private double translate_kP = 3.0;
     private double rotate_kP = 2.0;
 
+    // Raymond: reference seeds this from Drive.MAX_LINEAR_VEL_mps so the cap matches what the drivetrain actually uses. you reach into TunerConstants instead - and Drive.MAX_LINEAR_VEL_mps is hardcoded to 4.8, not kSpeedAt12Volts, so these two now disagree. use the Drive constant.
     private double maxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     private Pose2d targetPose = new Pose2d();
 
@@ -38,6 +40,7 @@ public class PoseFollower {
         this.rotate_kP = rotate_kP;
     }
 
+    // Raymond: reference is process(Pose2d currentPose) - the caller hands in the pose. yours takes no arg and grabs Drive.getInstance().getPose() itself. that singleton reach-in makes this impossible to unit test and couples the follower to Drive. take the pose as a param.
     public ChassisSpeeds process() {
         Transform2d poseDiff = targetPose.minus(Drive.getInstance().getPose()); // Calculate the difference in position.
 
@@ -52,6 +55,7 @@ public class PoseFollower {
         double angularVelocity = Util.limit(rotate_kP * radDiff, -Drive.getInstance().MAX_ANGULAR_VEL_radps,
                 Drive.getInstance().MAX_ANGULAR_VEL_radps);
 
+        // Raymond: this line is a bug. you just limited angularVelocity to MAX_ANGULAR_VEL_radps (rad/s), then multiply by radiansToDegrees(1) (~57.3), blowing it ~57x past the limit and out of units. ChassisSpeeds.omega wants rad/s - delete this line. reference has nothing like it.
         angularVelocity *= Units.radiansToDegrees(1);
 
         double output = Util.limit(translate_kP * magnitude, maxSpeed);

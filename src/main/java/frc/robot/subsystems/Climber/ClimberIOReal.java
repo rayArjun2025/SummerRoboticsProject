@@ -2,6 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+// Raymond: lowercase package.
 package frc.robot.subsystems.Climber;
 
 import com.ctre.phoenix6.StatusSignal;
@@ -27,6 +28,8 @@ import static frc.robot.util.PhoenixUtil.tryUntilOk;
 public class ClimberIOReal implements ClimberIO {
     private final TalonFX hookMotor;
     private final TalonFX wheelMotor;
+    // Raymond: these are the HOOK motor's signals but you named them climbXxx. confusing when wheelXxx sits right below it - call them hookCurrent_A/hookVolts_V/etc so it lines up with the motor.
+    // Raymond: also these should be private. nothing outside this class needs the raw status signals - reference keeps them private.
     public final StatusSignal<Current> climbCurrent_A;
     public final StatusSignal<Voltage> climbVolts_V;
     public final StatusSignal<AngularVelocity> climbVel_rps;
@@ -46,6 +49,7 @@ public class ClimberIOReal implements ClimberIO {
     private final VelocityVoltage wheelVelOut;
     private final PositionVoltage wheelPosCtrl;
 
+    // Raymond: brace goes on the same line as the signature (K&R) like the rest of the codebase, not dropped to the next line.
     public ClimberIOReal()
     {
         hookMotor = new TalonFX(ClimberConstants.hookMotorID, TunerConstants.kCANBus);
@@ -59,6 +63,7 @@ public class ClimberIOReal implements ClimberIO {
         //Hook Motor
         var hookMotorConfig = new TalonFXConfiguration();
 
+        // Raymond: 60/82 are copy-pasted here AND in the wheel config below. pull them into ClimberConstants (SUPPLY_CURRENT_LIMIT_A, STATOR_CURRENT_LIMIT_A) so both motors read the same value and you change it in one place.
         hookMotorConfig.CurrentLimits.SupplyCurrentLimit = 60.0;
         hookMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         hookMotorConfig.CurrentLimits.StatorCurrentLimit = 82.0;
@@ -142,6 +147,7 @@ public class ClimberIOReal implements ClimberIO {
 
     @Override
     public void setHookVoltage(double volts_V, double ff_V) {
+        // Raymond: -12.0 and 12 (no .0) - keep it consistent, both should be 12.0. small thing but it reads sloppy. 12 should really be a named constant too.
         volts_V = MathUtil.clamp(volts_V + ff_V, -12.0, 12);
         hookMotor.setControl(climbVoltOut_V.withOutput(volts_V));
     }
@@ -175,4 +181,7 @@ public class ClimberIOReal implements ClimberIO {
         hookMotor.setControl(climbPosCtrl.withPosition(hook_pos_r));
         wheelMotor.setControl(wheelPosCtrl.withPosition(wheel_pos_r));
     }
+
+    // Raymond: you never override toggleBrake() or putUpTheWheels() here, so the interface defaults (do nothing) run. if the climber needs a brake that's a real gap, not just style. either implement it or cut it from the interface.
+    // Raymond: also no zeroPosition - the climber never gets a known zero, so position control is relative to wherever it powered on. reference homes/zeros on startup.
 }
