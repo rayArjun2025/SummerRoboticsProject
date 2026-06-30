@@ -87,6 +87,7 @@ public class Elbow extends StateMachineSubsystemBase<ElbowStates>{
     protected void outputPeriodic(){
         Logger.recordOutput("Elbow/State", getState());
         Logger.recordOutput("Elbow/TargetAngle", targetAngle);
+        Logger.recordOutput("Elbow/Voltage", inputs.elbowVoltage);
     }
 
     public void swivelAngle(){

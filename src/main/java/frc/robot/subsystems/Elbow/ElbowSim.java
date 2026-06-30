@@ -20,7 +20,7 @@ public class ElbowSim implements ElbowIO{
         inputs.elbowRotateAngle = elbowJoint.getAngleRads();
         inputs.elbowCurrent = elbowJoint.getCurrentDrawAmps();
         inputs.elbowVoltage = motorVoltage;
-
+        
         inputs.atMaxAngle = inputs.elbowRotateAngle >= ElbowConstants.MAX_ANGLE + ElbowConstants.ZERO_REF;
         inputs.atMinAngle = inputs.elbowRotateAngle <= ElbowConstants.MIN_ANGLE + ElbowConstants.ZERO_REF;
     }

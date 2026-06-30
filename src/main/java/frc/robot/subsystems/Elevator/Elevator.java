@@ -17,7 +17,7 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
     public Elevator(ElevatorIO io) {
         super("Elevator");
         this.io = io;
-        queueState(ElevatorStates.MOVING_UP);
+        queueState(ElevatorStates.IDLE);
         pid = new PIDController(1.0, 0.0, 0.2);
     }
 

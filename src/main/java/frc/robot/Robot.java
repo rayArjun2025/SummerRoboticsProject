@@ -14,9 +14,15 @@
 
 package frc.robot;
 
+import frc.robot.subsystems.Elbow.Elbow;
+import frc.robot.subsystems.Elbow.ElbowReal;
+import frc.robot.subsystems.Elbow.ElbowSim;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorReal;
 import frc.robot.subsystems.Elevator.ElevatorSimulation;
+import frc.robot.subsystems.Shoulder.Shoulder;
+import frc.robot.subsystems.Shoulder.ShoulderReal;
+import frc.robot.subsystems.Shoulder.ShoulderSim;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Threads;
@@ -46,6 +52,9 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 public class Robot extends LoggedRobot {
 
     private Elevator elevator;
+    private Elbow elbow;
+    private Shoulder shoulder;
+
     private boolean lastState = false;
 
     private MTimer pipelineSwitch = new MTimer();
@@ -81,6 +90,8 @@ public class Robot extends LoggedRobot {
             case REAL:
                 // Running on a real robot, log to a USB stick ("/U/logs")
                 elevator = new Elevator(new ElevatorReal());
+                elbow = new Elbow(new ElbowReal());
+                shoulder = new Shoulder(new ShoulderReal());
                 Logger.addDataReceiver(new WPILOGWriter("U/logs/" + BuildConstants.GIT_BRANCH));
                 Logger.addDataReceiver(new NT4Publisher());
                 break;
@@ -88,12 +99,16 @@ public class Robot extends LoggedRobot {
             case SIM:
                 // Running a physics simulator, log to NT
                 elevator = new Elevator(new ElevatorSimulation());
+                elbow = new Elbow(new ElbowSim());
+                shoulder = new Shoulder(new ShoulderSim());
                 Logger.addDataReceiver(new NT4Publisher());
                 break;
 
             case REPLAY:
                 // Replaying a log, set up replay source
                 elevator = new Elevator(new ElevatorSimulation());
+                elbow = new Elbow(new ElbowSim());
+                shoulder = new Shoulder(new ShoulderSim());
                 setUseTiming(false); // Run as fast as possible
                 String logPath = LogFileUtil.findReplayLog();
                 Logger.setReplaySource(new WPILOGReader(logPath));
@@ -137,6 +152,8 @@ public class Robot extends LoggedRobot {
         // Switch thread to high priority to improve loop timing
         Threads.setCurrentThreadPriority(true, 99);
         elevator.periodic();
+        elbow.periodic();
+        shoulder.periodic();
         PerfTracker.periodic();
         Threads.setCurrentThreadPriority(false, 10);
     }
