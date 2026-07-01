@@ -1,5 +1,6 @@
-package frc.robot.subsystems.Shoulder;
+package frc.robot.subsystems.shoulder;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
@@ -17,17 +18,17 @@ public class ShoulderSim implements ShoulderIO{
         shoulderJoint.update(ShoulderConstants.CHANGE_IN_TIME);
 
         inputs.angularVelocityRad = shoulderJoint.getVelocityRadPerSec();
-        inputs.shoulderSwivelAngle = shoulderJoint.getAngleRads();
-        inputs.shoulderCurrent = shoulderJoint.getCurrentDrawAmps();
-        inputs.shoulderVoltage = motorVoltage;
+        inputs.shoulderSwivelAngle_rad = shoulderJoint.getAngleRads();
+        inputs.shoulderCurrent_amps = shoulderJoint.getCurrentDrawAmps();
+        inputs.shoulderVoltage_volts = motorVoltage;
 
-        inputs.atMaxAngle = inputs.shoulderSwivelAngle >= ShoulderConstants.MAX_ANGLE + ShoulderConstants.ZERO_REF;
-        inputs.atMinAngle = inputs.shoulderSwivelAngle <= ShoulderConstants.MIN_ANGLE + ShoulderConstants.ZERO_REF;
+        inputs.atMaxAngleRad = inputs.shoulderSwivelAngle_rad >= ShoulderConstants.MAX_ANGLE + ShoulderConstants.ZERO_REF;
+        inputs.atMinAngleRad = inputs.shoulderSwivelAngle_rad <= ShoulderConstants.MIN_ANGLE + ShoulderConstants.ZERO_REF;
     }
 
     @Override
     public void setShoulderVoltage(double voltage){
-        motorVoltage = voltage;
+        motorVoltage = MathUtil.clamp(voltage, ShoulderConstants.LOW_CLAMP, ShoulderConstants.HIGH_CLAMP);
         shoulderJoint.setInputVoltage(voltage);
     }
 

@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Shoulder;
+package frc.robot.subsystems.shoulder;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -26,7 +26,7 @@ public class ShoulderReal implements ShoulderIO {
         current = motor.getStatorCurrent();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
-            50,
+            ShoulderConstants.UPDATE_RATE,
             position,
             velocity,
             voltage,
@@ -47,20 +47,20 @@ public class ShoulderReal implements ShoulderIO {
 
         inputs.connected = status.isOK();
 
-        inputs.shoulderSwivelAngle =
+        inputs.shoulderSwivelAngle_rad =
             rotationsToRadians(position.getValueAsDouble());
 
         inputs.angularVelocityRad =
             rotationsToRadians(velocity.getValueAsDouble());
 
-        inputs.shoulderVoltage =
+        inputs.shoulderVoltage_volts =
             voltage.getValueAsDouble();
 
-        inputs.shoulderCurrent =
+        inputs.shoulderCurrent_amps =
             current.getValueAsDouble();
         
-        inputs.atMaxAngle = inputs.shoulderSwivelAngle >= ShoulderConstants.ZERO_REF + ShoulderConstants.MAX_ANGLE;
-         inputs.atMinAngle = inputs.shoulderSwivelAngle <= ShoulderConstants.ZERO_REF + ShoulderConstants.MIN_ANGLE;
+        inputs.atMaxAngleRad = inputs.shoulderSwivelAngle_rad >= ShoulderConstants.ZERO_REF + ShoulderConstants.MAX_ANGLE;
+        inputs.atMinAngleRad = inputs.shoulderSwivelAngle_rad <= ShoulderConstants.ZERO_REF + ShoulderConstants.MIN_ANGLE;
     }
     
     public static double rotationsToRadians(double motorRotations) {
@@ -71,5 +71,10 @@ public class ShoulderReal implements ShoulderIO {
     @Override
     public void setShoulderVoltage(double volts) {
         motor.setVoltage(volts);
+    }
+
+    @Override
+    public void stopMotor(){
+        motor.setVoltage(0);
     }
 }

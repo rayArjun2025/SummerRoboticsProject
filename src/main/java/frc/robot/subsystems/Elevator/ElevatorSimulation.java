@@ -8,7 +8,6 @@ public class ElevatorSimulation implements ElevatorIO{
     private final ElevatorSim elevatorSim;
     
     public ElevatorSimulation(){
-        
        elevatorSim = new ElevatorSim(DCMotor.getKrakenX60Foc(1), ElevatorConstants.GEAR_RATIO, ElevatorConstants.CARRIAGE_MASS, ElevatorConstants.DRUM_RADIUS, ElevatorConstants.ELEVATOR_MIN_HEIGHT, ElevatorConstants.ELEVATOR_MAX_HEIGHT,true,ElevatorConstants.ELEVATOR_MIN_HEIGHT);
     }
 

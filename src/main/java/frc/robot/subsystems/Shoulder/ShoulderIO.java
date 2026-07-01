@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Shoulder;
+package frc.robot.subsystems.shoulder;
 import org.littletonrobotics.junction.AutoLog;
 
 
@@ -6,12 +6,12 @@ public interface ShoulderIO {
 
     @AutoLog
    public static class ShoulderIOInputs{
-        public double shoulderSwivelAngle = 0;
+        public double shoulderSwivelAngle_rad = 0;
         public double angularVelocityRad = 0;
-        public double shoulderCurrent = 0;
-        public double shoulderVoltage = 0;
-        public boolean atMaxAngle = false;
-        public boolean atMinAngle = false;
+        public double shoulderCurrent_amps = 0;
+        public double shoulderVoltage_volts = 0;
+        public boolean atMaxAngleRad = false;
+        public boolean atMinAngleRad = false;
         public boolean connected = false;
     }
 

@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Shoulder;
+package frc.robot.subsystems.shoulder;
 
 import org.littletonrobotics.junction.LogTable;
 import org.littletonrobotics.junction.inputs.LoggableInputs;
@@ -8,24 +8,24 @@ public class ShoulderIOInputsAutoLogged extends ShoulderIO.ShoulderIOInputs
 
   @Override
   public void toLog(LogTable table) {
-    table.put("ShoulderSwivelAngle", shoulderSwivelAngle);
-    table.put("ShoulderCurrent", shoulderCurrent);
-    table.put("ShoulderVoltage", shoulderVoltage);
+    table.put("ShoulderSwivelAngle", shoulderSwivelAngle_rad);
+    table.put("ShoulderCurrent", shoulderCurrent_amps);
+    table.put("ShoulderVoltage", shoulderVoltage_volts);
     table.put("ShoulderAngularV", angularVelocityRad);
 
-    table.put("atMinAngle", atMinAngle);
-    table.put("atMaxAngle", atMaxAngle);
+    table.put("atMinAngle", atMinAngleRad);
+    table.put("atMaxAngle", atMinAngleRad);
   }
 
   @Override
   public void fromLog(LogTable table) {
 
-    shoulderVoltage = table.get("ShoulderVoltage", shoulderVoltage);
-    shoulderCurrent = table.get("ShoulderCurrent", shoulderCurrent);
+    shoulderVoltage_volts = table.get("ShoulderVoltage", shoulderVoltage_volts);
+    shoulderCurrent_amps = table.get("ShoulderCurrent", shoulderCurrent_amps);
     angularVelocityRad = table.get("ShoulderAngularV", angularVelocityRad);
-    shoulderSwivelAngle = table.get("ShoulderSwivelAngle", shoulderSwivelAngle);
-    atMaxAngle = table.get("atMaxAngle", atMaxAngle);
-    atMinAngle = table.get("atMinAngle", atMinAngle);
+    shoulderCurrent_amps = table.get("ShoulderSwivelAngle", shoulderCurrent_amps);
+    atMaxAngleRad = table.get("atMaxAngle", atMaxAngleRad);
+    atMinAngleRad = table.get("atMinAngle", atMinAngleRad);
   }
 
   @Override
@@ -33,14 +33,14 @@ public class ShoulderIOInputsAutoLogged extends ShoulderIO.ShoulderIOInputs
     ShoulderIOInputsAutoLogged copy =
         new ShoulderIOInputsAutoLogged();
 
-    copy.shoulderVoltage = shoulderVoltage;
-    copy.shoulderCurrent = shoulderCurrent;
+    copy.shoulderVoltage_volts = shoulderVoltage_volts;
+    copy.shoulderCurrent_amps = shoulderCurrent_amps;
     copy.angularVelocityRad = angularVelocityRad;
 
-    copy.shoulderSwivelAngle = shoulderSwivelAngle;
+    copy.shoulderSwivelAngle_rad = shoulderSwivelAngle_rad;
 
-    copy.atMaxAngle = atMaxAngle;
-    copy.atMinAngle = atMinAngle;
+    copy.atMaxAngleRad = atMaxAngleRad;
+    copy.atMinAngleRad = atMinAngleRad;
 
     return copy;
   }

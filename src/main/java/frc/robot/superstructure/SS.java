@@ -15,8 +15,8 @@ import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorStates;
 import frc.robot.subsystems.Elbow.Elbow;
 import frc.robot.subsystems.Elbow.ElbowStates;
-import frc.robot.subsystems.Shoulder.Shoulder;
-import frc.robot.subsystems.Shoulder.ShoulderState;
+import frc.robot.subsystems.shoulder.Shoulder;
+import frc.robot.subsystems.shoulder.ShoulderStates;
 import frc.robot.subsystems.Hand.Hand;
 import frc.robot.subsystems.Hand.HandStates;
 import frc.robot.subsystems.Climber.Climber;
@@ -175,7 +175,7 @@ public class SS extends StateMachineSubsystemBase<SuperstructureStates>{
         elbow.setTargetAngle(STOWED_ELBOW_DEG);
 
         boolean clearToClimb = elevator.isState(ElevatorStates.IDLE)
-                && shoulder.isState(ShoulderState.IDLE)
+                && shoulder.isState(ShoulderStates.IDLE)
                 && elbow.isState(ElbowStates.IDLE);
 
         if (clearToClimb) {
@@ -228,7 +228,7 @@ public class SS extends StateMachineSubsystemBase<SuperstructureStates>{
 
     private boolean atScorePosition() {
         return elevator.isState(ElevatorStates.IDLE)
-                && shoulder.isState(ShoulderState.IDLE)
+                && shoulder.isState(ShoulderStates.IDLE)
                 && elbow.isState(ElbowStates.IDLE);
     }
 

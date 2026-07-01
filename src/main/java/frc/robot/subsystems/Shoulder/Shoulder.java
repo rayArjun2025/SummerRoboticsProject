@@ -1,23 +1,24 @@
-package frc.robot.subsystems.Shoulder;
+package frc.robot.subsystems.shoulder;
 
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.controller.PIDController;
 import frc.robot.Constants;
+import frc.robot.util.StateMachineSubsystemBase;
 
 
-public class Shoulder extends StateMachineSubsystemBase<ShoulderState>{
+public class Shoulder extends StateMachineSubsystemBase<ShoulderStates>{
     private static Shoulder instance;
-    private ShoulderIO io;
+    private final ShoulderIO io;
     private ShoulderIOInputsAutoLogged inputs = new ShoulderIOInputsAutoLogged();
     private PIDController pid;
-    private double targetAngle;
+    private double targetAngle_rad;
 
     public Shoulder(ShoulderIO io){
         super("Shoulder");
         this.io = io;
-        queueState(ShoulderState.INCREASE_SHOOTING_ANGLE);
-        pid = new PIDController(1, 0, ShoulderConstants.CHANGE_IN_TIME);
+        queueState(ShoulderStates.IDLE);
+        pid = new PIDController(ShoulderConstants.KP, ShoulderConstants.KI, ShoulderConstants.KD);
     }
 
     public static Shoulder getInstance() {
@@ -41,32 +42,35 @@ public class Shoulder extends StateMachineSubsystemBase<ShoulderState>{
     public void handleStateMachine() {
         switch (getState()) {
             case INCREASE_SHOOTING_ANGLE:
-                if (inputs.atMaxAngle) {
+                if (inputs.atMaxAngleRad) {
                     io.stopMotor();
-                    queueState(ShoulderState.IDLE);
+                    queueState(ShoulderStates.IDLE);
                     break;
                 }
                 swivelAngle();
-                if (inputs.shoulderSwivelAngle >= targetAngle - 1.0) {
-                    queueState(ShoulderState.IDLE);
+                if (inputs.shoulderSwivelAngle_rad >= targetAngle_rad - ShoulderConstants.TOLERANCE_RAD) {
+                    queueState(ShoulderStates.IDLE);
                 }
                 break;
 
             case DECREASE_SHOOTING_ANGLE:
 
-                if (inputs.atMinAngle) {
+                if (inputs.atMinAngleRad) {
                     io.stopMotor();
-                    queueState(ShoulderState.IDLE);
+                    queueState(ShoulderStates.IDLE);
                     break;
                 }
                 swivelAngle();
-                if (inputs.shoulderSwivelAngle <= targetAngle + 1.0) {
-                    queueState(ShoulderState.IDLE);
+                if (inputs.shoulderSwivelAngle_rad <= targetAngle_rad + ShoulderConstants.TOLERANCE_RAD) {
+                    queueState(ShoulderStates.IDLE);
                 }
                 break;
 
             case IDLE:
                 swivelAngle();
+                break;
+            case DISABLED:
+                io.stopMotor();
                 break;
         }
     }
@@ -80,32 +84,32 @@ public class Shoulder extends StateMachineSubsystemBase<ShoulderState>{
     @Override
     protected void outputPeriodic(){
         Logger.recordOutput("Shoulder/State", getState());
-        Logger.recordOutput("Shoulder/TargetAngle", targetAngle);
+        Logger.recordOutput("Shoulder/TargetAngle", targetAngle_rad);
     }
 
-    public void requestState(ShoulderState state) {
+    public void requestState(ShoulderStates state) {
         queueState(state);
     }
 
     public void swivelAngle(){
-        double currentAngle = inputs.shoulderSwivelAngle;
-        double volts = pid.calculate(currentAngle, targetAngle);
+        double currentAngle = inputs.shoulderSwivelAngle_rad;
+        double volts = pid.calculate(currentAngle, targetAngle_rad);
         io.setShoulderVoltage(volts + ShoulderConstants.GRAVITY_FF);
     }
 
     public void setTargetAngle(double angle) {
-        targetAngle = angle;
-        double error = targetAngle - inputs.shoulderSwivelAngle;
-        if (error > 1.0) {
+        targetAngle_rad = angle;
+        double error = targetAngle_rad - inputs.shoulderSwivelAngle_rad;
+        if (error > ShoulderConstants.TOLERANCE_RAD) {
             queueState(
-                ShoulderState.INCREASE_SHOOTING_ANGLE);
+                ShoulderStates.INCREASE_SHOOTING_ANGLE);
         }
-        else if (error < -1.0) {
+        else if (error < -ShoulderConstants.TOLERANCE_RAD) {
             queueState(
-                ShoulderState.DECREASE_SHOOTING_ANGLE);
+                ShoulderStates.DECREASE_SHOOTING_ANGLE);
         }
         else {
-            queueState(ShoulderState.IDLE);
+            queueState(ShoulderStates.IDLE);
         }
     }
 }
