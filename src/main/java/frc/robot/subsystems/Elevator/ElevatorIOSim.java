@@ -1,13 +1,13 @@
-package frc.robot.subsystems.Elevator;
+package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 
-public class ElevatorSimulation implements ElevatorIO{
+public class ElevatorIOSim implements ElevatorIO{
     private double motorVoltage = 0;
     private final ElevatorSim elevatorSim;
     
-    public ElevatorSimulation(){
+    public ElevatorIOSim(){
        elevatorSim = new ElevatorSim(DCMotor.getKrakenX60Foc(1), ElevatorConstants.GEAR_RATIO, ElevatorConstants.CARRIAGE_MASS, ElevatorConstants.DRUM_RADIUS, ElevatorConstants.ELEVATOR_MIN_HEIGHT, ElevatorConstants.ELEVATOR_MAX_HEIGHT,true,ElevatorConstants.ELEVATOR_MIN_HEIGHT);
     }
 
@@ -21,14 +21,14 @@ public class ElevatorSimulation implements ElevatorIO{
         inputs.elevatorPositionMeters = elevatorSim.getPositionMeters();
         inputs.elevatorMotorCurrent = elevatorSim.getCurrentDrawAmps();
         
-        inputs.atTop = inputs.elevatorPositionMeters >= ElevatorConstants.ELEVATOR_MAX_HEIGHT - 0.001;
-        inputs.atBottom = inputs.elevatorPositionMeters <= ElevatorConstants.ELEVATOR_MIN_HEIGHT + 0.001;
+        inputs.atTop = inputs.elevatorPositionMeters >= ElevatorConstants.ELEVATOR_MAX_HEIGHT - ElevatorConstants.TOLERANCE_METERS;
+        inputs.atBottom = inputs.elevatorPositionMeters <= ElevatorConstants.ELEVATOR_MIN_HEIGHT + ElevatorConstants.TOLERANCE_METERS;
     }
 
     @Override
     public void setMotorVoltage(double voltage) {
         motorVoltage = voltage;
-        elevatorSim.setInputVoltage(voltage);
+        elevatorSim.setInputVoltage(motorVoltage);
     }
 
     @Override

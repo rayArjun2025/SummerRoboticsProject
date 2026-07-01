@@ -11,14 +11,14 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.util.IState;
 import frc.robot.util.StateMachineSubsystemBase;
-import frc.robot.subsystems.Elevator.Elevator;
-import frc.robot.subsystems.Elevator.ElevatorStates;
 import frc.robot.subsystems.Elbow.Elbow;
 import frc.robot.subsystems.Elbow.ElbowStates;
 import frc.robot.subsystems.shoulder.Shoulder;
 import frc.robot.subsystems.shoulder.ShoulderStates;
 import frc.robot.subsystems.Hand.Hand;
 import frc.robot.subsystems.Hand.HandStates;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorStates;
 import frc.robot.subsystems.Climber.Climber;
 import frc.robot.subsystems.Climber.ClimberStates;
 

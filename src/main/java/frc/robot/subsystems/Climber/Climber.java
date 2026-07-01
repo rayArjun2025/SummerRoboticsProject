@@ -7,9 +7,7 @@ package frc.robot.subsystems.Climber;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.inputs.LoggableInputs;
 
-import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.Constants;
-import frc.robot.subsystems.Hand.HandStates;
 import frc.robot.util.*;
 
 public class Climber extends StateMachineSubsystemBase<ClimberStates> {private static Climber instance;

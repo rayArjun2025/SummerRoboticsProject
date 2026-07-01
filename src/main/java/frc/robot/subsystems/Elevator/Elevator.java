@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Elevator;
+package frc.robot.subsystems.elevator;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -11,16 +11,16 @@ import frc.robot.util.StateMachineSubsystemBase;
 
 public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
     private final ElevatorIO io;
-    private PIDController pid;
+    private final PIDController pid;
     ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
-    private double targetPosition = 0;
+    private double targetPosition_m = 0;
     private static Elevator instance;
 
     public Elevator(ElevatorIO io) {
         super("Elevator");
         this.io = io;
         queueState(ElevatorStates.IDLE);
-        pid = new PIDController(1.0, 0.0, 0.2);
+        pid = new PIDController(ElevatorConstants.KP, ElevatorConstants.KI, ElevatorConstants.KD);
     }
 
     public void requestState(ElevatorStates state) {
@@ -30,7 +30,7 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
     @Override
     public void outputPeriodic() {
         Logger.recordOutput("Elevator/ElevatorState", getState().toString());
-        Logger.recordOutput("Elevator/TargetPosition", targetPosition);
+        Logger.recordOutput("Elevator/TargetPosition", targetPosition_m);
     }
 
     @Override
@@ -43,13 +43,13 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
         if (instance == null) {
             switch (Constants.currentMode) {
                 case SIM:
-                    instance = new Elevator(new ElevatorSimulation());
+                    instance = new Elevator(new ElevatorIOSim());
                     break;
                 case REAL:
-                    instance = new Elevator(new ElevatorReal());
+                    instance = new Elevator(new ElevatorIOReal());
                     break;
                 default:
-                    instance = new Elevator(new ElevatorSimulation());
+                    instance = new Elevator(new ElevatorIOSim());
                     break;
             }
         }   
@@ -67,7 +67,7 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
                 }
 
                 moveElevator();
-                if (inputs.elevatorPositionMeters >= targetPosition - 0.02) {
+                if (inputs.elevatorPositionMeters >= targetPosition_m - ElevatorConstants.TOLERANCE_METERS) {
                     queueState(ElevatorStates.IDLE);
                 }
                 break;
@@ -78,12 +78,15 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
                     break;
                 }
                 moveElevator();
-                if (inputs.elevatorPositionMeters <= targetPosition + 0.02) {
+                if (inputs.elevatorPositionMeters <= targetPosition_m + ElevatorConstants.TOLERANCE_METERS) {
                     queueState(ElevatorStates.IDLE);
                 }
                 break;
             case IDLE:
                 moveElevator();
+                break;
+            default:
+                io.stopMoving();
                 break;
         }
     
@@ -92,13 +95,13 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
     public void moveElevator(){
         double currentPosition = inputs.elevatorPositionMeters;
         double ff = ElevatorConstants.GRAVITY_FF;
-        double pidOut = pid.calculate(currentPosition, targetPosition);
-        double volts = MathUtil.clamp(pidOut + ff, -12, 12);
+        double pidOut = pid.calculate(currentPosition, targetPosition_m);
+        double volts = MathUtil.clamp(pidOut + ff, ElevatorConstants.LOW_CLAMP, ElevatorConstants.HIGH_CLAMP);
         io.setMotorVoltage(volts);
     }
 
     public void setTargetPosition(double position) {
-        targetPosition = position;
+        targetPosition_m = position;
 
         if (position > inputs.elevatorPositionMeters) {
             queueState(ElevatorStates.MOVING_UP);
