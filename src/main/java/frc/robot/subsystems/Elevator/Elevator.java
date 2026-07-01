@@ -7,6 +7,7 @@ import edu.wpi.first.math.controller.PIDController;
 import frc.robot.Constants;
 
 
+
 public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
     private final ElevatorIO io;
     private PIDController pid;
@@ -20,6 +21,10 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
         queueState(ElevatorStates.IDLE);
         pid = new PIDController(1.0, 0.0, 0.2);
     }
+
+    public void requestState(ElevatorStates state) {
+        queueState(state);
+    }   
 
     @Override
     public void outputPeriodic() {

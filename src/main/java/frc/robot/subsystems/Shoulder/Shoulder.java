@@ -5,6 +5,7 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.controller.PIDController;
 import frc.robot.Constants;
 
+
 public class Shoulder extends StateMachineSubsystemBase<ShoulderState>{
     private static Shoulder instance;
     private ShoulderIO io;
@@ -69,6 +70,7 @@ public class Shoulder extends StateMachineSubsystemBase<ShoulderState>{
                 break;
         }
     }
+
     @Override
     public void inputPeriodic(){
         io.updateInputs(inputs);
@@ -79,6 +81,10 @@ public class Shoulder extends StateMachineSubsystemBase<ShoulderState>{
     protected void outputPeriodic(){
         Logger.recordOutput("Shoulder/State", getState());
         Logger.recordOutput("Shoulder/TargetAngle", targetAngle);
+    }
+
+    public void requestState(ShoulderState state) {
+        queueState(state);
     }
 
     public void swivelAngle(){

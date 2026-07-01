@@ -5,6 +5,7 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.controller.PIDController;
 import frc.robot.Constants;
 
+
 public class Elbow extends StateMachineSubsystemBase<ElbowStates>{
     private static Elbow instance;
     private ElbowIO io;
@@ -68,6 +69,10 @@ public class Elbow extends StateMachineSubsystemBase<ElbowStates>{
         }
     }
 
+    public void requestState(ElbowStates state) {
+        queueState(state);
+    }
+
     public void setTargetAngle(double angle) {
 
         targetAngle = angle;
@@ -88,6 +93,12 @@ public class Elbow extends StateMachineSubsystemBase<ElbowStates>{
         Logger.recordOutput("Elbow/State", getState());
         Logger.recordOutput("Elbow/TargetAngle", targetAngle);
         Logger.recordOutput("Elbow/Voltage", inputs.elbowVoltage);
+    }
+
+    @Override
+    public void inputPeriodic() {
+        io.updateInputs(inputs);
+        Logger.processInputs("Elbow", inputs);
     }
 
     public void swivelAngle(){
