@@ -68,6 +68,9 @@ public class Elbow extends StateMachineSubsystemBase<ElbowStates>{
             case IDLE:
                 swivelAngle();
                 break;
+            case DISABLED:
+                io.stopMotor();
+                break;
             default:
                 io.stopMotor();
                 break;

@@ -72,6 +72,9 @@ public class Shoulder extends StateMachineSubsystemBase<ShoulderStates>{
             case DISABLED:
                 io.stopMotor();
                 break;
+            default:
+                io.stopMotor();
+                break;
         }
     }
 

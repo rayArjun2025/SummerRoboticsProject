@@ -85,6 +85,9 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
             case IDLE:
                 moveElevator();
                 break;
+            case DISABLED:
+                io.stopMoving();
+                break;
             default:
                 io.stopMoving();
                 break;

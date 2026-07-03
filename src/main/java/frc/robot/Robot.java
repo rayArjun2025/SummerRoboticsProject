@@ -23,6 +23,8 @@ import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.shoulder.Shoulder;
 import frc.robot.subsystems.shoulder.ShoulderReal;
 import frc.robot.subsystems.shoulder.ShoulderSim;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIOSim;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Threads;
@@ -54,6 +56,7 @@ public class Robot extends LoggedRobot {
     private Elevator elevator;
     private Elbow elbow;
     private Shoulder shoulder;
+    private Vision vision;
 
     private boolean lastState = false;
 
