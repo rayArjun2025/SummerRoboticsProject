@@ -2,6 +2,7 @@ package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import frc.robot.Constants;
 
 public class ElevatorIOSim implements ElevatorIO{
     private double motorVoltage = 0;
@@ -14,7 +15,7 @@ public class ElevatorIOSim implements ElevatorIO{
     @Override
     public void updateInputs(ElevatorIOInputs inputs) {
 
-        elevatorSim.update(ElevatorConstants.CHANGE_IN_TIME);
+        elevatorSim.update(Constants.globalDelta_s);
 
         inputs.elevatorVelocityMetersPerSec = elevatorSim.getVelocityMetersPerSecond();
         inputs.elevatorMotorVolts = motorVoltage;

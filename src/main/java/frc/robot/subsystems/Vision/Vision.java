@@ -18,28 +18,28 @@ public class Vision {
     public static final Transform3d LEFT_ROBOT_TO_CAMERA =
     new Transform3d(
         new Translation3d(
-            0.0889,  
-            0.2794,  
-            0.4445   
+            VisionConstants.CAMERA_X,  
+            VisionConstants.CAMERA_Y,  
+            VisionConstants.CAMERA_Z   
         ),
         new Rotation3d(
             0.0,
-            Units.degreesToRadians(20), 
-            Units.degreesToRadians(90)   
+            Units.degreesToRadians(VisionConstants.CAMERA_PITCH_DEG), 
+            Units.degreesToRadians(VisionConstants.CAMERA_YAW_LEFT_DEG)   
         )
     );
 
     public static final Transform3d RIGHT_ROBOT_TO_CAMERA =
         new Transform3d(
             new Translation3d(
-                0.0889,   
-            -0.2794,   
-                0.4445 
+                VisionConstants.CAMERA_X,   
+                -VisionConstants.CAMERA_Y,   
+                VisionConstants.CAMERA_Z 
             ),
             new Rotation3d(
                 0.0,
-                Units.degreesToRadians(20), 
-                Units.degreesToRadians(-90) 
+                Units.degreesToRadians(VisionConstants.CAMERA_PITCH_DEG), 
+                Units.degreesToRadians(VisionConstants.CAMERA_YAW_RIGHT_DEG) 
             )
         );
 

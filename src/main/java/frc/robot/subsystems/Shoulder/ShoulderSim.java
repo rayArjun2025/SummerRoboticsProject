@@ -3,6 +3,7 @@ package frc.robot.subsystems.shoulder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import frc.robot.Constants;
 
 public class ShoulderSim implements ShoulderIO{
     private SingleJointedArmSim shoulderJoint;
@@ -15,7 +16,7 @@ public class ShoulderSim implements ShoulderIO{
 
     @Override
     public void updateInputs(ShoulderIOInputs inputs){
-        shoulderJoint.update(ShoulderConstants.CHANGE_IN_TIME);
+        shoulderJoint.update(Constants.globalDelta_s);
 
         inputs.angularVelocityRad = shoulderJoint.getVelocityRadPerSec();
         inputs.shoulderSwivelAngle_rad = shoulderJoint.getAngleRads();
