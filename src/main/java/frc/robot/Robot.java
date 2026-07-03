@@ -14,9 +14,9 @@
 
 package frc.robot;
 
-import frc.robot.subsystems.Elbow.Elbow;
-import frc.robot.subsystems.Elbow.ElbowReal;
-import frc.robot.subsystems.Elbow.ElbowSim;
+import frc.robot.subsystems.elbow.Elbow;
+import frc.robot.subsystems.elbow.ElbowIOReal;
+import frc.robot.subsystems.elbow.ElbowIOSim;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIOReal;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
@@ -90,7 +90,7 @@ public class Robot extends LoggedRobot {
             case REAL:
                 // Running on a real robot, log to a USB stick ("/U/logs")
                 elevator = new Elevator(new ElevatorIOReal());
-                elbow = new Elbow(new ElbowReal());
+                elbow = new Elbow(new ElbowIOReal());
                 shoulder = new Shoulder(new ShoulderReal());
                 Logger.addDataReceiver(new WPILOGWriter("U/logs/" + BuildConstants.GIT_BRANCH));
                 Logger.addDataReceiver(new NT4Publisher());
@@ -99,7 +99,7 @@ public class Robot extends LoggedRobot {
             case SIM:
                 // Running a physics simulator, log to NT
                 elevator = new Elevator(new ElevatorIOSim());
-                elbow = new Elbow(new ElbowSim());
+                elbow = new Elbow(new ElbowIOSim());
                 shoulder = new Shoulder(new ShoulderSim());
                 Logger.addDataReceiver(new NT4Publisher());
                 break;
@@ -107,7 +107,7 @@ public class Robot extends LoggedRobot {
             case REPLAY:
                 // Replaying a log, set up replay source
                 elevator = new Elevator(new ElevatorIOSim());
-                elbow = new Elbow(new ElbowSim());
+                elbow = new Elbow(new ElbowIOSim());
                 shoulder = new Shoulder(new ShoulderSim());
                 setUseTiming(false); // Run as fast as possible
                 String logPath = LogFileUtil.findReplayLog();

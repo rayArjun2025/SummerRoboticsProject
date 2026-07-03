@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Elbow;
+package frc.robot.subsystems.elbow;
 
 import frc.robot.util.IState;
 

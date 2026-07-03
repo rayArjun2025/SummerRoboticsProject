@@ -1,16 +1,16 @@
-package frc.robot.subsystems.Elbow;
+package frc.robot.subsystems.elbow;
 
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ElbowIO {
-    @AutoLog
-   public static class ElbowIOInputs{
-        public double elbowRotateAngle = ElbowConstants.ZERO_REF;
+   @AutoLog
+   public class ElbowIOInputs{
+        public double elbowRotateAngleRad = ElbowConstants.ZERO_REF;
         public double angularVelocityRad = 0;
-        public double elbowCurrent = 0;
-        public double elbowVoltage = 0;
-        public boolean atMaxAngle = false;
-        public boolean atMinAngle = false;
+        public double elbowCurrentAmps = 0;
+        public double elbowVoltageVolts = 0;
+        public boolean atMaxAngleRad = false;
+        public boolean atMinAngleRad = false;
         public boolean connected = false;
     }
 
