@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Vision;
+package frc.robot.subsystems.vision;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -51,7 +51,7 @@ public class Vision {
         if (instance == null) {
             switch (Constants.currentMode) {
                 case REAL:
-                    instance = new Vision(new VisionIOSim(LEFT_ROBOT_TO_CAMERA, RIGHT_ROBOT_TO_CAMERA));
+                    instance = new Vision(new VisionIOLimelight());
                     break;
                 case SIM:
                     instance = new Vision(new VisionIOSim(LEFT_ROBOT_TO_CAMERA, RIGHT_ROBOT_TO_CAMERA));
@@ -72,9 +72,13 @@ public class Vision {
     }
 
     public Pose2d getEstimatedPose() {
-        return inputs.estimatedPose;
-    
+        if (inputs.poseObservations.length == 0) {
+            return new Pose2d();
+        }
+        
+        return inputs.poseObservations[0].pose().toPose2d();
     }
+
     public boolean hasTarget() {
         return inputs.hasTarget;
     }

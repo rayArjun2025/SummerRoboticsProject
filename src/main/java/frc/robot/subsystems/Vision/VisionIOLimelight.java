@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Vision;
+package frc.robot.subsystems.vision;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -7,9 +7,8 @@ import java.util.Set;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-
-import frc.robot.subsystems.Vision.VisionIO.VisionIOInputs.PoseObservation;
-import frc.robot.subsystems.Vision.VisionIO.VisionIOInputs.PoseObservationType;
+import frc.robot.subsystems.vision.VisionIO.VisionIOInputs.PoseObservation;
+import frc.robot.subsystems.vision.VisionIO.VisionIOInputs.PoseObservationType;
 
 public class VisionIOLimelight implements VisionIO {
 
@@ -60,7 +59,7 @@ public class VisionIOLimelight implements VisionIO {
                 bestCamera = rightCamera;
             } else {
 
-                double leftArea = LimelightHelpers.getTA(bestCamera);
+                double leftArea = LimelightHelpers.getTA(leftCamera);
                 double rightArea = LimelightHelpers.getTA(rightCamera);
 
                 if (rightArea > leftArea) {

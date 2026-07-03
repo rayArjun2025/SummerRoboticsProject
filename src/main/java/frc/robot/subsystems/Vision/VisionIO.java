@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Vision;
+package frc.robot.subsystems.vision;
 
 import org.littletonrobotics.junction.AutoLog;
 
@@ -18,8 +18,7 @@ public interface VisionIO {
 
         public int[] visibleTagIds = new int[0];
         public int tagCount = 0;
-
-        public Pose2d estimatedPose = new Pose2d();
+        
         public double timestampSeconds = 0.0;
 
       

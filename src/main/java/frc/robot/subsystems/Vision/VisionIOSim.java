@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Vision;
+package frc.robot.subsystems.vision;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -19,8 +19,8 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import frc.robot.subsystems.Vision.VisionIO.VisionIOInputs.PoseObservation;
-import frc.robot.subsystems.Vision.VisionIO.VisionIOInputs.PoseObservationType;
+import frc.robot.subsystems.vision.VisionIO.VisionIOInputs.PoseObservation;
+import frc.robot.subsystems.vision.VisionIO.VisionIOInputs.PoseObservationType;
 
 public class VisionIOSim implements VisionIO{
 
@@ -54,7 +54,7 @@ public class VisionIOSim implements VisionIO{
         rightCamera = new PhotonCamera("right-Camera");
 
         SimCameraProperties props = new SimCameraProperties();
-        props.setCalibration(1280, 880, Rotation2d.fromDegrees(70));
+        props.setCalibration(1280, 800, Rotation2d.fromDegrees(70));
         props.setFPS(90);
         props.setAvgLatencyMs(11);
         props.setLatencyStdDevMs(2);
@@ -85,7 +85,7 @@ public class VisionIOSim implements VisionIO{
         PhotonPipelineResult rightResult = rightCamera.getLatestResult();
 
         
-        inputs.connected = (leftResult != null || rightResult != null);;
+        inputs.connected = (leftResult != null || rightResult != null);
 
 
         boolean leftHasTargets = leftResult != null && leftResult.hasTargets();
@@ -173,6 +173,7 @@ public class VisionIOSim implements VisionIO{
 
         inputs.poseObservations =
             observations.toArray(PoseObservation[]::new);
+        
     }
 
     private void addObservation(List<PoseObservation> observations, EstimatedRobotPose est) {
