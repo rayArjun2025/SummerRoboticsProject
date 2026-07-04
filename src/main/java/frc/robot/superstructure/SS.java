@@ -145,13 +145,13 @@ public class SS extends StateMachineSubsystemBase<SuperstructureStates>{
         switch (getState()) {
             case STOWED:
                 elevator.setTargetPosition(STOWED_ELEVATOR_POS);
-                shoulder.setTargetAngle(STOWED_SHOULDER_DEG);
+                shoulder.queueTargetAngle(INTAKE_SHOULDER_DEG);
                 elbow.setTargetAngle(STOWED_ELBOW_DEG);
                 break;
 
             case INTAKE_CORAL:
                 elevator.setTargetPosition(INTAKE_ELEVATOR_POS);
-                shoulder.setTargetAngle(INTAKE_SHOULDER_DEG);
+                shoulder.queueTargetAngle(INTAKE_SHOULDER_DEG);
                 elbow.setTargetAngle(INTAKE_ELBOW_DEG);
                 hand.requestState(HandStates.GRIPPING_CORAL);
                 break;
@@ -171,7 +171,7 @@ public class SS extends StateMachineSubsystemBase<SuperstructureStates>{
 
     private void handleClimbing() {
         elevator.setTargetPosition(STOWED_ELEVATOR_POS);
-        shoulder.setTargetAngle(STOWED_SHOULDER_DEG);
+        shoulder.queueTargetAngle(STOWED_SHOULDER_DEG);
         elbow.setTargetAngle(STOWED_ELBOW_DEG);
 
         boolean clearToClimb = elevator.isState(ElevatorStates.IDLE)
@@ -222,7 +222,7 @@ public class SS extends StateMachineSubsystemBase<SuperstructureStates>{
 
     private void driveToScorePosition() {
         elevator.setTargetPosition(scoreElevatorTarget);
-        shoulder.setTargetAngle(SCORE_SHOULDER_DEG);
+        shoulder.queueTargetAngle(SCORE_SHOULDER_DEG);
         elbow.setTargetAngle(SCORE_ELBOW_DEG);
     }
 

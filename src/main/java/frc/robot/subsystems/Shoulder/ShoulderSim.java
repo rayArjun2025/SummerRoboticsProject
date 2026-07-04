@@ -7,7 +7,7 @@ import frc.robot.Constants;
 
 public class ShoulderSim implements ShoulderIO{
     private SingleJointedArmSim shoulderJoint;
-    private double motorVoltage;
+    private double targetAngle_RAD;
 
     public ShoulderSim(){
         double moi = SingleJointedArmSim.estimateMOI(ShoulderConstants.ARM_LENGTH, ShoulderConstants.ARM_MASS);
@@ -16,21 +16,21 @@ public class ShoulderSim implements ShoulderIO{
 
     @Override
     public void updateInputs(ShoulderIOInputs inputs){
+        double error = targetAngle_RAD - shoulderJoint.getAngleRads();
+        double motorVoltage = MathUtil.clamp(ShoulderConstants.KP * error, -12.0,12.0);
+        shoulderJoint.setInputVoltage(motorVoltage);
         shoulderJoint.update(Constants.globalDelta_s);
 
         inputs.angularVelocityRad = shoulderJoint.getVelocityRadPerSec();
         inputs.shoulderSwivelAngle_rad = shoulderJoint.getAngleRads();
         inputs.shoulderCurrent_amps = shoulderJoint.getCurrentDrawAmps();
         inputs.shoulderVoltage_volts = motorVoltage;
-
-        inputs.atMaxAngleRad = inputs.shoulderSwivelAngle_rad >= ShoulderConstants.MAX_ANGLE + ShoulderConstants.ZERO_REF;
-        inputs.atMinAngleRad = inputs.shoulderSwivelAngle_rad <= ShoulderConstants.MIN_ANGLE + ShoulderConstants.ZERO_REF;
     }
 
+   
     @Override
-    public void setShoulderVoltage(double voltage){
-        motorVoltage = MathUtil.clamp(voltage, ShoulderConstants.LOW_CLAMP, ShoulderConstants.HIGH_CLAMP);
-        shoulderJoint.setInputVoltage(voltage);
+    public void setTargetAngle(double angle_rad){
+        targetAngle_RAD = MathUtil.clamp(angle_rad, ShoulderConstants.MIN_ANGLE, ShoulderConstants.MAX_ANGLE);
     }
 
     @Override

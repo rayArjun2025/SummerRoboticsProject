@@ -3,8 +3,8 @@ package frc.robot.subsystems.shoulder;
 import frc.robot.util.IState;
 
 public enum ShoulderStates implements IState{
-    INCREASE_SHOOTING_ANGLE,
-    DECREASE_SHOOTING_ANGLE,
+    TRAVELLING_TO_POSITION,
+    HOLDING_POSITION,
     IDLE,
     DISABLED
 
