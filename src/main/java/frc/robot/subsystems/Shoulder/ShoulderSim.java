@@ -30,7 +30,7 @@ public class ShoulderSim implements ShoulderIO{
    
     @Override
     public void setTargetAngle(double angle_rad){
-        targetAngle_RAD = MathUtil.clamp(angle_rad, ShoulderConstants.MIN_ANGLE, ShoulderConstants.MAX_ANGLE);
+        targetAngle_RAD = angle_rad;
     }
 
     @Override
