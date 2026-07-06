@@ -3,7 +3,6 @@ package frc.robot.subsystems.elevator;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import frc.robot.Constants;
 import frc.robot.util.StateMachineSubsystemBase;
 
@@ -11,7 +10,6 @@ import frc.robot.util.StateMachineSubsystemBase;
 
 public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
     private final ElevatorIO io;
-    private final PIDController pid;
     ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
     private double targetPosition_m = 0;
     private static Elevator instance;
@@ -20,7 +18,6 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
         super("Elevator");
         this.io = io;
         queueState(ElevatorStates.IDLE);
-        pid = new PIDController(ElevatorConstants.KP, ElevatorConstants.KI, ElevatorConstants.KD);
     }
 
     public void requestState(ElevatorStates state) {
@@ -60,30 +57,19 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
     public void handleStateMachine() {
         switch (getState()) {
             case MOVING_UP:
-                if (inputs.atTop) {
-                    io.stopMoving();
-                    queueState(ElevatorStates.IDLE);
-                    break;
-                }
-
-                moveElevator();
+                io.moveElevator();
                 if (inputs.elevatorPositionMeters >= targetPosition_m - ElevatorConstants.TOLERANCE_METERS) {
                     queueState(ElevatorStates.IDLE);
                 }
                 break;
             case MOVING_DOWN:
-                if (inputs.atBottom) {
-                    io.stopMoving();
-                    queueState(ElevatorStates.IDLE);
-                    break;
-                }
-                moveElevator();
+                io.moveElevator();
                 if (inputs.elevatorPositionMeters <= targetPosition_m + ElevatorConstants.TOLERANCE_METERS) {
                     queueState(ElevatorStates.IDLE);
                 }
                 break;
             case IDLE:
-                moveElevator();
+                io.moveElevator();
                 break;
             case DISABLED:
                 io.stopMoving();
@@ -95,17 +81,11 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
     
     }
     
-    public void moveElevator(){
-        double currentPosition = inputs.elevatorPositionMeters;
-        double ff = ElevatorConstants.GRAVITY_FF;
-        double pidOut = pid.calculate(currentPosition, targetPosition_m);
-        double volts = MathUtil.clamp(pidOut + ff, ElevatorConstants.LOW_CLAMP, ElevatorConstants.HIGH_CLAMP);
-        io.setMotorVoltage(volts);
-    }
+   
 
     public void setTargetPosition(double position) {
-        targetPosition_m = position;
-
+        targetPosition_m = MathUtil.clamp(position, ElevatorConstants.ELEVATOR_MIN_HEIGHT, ElevatorConstants.ELEVATOR_MAX_HEIGHT);
+        io.setTargetPosition(targetPosition_m);
         if (position > inputs.elevatorPositionMeters) {
             queueState(ElevatorStates.MOVING_UP);
         } else if (position < inputs.elevatorPositionMeters) {

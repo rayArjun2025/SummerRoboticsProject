@@ -3,8 +3,8 @@ package frc.robot.subsystems.elevator;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-
-import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -14,6 +14,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.generated.TunerConstants;
+
 import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 public class ElevatorIOReal implements ElevatorIO{
@@ -22,8 +23,11 @@ public class ElevatorIOReal implements ElevatorIO{
     private final StatusSignal<Voltage> elevatorVoltage;
     private final StatusSignal<AngularVelocity> elevatorVelocity;
     private final StatusSignal<Angle> elevatorPosition;
+    
+    private double targetPosition_m = 0;
 
-    private final VoltageOut elevatorVoltOut_V;
+    private final MotionMagicVoltage voltageControl = new MotionMagicVoltage(0);
+    private final MotionMagicVelocityVoltage velocityControl = new MotionMagicVelocityVoltage(0);
 
     public ElevatorIOReal(){
         elevatorMotor = new TalonFX(ElevatorConstants.MOTOR_ID, TunerConstants.kCANBus);
@@ -50,9 +54,13 @@ public class ElevatorIOReal implements ElevatorIO{
         elevatorMotorConfig.Slot0.kV = ElevatorConstants.KV;
         elevatorMotorConfig.Slot0.kA = ElevatorConstants.KA;
 
+        var motionMagicConfigs = elevatorMotorConfig.MotionMagic;
+        motionMagicConfigs.MotionMagicAcceleration = ElevatorConstants.MOTION_MAGIC_ACCELERATION;
+        motionMagicConfigs.MotionMagicCruiseVelocity = ElevatorConstants.MOTION_MAGIC_CRUISE_VELOCITY;
+        motionMagicConfigs.MotionMagicJerk = ElevatorConstants.MOTION_MAGIC_JERK;
+
         tryUntilOk(5, () -> elevatorMotor.getConfigurator().apply(elevatorMotorConfig));
 
-        elevatorVoltOut_V = new VoltageOut(0).withEnableFOC(true);
         BaseStatusSignal.setUpdateFrequencyForAll(ElevatorConstants.UPDATE_RATE, elevatorCurrent,elevatorVoltage,elevatorVelocity,elevatorPosition);
         elevatorMotor.optimizeBusUtilization();
 
@@ -66,8 +74,6 @@ public class ElevatorIOReal implements ElevatorIO{
         inputs.elevatorMotorVolts = elevatorVoltage.getValueAsDouble();
         inputs.elevatorVelocityMetersPerSec = convertToLinearVel(elevatorVelocity.getValueAsDouble());
         inputs.elevatorPositionMeters = convertToMeters(elevatorPosition.getValueAsDouble());
-        inputs.atTop = inputs.elevatorPositionMeters >= ElevatorConstants.ELEVATOR_MAX_HEIGHT - 0.001;
-        inputs.atBottom = inputs.elevatorPositionMeters <= ElevatorConstants.ELEVATOR_MIN_HEIGHT + 0.001;
     }
 
     private double convertToLinearVel(double aVelocity){
@@ -79,12 +85,27 @@ public class ElevatorIOReal implements ElevatorIO{
     }
 
     @Override
-    public void setMotorVoltage(double voltage) {
-        elevatorMotor.setControl(elevatorVoltOut_V.withOutput(voltage));
+    public void setMotorVoltage(double position) {
+        elevatorMotor.setControl(voltageControl.withPosition(position));
+    }
+
+    @Override
+    public void setMotorVelocity(double velocity) {
+        elevatorMotor.setControl(velocityControl.withVelocity(velocity));
     }
 
     @Override
     public void stopMoving() {
         setMotorVoltage(0);
+    }
+
+    @Override
+    public void moveElevator() {
+        setMotorVoltage(targetPosition_m);
+    }
+
+    @Override
+    public void setTargetPosition(double targetPosition_m) {
+        this.targetPosition_m = targetPosition_m;
     }
 }

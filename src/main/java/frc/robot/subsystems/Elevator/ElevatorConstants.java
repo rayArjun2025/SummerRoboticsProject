@@ -18,6 +18,9 @@ public class ElevatorConstants {
     public static final double HIGH_CLAMP = 12;
     public static final double TOLERANCE_METERS = 0.001;
     public static final double UPDATE_RATE = 50;
+    public static final double MOTION_MAGIC_CRUISE_VELOCITY = 2.0; // mechanism rotations/sec
+    public static final double MOTION_MAGIC_ACCELERATION = 8.0;     // mechanism rotations/sec²
+    public static final double MOTION_MAGIC_JERK = 80.0;   // mechanism rotations/sec³
     public static final int MOTOR_ID = 1;
     
 
