@@ -1,5 +1,5 @@
 // Raymond: lowercase package.
-package frc.robot.subsystems.Hand;
+package frc.robot.subsystems.hand;
 
 
 import frc.robot.util.IState; // Raymond: blank line between the import and the enum decl.

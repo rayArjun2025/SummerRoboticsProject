@@ -1,6 +1,6 @@
 // Raymond: lowercase package.
 // Raymond: same as Climber's - this is @AutoLog generated code, and you wrote it but Hand.java never uses it (it uses the raw HandIO.HandIOInputs). either delete it and let @AutoLog generate it, or actually use this class as the inputs field.
-package frc.robot.subsystems.Hand;
+package frc.robot.subsystems.hand;
 
 import org.littletonrobotics.junction.LogTable;
 import org.littletonrobotics.junction.inputs.LoggableInputs;

@@ -19,10 +19,10 @@ import frc.robot.subsystems.Elbow.ElbowStates;
 import frc.robot.subsystems.Shoulder.Shoulder;
 // Raymond: ShoulderState is singular but everything else is plural - ElbowStates, HandStates, ClimberStates, ElevatorStates. rename it ShoulderStates so it matches.
 import frc.robot.subsystems.Shoulder.ShoulderState;
-import frc.robot.subsystems.Hand.Hand;
-import frc.robot.subsystems.Hand.HandStates;
-import frc.robot.subsystems.Climber.Climber;
-import frc.robot.subsystems.Climber.ClimberStates;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberStates;
+import frc.robot.subsystems.hand.Hand;
+import frc.robot.subsystems.hand.HandStates;
 
 // Raymond: run spotlessApply - missing space before the brace, and there's stray double blank lines and trailing whitespace all through this file.
 public class SS extends StateMachineSubsystemBase<SuperstructureStates>{

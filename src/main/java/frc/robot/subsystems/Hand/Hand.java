@@ -1,11 +1,8 @@
-// Raymond: lowercase package - frc.robot.subsystems.hand. rename the folder too.
-package frc.robot.subsystems.Hand;
+package frc.robot.subsystems.hand;
 
 
 import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.inputs.LoggableInputs; // Raymond: only needed because of the cast below. fix the inputs type and drop this.
 
-import edu.wpi.first.wpilibj.util.Color8Bit; // Raymond: unused, delete.
 import frc.robot.Constants;
 import frc.robot.util.StateMachineSubsystemBase;
 
@@ -13,12 +10,8 @@ import frc.robot.util.StateMachineSubsystemBase;
 public class Hand extends StateMachineSubsystemBase<HandStates> {private static Hand instance;
 
 private final HandIO io;
-// Raymond: use HandIOInputsAutoLogged here, not the raw inputs class - same reason as Climber. you even wrote the AutoLogged class and didn't use it.
-private final HandIO.HandIOInputs inputs =
-    new HandIO.HandIOInputs();
-// Raymond: units in the name (_deg) and these belong in HandConstants, not magic 90/0 here.
-private double targetDegrees=90.0;
-private double homeDegrees=0.0;
+private final HandIOInputsAutoLogged inputs = new HandIOInputsAutoLogged();
+private double targetDegrees = 0.0;
 
 // Raymond: private constructor for a singleton.
 Hand(HandIO io) {
@@ -62,38 +55,45 @@ public void handleStateMachine() {switch (getState()) {
     // Raymond: brace your if/else bodies. unbraced one-liners stacked like this are a bug waiting to happen the moment someone adds a second line. and indent them.
     case GRIPPING_CORAL:
         // Raymond: CORAL exits when pos-target <= 1.0 but ALGAE (right below) exits when pos-target > 1.0 - opposite conditions for what should be the same "did we reach the target" check. one of these is wrong. use Math.abs(pos - target) < TOLERANCE_DEG for both, with the tolerance as a constant instead of 1.0.
-        if ((inputs.handPositionDeg - targetDegrees) <= 1.0)
-        queueState(HandStates.IDLE);
-        else
-        io.grip(targetDegrees);
-
+        if (Math.abs(inputs.handPositionDeg - HandConstants.coralTarget_deg) <= HandConstants.tolerance_deg) {
+            queueState(HandStates.IDLE);
+        } 
+        else {
+            io.grip(HandConstants.coralTarget_deg);
+            targetDegrees = HandConstants.coralTarget_deg;
+        }
         break;
-    case GRIPPING_ALGAE:
-        // Raymond: also both coral and algae grip to the SAME targetDegrees - so what's the actual difference between gripping coral vs algae? if they need different grip positions that has to come from somewhere. right now these two states are identical except for the broken condition.
-        if ((inputs.handPositionDeg - targetDegrees) > 1.0)
-        queueState(HandStates.IDLE);
-        else
-        io.grip(targetDegrees);
 
+    case GRIPPING_ALGAE:
+        if (Math.abs(inputs.handPositionDeg - HandConstants.algaeTarget_deg) <= HandConstants.tolerance_deg) {
+        queueState(HandStates.IDLE);
+    }
+        else {
+            io.grip(HandConstants.algaeTarget_deg);
+            targetDegrees = HandConstants.algaeTarget_deg; 
+        }
         break;
 
     case RELEASING:
-        if ((inputs.handPositionDeg - homeDegrees) <= 1.0)
+        if (Math.abs(inputs.handPositionDeg - HandConstants.home_deg) <= HandConstants.tolerance_deg) {
         queueState(HandStates.IDLE);
-        else
-        io.grip(homeDegrees);
+        }
+        else {
+        io.grip(HandConstants.home_deg);
+        }
         break;
         
     default:
         io.stopMoving();
+        targetDegrees = HandConstants.home_deg;
         break;
     }
 }
 
-// Raymond: needs @Override, and drop the (LoggableInputs) cast once inputs is the AutoLogged type.
+@Override
 public void inputPeriodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Hand", (LoggableInputs) inputs);
+    Logger.processInputs("Hand", inputs);
 }
 
 @Override

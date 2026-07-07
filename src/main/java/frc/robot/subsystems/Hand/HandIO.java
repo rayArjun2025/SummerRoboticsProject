@@ -1,5 +1,5 @@
 // Raymond: lowercase package.
-package frc.robot.subsystems.Hand;
+package frc.robot.subsystems.hand;
 
 import org.littletonrobotics.junction.AutoLog;
 

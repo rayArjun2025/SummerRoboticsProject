@@ -1,5 +1,5 @@
 // Raymond: lowercase package. and this file is nearly identical to ClimberIOReal - same current limits, same FOC setup, same boilerplate. fine for now, but at some point we factor the shared TalonFX setup into a helper instead of copy-pasting it into every IOReal.
-package frc.robot.subsystems.Hand;
+package frc.robot.subsystems.hand;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;

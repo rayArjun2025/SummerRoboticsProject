@@ -3,7 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 // Raymond: lowercase package - frc.robot.subsystems.climber.
-package frc.robot.subsystems.Climber;
+package frc.robot.subsystems.climber;
 
 import org.littletonrobotics.junction.AutoLog;
 
@@ -35,13 +35,6 @@ public interface ClimberIO {
 
     public default void stopClimb() {}
 
-    // Raymond: param names use snake_case here but camelCase in the Real impl (hook_position_deg). pick camelCase, that's what we use in java. and add the _deg unit.
-    public default void climbTo(double hook_position, double wheel_position) {}
-
-    // Raymond: putUpTheWheels is never called anywhere and no IO implements it. dead method, delete it.
-    public default void putUpTheWheels(double position) {}
-
-    // Raymond: toggleBrake is declared but no IO implements it, so it does nothing. either implement setBrake(boolean) in Real or remove it. a no-op toggle is worse than nothing.
-    public default void toggleBrake() {}
+    public default void climbTo(double hookPosition_deg, double wheelPosition_deg) {}
 
 }
