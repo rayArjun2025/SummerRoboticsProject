@@ -56,15 +56,9 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
     @Override
     public void handleStateMachine() {
         switch (getState()) {
-            case MOVING_UP:
+            case TRAVELLING:
                 io.moveElevator();
-                if (inputs.elevatorPositionMeters >= targetPosition_m - ElevatorConstants.TOLERANCE_METERS) {
-                    queueState(ElevatorStates.IDLE);
-                }
-                break;
-            case MOVING_DOWN:
-                io.moveElevator();
-                if (inputs.elevatorPositionMeters <= targetPosition_m + ElevatorConstants.TOLERANCE_METERS) {
+                if (Math.abs(inputs.elevatorPositionMeters - targetPosition_m) < ElevatorConstants.TOLERANCE_METERS) {
                     queueState(ElevatorStates.IDLE);
                 }
                 break;
@@ -86,10 +80,10 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
     public void setTargetPosition(double position) {
         targetPosition_m = MathUtil.clamp(position, ElevatorConstants.ELEVATOR_MIN_HEIGHT, ElevatorConstants.ELEVATOR_MAX_HEIGHT);
         io.setTargetPosition(targetPosition_m);
-        if (position > inputs.elevatorPositionMeters) {
-            queueState(ElevatorStates.MOVING_UP);
-        } else if (position < inputs.elevatorPositionMeters) {
-            queueState(ElevatorStates.MOVING_DOWN);
+        if (targetPosition_m > inputs.elevatorPositionMeters) {
+            queueState(ElevatorStates.TRAVELLING);
+        } else if (targetPosition_m < inputs.elevatorPositionMeters) {
+            queueState(ElevatorStates.TRAVELLING);
         }
         else{
             queueState(ElevatorStates.IDLE);

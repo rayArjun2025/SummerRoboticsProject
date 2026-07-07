@@ -19,14 +19,14 @@ public class ElevatorIOSim implements ElevatorIO{
 
     @Override
     public void updateInputs(ElevatorIOInputs inputs) {
-
+        moveElevator();
         elevatorSim.update(Constants.globalDelta_s);
 
         inputs.elevatorVelocityMetersPerSec = elevatorSim.getVelocityMetersPerSecond();
         inputs.elevatorMotorVolts = motorVoltage;
         inputs.elevatorPositionMeters = elevatorSim.getPositionMeters();
         inputs.elevatorMotorCurrent = elevatorSim.getCurrentDrawAmps();
-        
+        inputs.connected = true;
        
     }
 
