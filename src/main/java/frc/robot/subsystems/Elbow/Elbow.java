@@ -1,9 +1,8 @@
 package frc.robot.subsystems.elbow;
 
 import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.inputs.LoggableInputs;
 
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.MathUtil;
 import frc.robot.Constants;
 import frc.robot.util.StateMachineSubsystemBase;
 
@@ -13,14 +12,12 @@ public class Elbow extends StateMachineSubsystemBase<ElbowStates>{
     private final ElbowIO io;
     private double targetAngle_RAD;
     private ElbowIOInputsAutoLogged inputs = new ElbowIOInputsAutoLogged();
-    private final PIDController pid;
 
     public Elbow(ElbowIO io) {
         super("Elbow");
         this.io = io;
         targetAngle_RAD = 0;
         queueState(ElbowStates.IDLE);
-        pid = new PIDController(ElbowConstants.KP, ElbowConstants.KI, ElbowConstants.KD);
     }
 
     public static Elbow getInstance() {
@@ -43,30 +40,18 @@ public class Elbow extends StateMachineSubsystemBase<ElbowStates>{
     @Override
     public void handleStateMachine() {
         switch (getState()) {
-            case INCREASING_ELEVATION_ANGLE:
-                if (inputs.atMaxAngleRad) {
-                    io.stopMotor();
+            case MOVING_ELBOW:
+                if (atLimit()) {
                     queueState(ElbowStates.IDLE);
                     break;
                 }
-                swivelAngle();
-                if (inputs.elbowRotateAngleRad >= targetAngle_RAD - ElbowConstants.TOLERANCE) {
-                    queueState(ElbowStates.IDLE);
-                }
-                break;
-            case DECREASING_ELEVATION_ANGLE:
-                if (inputs.atMinAngleRad) {
-                    io.stopMotor();
-                    queueState(ElbowStates.IDLE);
-                    break;
-                }
-                swivelAngle();
-                if (inputs.elbowRotateAngleRad <= targetAngle_RAD + ElbowConstants.TOLERANCE) {
+                io.swivelAngle();
+                if (Math.abs(targetAngle_RAD - inputs.elbowRotateAngleRad) <= ElbowConstants.TOLERANCE) {
                     queueState(ElbowStates.IDLE);
                 }
                 break;
             case IDLE:
-                swivelAngle();
+                io.swivelAngle();
                 break;
             case DISABLED:
                 io.stopMotor();
@@ -82,15 +67,12 @@ public class Elbow extends StateMachineSubsystemBase<ElbowStates>{
     }
 
     public void setTargetAngle(double angle) {
+        targetAngle_RAD = MathUtil.clamp(angle, ElbowConstants.MIN_ANGLE, ElbowConstants.MAX_ANGLE);
 
-        targetAngle_RAD = angle;
-        double error = targetAngle_RAD - inputs.elbowRotateAngleRad;
-
+        io.setTargetAngle(targetAngle_RAD);
+        double error = Math.abs(targetAngle_RAD - inputs.elbowRotateAngleRad);
         if (error > ElbowConstants.TOLERANCE) {
-            queueState(ElbowStates.INCREASING_ELEVATION_ANGLE);
-        }
-        else if (error < -ElbowConstants.TOLERANCE) {
-            queueState(ElbowStates.DECREASING_ELEVATION_ANGLE);
+            queueState(ElbowStates.MOVING_ELBOW);
         }
         else {
             queueState(ElbowStates.IDLE);
@@ -106,13 +88,12 @@ public class Elbow extends StateMachineSubsystemBase<ElbowStates>{
     @Override
     public void inputPeriodic() {
         io.updateInputs(inputs);
-        Logger.processInputs("Elbow", (LoggableInputs)inputs);
+        Logger.processInputs("Elbow", inputs);
     }
 
-    public void swivelAngle(){
-        double currentAngle = inputs.elbowRotateAngleRad;
-        double volts = pid.calculate(currentAngle, targetAngle_RAD);
-        io.setElbowVoltage(volts + ElbowConstants.GRAVITY_FF*Math.cos(currentAngle));
+    
+    public boolean atLimit() {
+        return inputs.elbowRotateAngleRad >= ElbowConstants.MAX_ANGLE || inputs.elbowRotateAngleRad <= ElbowConstants.MIN_ANGLE;
     }
 }
 
