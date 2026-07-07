@@ -53,7 +53,7 @@ public class Shoulder extends StateMachineSubsystemBase<ShoulderStates>{
                 break;
             
             case IDLE:
-                io.setShoulderVelocity(targetAngle_rad);
+                io.setTargetAngle(targetAngle_rad);
                 break;
 
             case DISABLED:
