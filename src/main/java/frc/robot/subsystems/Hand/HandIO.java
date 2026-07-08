@@ -5,6 +5,7 @@ import org.littletonrobotics.junction.AutoLog;
 public interface HandIO {
   @AutoLog
   public static class HandIOInputs {
+    public boolean connected = false;
     public double handMotorVolts = 0.0;
     public double handMotorCurrent = 0.0;
     public double handPositionDeg = 0.0;

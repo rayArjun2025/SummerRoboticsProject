@@ -27,7 +27,7 @@ public class HandIOSim implements HandIO {
   public void updateInputs(HandIOInputs inputs) {
     handMotorSim.update(Constants.globalDelta_s);
     double motorRadPerSec = handMotorSim.getAngularVelocityRadPerSec();
-
+    inputs.connected = true;
     inputs.handMotorCurrent = handMotorSim.getCurrentDrawAmps();
     inputs.handMotorVolts = handVoltage;
     inputs.handPositionDeg = Math.toDegrees(handMotorSim.getAngularPositionRad());
@@ -51,7 +51,6 @@ public class HandIOSim implements HandIO {
   @Override
   public void grip(double position_deg) {
     double handCurrentDeg = Math.toDegrees(handMotorSim.getAngularPositionRad());
-
     handVoltage = pid.calculate(handCurrentDeg, position_deg);
     handVoltage = MathUtil.clamp(handVoltage, HandConstants.LOW_CLAMP, HandConstants.HIGH_CLAMP);
     handMotorSim.setInputVoltage(handVoltage);

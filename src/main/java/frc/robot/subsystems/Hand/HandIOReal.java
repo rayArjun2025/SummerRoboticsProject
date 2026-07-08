@@ -69,8 +69,8 @@ public class HandIOReal implements HandIO {
 
   @Override
   public void updateInputs(HandIOInputs inputs) {
-    BaseStatusSignal.refreshAll(handCurrent_A, handVolts_V, handVel_rps, handPos_r);
-
+    var status = BaseStatusSignal.refreshAll(handCurrent_A, handVolts_V, handVel_rps, handPos_r);
+    inputs.connected = status.isOK();
     inputs.handMotorCurrent = handCurrent_A.getValueAsDouble();
     inputs.handMotorVolts = handVolts_V.getValueAsDouble();
     inputs.handPositionDeg = handPos_r.getValueAsDouble() * 360.0;
@@ -79,7 +79,7 @@ public class HandIOReal implements HandIO {
 
   @Override
   public void setHandVoltage(double volts_V, double ff_V) {
-    volts_V = MathUtil.clamp(volts_V + ff_V, -HandConstants.maxVoltage, HandConstants.maxVoltage);
+    volts_V = MathUtil.clamp(volts_V + ff_V, HandConstants.LOW_CLAMP, HandConstants.HIGH_CLAMP);
     handMotor.setControl(handVoltOut_V.withOutput(volts_V));
   }
 
