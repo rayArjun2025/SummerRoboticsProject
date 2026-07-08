@@ -2,17 +2,15 @@ package frc.robot.subsystems.Hand;
 
 
 import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.inputs.LoggableInputs;
 
-import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.Constants;
 import frc.robot.util.StateMachineSubsystemBase;
 
 public class Hand extends StateMachineSubsystemBase<HandStates> {private static Hand instance;
 
 private final HandIO io;
-private final HandIO.HandIOInputs inputs =
-    new HandIO.HandIOInputs();
+private final HandIOInputsAutoLogged inputs =
+    new HandIOInputsAutoLogged();
 private double targetDegrees=90.0;
 private double homeDegrees=0.0;
 
@@ -83,7 +81,7 @@ public void handleStateMachine() {switch (getState()) {
 
 public void inputPeriodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Hand", (LoggableInputs) inputs);
+    Logger.processInputs("Hand",  inputs);
 }
 
 @Override

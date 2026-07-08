@@ -57,6 +57,7 @@ public class Robot extends LoggedRobot {
     private Drive drive;
     private Climber climber;
     private Hand hand;
+    private ControlScheme controlScheme;
 
     private boolean lastState = false;
 
@@ -125,6 +126,7 @@ public class Robot extends LoggedRobot {
         drive = Drive.getInstance();
         climber = Climber.getInstance();
         hand = Hand.getInstance();
+        controlScheme = new ControlScheme(superstructure, drive);
 
 
         // init subsystems
@@ -154,6 +156,7 @@ public class Robot extends LoggedRobot {
         // Switch thread to high priority to improve loop timing
         Threads.setCurrentThreadPriority(true, 99);
         
+        controlScheme.update();
         elevator.periodic();
         elbow.periodic();
         shoulder.periodic();
@@ -162,6 +165,7 @@ public class Robot extends LoggedRobot {
         drive.periodic();
         climber.periodic();
         hand.periodic();
+       
 
         PerfTracker.periodic();
         Threads.setCurrentThreadPriority(false, 10);

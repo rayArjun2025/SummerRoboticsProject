@@ -12,7 +12,7 @@ import frc.robot.util.*;
 
 public class Climber extends StateMachineSubsystemBase<ClimberStates> {private static Climber instance;
 private final ClimberIO io;
-private final ClimberIO.ClimberIOInputs inputs = new ClimberIO.ClimberIOInputs();
+private final ClimberIOInputsAutoLogged inputs = new ClimberIOInputsAutoLogged();
 private double targetDegrees=90.0;
 private double homeDegrees=0.0;
 
@@ -83,7 +83,7 @@ public void handleStateMachine() {switch (getState()) {
 
 public void inputPeriodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Climber", (LoggableInputs) inputs);
+    Logger.processInputs("Climber", inputs);
 }
 @Override
 protected void outputPeriodic() {
