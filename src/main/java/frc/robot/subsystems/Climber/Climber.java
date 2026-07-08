@@ -69,9 +69,9 @@ public class Climber extends StateMachineSubsystemBase<ClimberStates> {
       case HOLDING:
         if (!isValueReached(inputs.climberPositionDeg, ClimberConstants.targetDegrees_deg, ClimberConstants.tolerance_deg)) {
               queueState(ClimberStates.SHALLOW_CLIMB_TRAVELLING);
-            }
+        }
         else {
-          io.climbTo(ClimberConstants.targetDegrees_deg);
+          io.climbTo(90);
         }
         break;
 
