@@ -14,12 +14,11 @@
 
 package frc.robot;
 
+import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.elbow.Elbow;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.hand.Hand;
-import frc.robot.subsystems.shoulder.Shoulder;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.superstructure.SS;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -50,9 +49,8 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 public class Robot extends LoggedRobot {
 
     private Elevator elevator;
-    private Elbow elbow;
-    private Shoulder shoulder;
     private Vision vision;
+    private Arm arm;
     private SS superstructure;
     private Drive drive;
     private Climber climber;
@@ -119,13 +117,12 @@ public class Robot extends LoggedRobot {
         Logger.start();
 
         elevator = Elevator.getInstance();
-        elbow = Elbow.getInstance();
-        shoulder = Shoulder.getInstance();
         vision = Vision.getInstance();
         superstructure = SS.getInstance();
         drive = Drive.getInstance();
         climber = Climber.getInstance();
         hand = Hand.getInstance();
+        arm = Arm.getInstance();
         controlScheme = new ControlScheme(superstructure, drive);
 
 
@@ -158,9 +155,8 @@ public class Robot extends LoggedRobot {
         
         controlScheme.update();
         elevator.periodic();
-        elbow.periodic();
-        shoulder.periodic();
         vision.periodic();
+        arm.periodic();
         superstructure.periodic();
         drive.periodic();
         climber.periodic();

@@ -10,12 +10,10 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.util.StateMachineSubsystemBase;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmStates;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberStates;
-import frc.robot.subsystems.elbow.Elbow;
-import frc.robot.subsystems.elbow.ElbowStates;
-import frc.robot.subsystems.shoulder.Shoulder;
-import frc.robot.subsystems.shoulder.ShoulderStates;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorStates;
 import frc.robot.subsystems.hand.Hand;
@@ -60,8 +58,7 @@ public class SS extends StateMachineSubsystemBase<SuperstructureStates>{
     }
 
     private final Elevator elevator;
-    private final Shoulder shoulder;
-    private final Elbow elbow;
+    private final Arm arm;
     private final Hand hand;
     private final Climber climber;
 
@@ -70,8 +67,7 @@ public class SS extends StateMachineSubsystemBase<SuperstructureStates>{
     private SS() {
         super("SS");
         this.elevator = Elevator.getInstance();
-        this.shoulder = Shoulder.getInstance();
-        this.elbow = Elbow.getInstance();
+        this.arm = Arm.getInstance();
         this.hand = Hand.getInstance();
         this.climber = Climber.getInstance();
         queueState(SuperstructureStates.STOWED);
@@ -144,14 +140,14 @@ public class SS extends StateMachineSubsystemBase<SuperstructureStates>{
         switch (getState()) {
             case STOWED:
                 elevator.setTargetPosition(STOWED_ELEVATOR_POS);
-                shoulder.queueTargetAngle(INTAKE_SHOULDER_DEG);
-                elbow.setTargetAngle(STOWED_ELBOW_DEG);
+                arm.setShoulderTargetAngle(INTAKE_SHOULDER_DEG);
+                arm.setElbowTargetAngle(STOWED_ELBOW_DEG);
                 break;
 
             case INTAKE_CORAL:
                 elevator.setTargetPosition(INTAKE_ELEVATOR_POS);
-                shoulder.queueTargetAngle(INTAKE_SHOULDER_DEG);
-                elbow.setTargetAngle(INTAKE_ELBOW_DEG);
+                arm.setShoulderTargetAngle(INTAKE_SHOULDER_DEG);
+                arm.setElbowTargetAngle(INTAKE_ELBOW_DEG);
                 hand.requestState(HandStates.GRIPPING_CORAL);
                 break;
 
@@ -170,12 +166,11 @@ public class SS extends StateMachineSubsystemBase<SuperstructureStates>{
 
     private void handleClimbing() {
         elevator.setTargetPosition(STOWED_ELEVATOR_POS);
-        shoulder.queueTargetAngle(STOWED_SHOULDER_DEG);
-        elbow.setTargetAngle(STOWED_ELBOW_DEG);
+        arm.setShoulderTargetAngle(STOWED_SHOULDER_DEG);
+        arm.setElbowTargetAngle(STOWED_ELBOW_DEG);
 
         boolean clearToClimb = elevator.isState(ElevatorStates.IDLE)
-                && shoulder.isState(ShoulderStates.IDLE)
-                && elbow.isState(ElbowStates.IDLE);
+                && arm.isState(ArmStates.IDLE);
 
         if (clearToClimb) {
             climber.requestState(ClimberStates.SHALLOW_CLIMB_TRAVELLING);
@@ -221,14 +216,13 @@ public class SS extends StateMachineSubsystemBase<SuperstructureStates>{
 
     private void driveToScorePosition() {
         elevator.setTargetPosition(scoreElevatorTarget);
-        shoulder.queueTargetAngle(SCORE_SHOULDER_DEG);
-        elbow.setTargetAngle(SCORE_ELBOW_DEG);
+        arm.setShoulderTargetAngle(SCORE_SHOULDER_DEG);
+        arm.setElbowTargetAngle(SCORE_ELBOW_DEG);
     }
 
     private boolean atScorePosition() {
         return elevator.isState(ElevatorStates.IDLE)
-                && shoulder.isState(ShoulderStates.IDLE)
-                && elbow.isState(ElbowStates.IDLE);
+                && arm.isState(ArmStates.IDLE);
     }
 
     @Override
