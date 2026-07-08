@@ -2,93 +2,118 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.Climber;
-
-import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.inputs.LoggableInputs;
+package frc.robot.subsystems.climber;
 
 import frc.robot.Constants;
-import frc.robot.util.*;
+import frc.robot.util.StateMachineSubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
-public class Climber extends StateMachineSubsystemBase<ClimberStates> {private static Climber instance;
-private final ClimberIO io;
-private final ClimberIOInputsAutoLogged inputs = new ClimberIOInputsAutoLogged();
-private double targetDegrees=90.0;
-private double homeDegrees=0.0;
+public class Climber extends StateMachineSubsystemBase<ClimberStates> {
+  private static Climber instance;
+  private final ClimberIO io;
+  private final ClimberIOInputsAutoLogged inputs = new ClimberIOInputsAutoLogged();
 
-Climber(ClimberIO io) {
+  private Climber(ClimberIO io) {
     super("Climber");
     this.io = io;
     queueState(ClimberStates.IDLE);
-}
+  }
 
-public static Climber getInstance() {
+  public static Climber getInstance() {
     if (instance == null) {
-    switch (Constants.currentMode) {
+      switch (Constants.currentMode) {
         case REAL:
-        instance = new Climber(new ClimberIOReal());
-        break;
+          instance = new Climber(new ClimberIOReal());
+          break;
 
         case SIM:
-        instance = new Climber(new ClimberIOSim());
-        break;
+          instance = new Climber(new ClimberIOSim());
+          break;
 
         case REPLAY:
-        instance = new Climber(new ClimberIO() {});
-        break;
+          instance = new Climber(new ClimberIO() {});
+          break;
         default:
-        break;
-    }
-
+          break;
+      }
     }
     return instance;
-}
+  }
 
-public void requestState(ClimberStates state) {
+  public void requestState(ClimberStates state) {
     queueState(state);
-}
+  }
 
-@Override
-public void handleStateMachine() {switch (getState()) {
-    case DISABLED:
+  @Override
+  public void handleStateMachine() {
+    switch (getState()) {
+      case DISABLED:
         io.stopClimb();
         break;
 
-    case IDLE:
+      case IDLE:
         io.stopClimb();
         break;
 
-    case SHALLOW_CLIMBING:
-        if ((inputs.hookPositionDeg - targetDegrees) > 1.0 && (inputs.wheelPositionDeg - targetDegrees) < 1.0)
-            queueState(ClimberStates.IDLE);
-        else
-            io.climbTo(targetDegrees, targetDegrees);
+      case SHALLOW_CLIMB_TRAVELLING:
+        if (isValueReached(inputs.hookPositionDeg, ClimberConstants.targetDegrees_deg, ClimberConstants.tolerance_deg) && 
+        isValueReached(inputs.wheelPositionDeg, ClimberConstants.targetDegrees_deg, ClimberConstants.tolerance_deg)) {
+              queueState(ClimberStates.HOLDING);
+            }
+
+        else {
+          io.climbTo(ClimberConstants.targetDegrees_deg, ClimberConstants.targetDegrees_deg);
+        }
         break;
 
-    case RELEASING:
-        if (((inputs.hookPositionDeg - homeDegrees) <= 1.0) && ((inputs.wheelPositionDeg - homeDegrees) <= 1.0))
-            queueState(ClimberStates.IDLE);
-        else
-            io.climbTo(homeDegrees, homeDegrees);
+      case HOLDING:
+        if (!isValueReached(inputs.hookPositionDeg, ClimberConstants.targetDegrees_deg, ClimberConstants.tolerance_deg) || 
+        !isValueReached(inputs.wheelPositionDeg, ClimberConstants.targetDegrees_deg, ClimberConstants.tolerance_deg)) {
+              queueState(ClimberStates.SHALLOW_CLIMB_TRAVELLING);
+            }
+        else {
+          io.climbTo(ClimberConstants.targetDegrees_deg, ClimberConstants.targetDegrees_deg);
+        }
         break;
 
-    case WAITING:
+      case RELEASING:
+        if (isValueReached(inputs.hookPositionDeg, ClimberConstants.homeDegrees_deg, ClimberConstants.tolerance_deg) && 
+        isValueReached(inputs.wheelPositionDeg, ClimberConstants.homeDegrees_deg, ClimberConstants.tolerance_deg)) { 
+          queueState(ClimberStates.IDLE);
+        }
+        else {
+          io.climbTo(ClimberConstants.homeDegrees_deg, ClimberConstants.homeDegrees_deg); 
+        }
         break;
-        
-    default:
+
+      case HOMING:
+        if (isValueReached(inputs.hookPositionDeg, ClimberConstants.homeDegrees_deg, ClimberConstants.tolerance_deg) && 
+        isValueReached(inputs.wheelPositionDeg, ClimberConstants.homeDegrees_deg, ClimberConstants.tolerance_deg)) { 
+          io.zeroPosition();
+          io.stopClimb();
+          queueState(ClimberStates.IDLE);
+        }
+        else {
+          io.climbTo(ClimberConstants.homeDegrees_deg, ClimberConstants.homeDegrees_deg);
+        }
+      default:
         io.stopClimb();
         break;
     }
-}
+  }
 
-public void inputPeriodic() {
+  public boolean isValueReached(double position_deg, double target_deg, double tolerance_deg) {
+    return (Math.abs(position_deg - target_deg) <= tolerance_deg);
+  }
+
+  @Override
+  public void inputPeriodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Climber", inputs);
-}
-@Override
-protected void outputPeriodic() {
-    Logger.recordOutput("Climber/ClimbTargetDegrees", targetDegrees);
-}
+  }
 
-
+  @Override
+  protected void outputPeriodic() {
+    Logger.recordOutput("Climber/ClimbTargetDegrees", ClimberConstants.targetDegrees_deg);
+  }
 }

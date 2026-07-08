@@ -11,7 +11,8 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.Drive;
+// Raymond: lowercase package - frc.robot.subsystems.drive, rename the folder.
+package frc.robot.subsystems.drive;
 
 import static frc.robot.util.PhoenixUtil.*;
 
@@ -62,8 +63,10 @@ public class ModuleIOTalonFX implements ModuleIO {
 
   // Voltage control requests
   private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(true);
-  private final PositionVoltage positionVoltageRequest = new PositionVoltage(0.0);
-  private final VelocityVoltage velocityVoltageRequest = new VelocityVoltage(0.0);
+  private final PositionVoltage positionVoltageRequest =
+      new PositionVoltage(0.0).withEnableFOC(true);
+  private final VelocityVoltage velocityVoltageRequest =
+      new VelocityVoltage(0.0).withEnableFOC(true);
 
   // Torque-current control requests
   private final TorqueCurrentFOC torqueCurrentRequest = new TorqueCurrentFOC(0);
@@ -256,8 +259,6 @@ public class ModuleIOTalonFX implements ModuleIO {
           case TorqueCurrentFOC -> velocityTorqueCurrentRequest.withVelocity(velocityRotPerSec);
         });
   }
-
-
 
   @Override
   public void setTurnPosition(Rotation2d rotation) {

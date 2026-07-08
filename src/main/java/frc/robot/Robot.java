@@ -14,11 +14,11 @@
 
 package frc.robot;
 
-import frc.robot.subsystems.Climber.Climber;
-import frc.robot.subsystems.Drive.Drive;
-import frc.robot.subsystems.Hand.Hand;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.elbow.Elbow;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.hand.Hand;
 import frc.robot.subsystems.shoulder.Shoulder;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.superstructure.SS;

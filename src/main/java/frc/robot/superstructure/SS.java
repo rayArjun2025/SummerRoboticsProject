@@ -11,16 +11,16 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.util.IState;
 import frc.robot.util.StateMachineSubsystemBase;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberStates;
 import frc.robot.subsystems.elbow.Elbow;
 import frc.robot.subsystems.elbow.ElbowStates;
 import frc.robot.subsystems.shoulder.Shoulder;
 import frc.robot.subsystems.shoulder.ShoulderStates;
-import frc.robot.subsystems.Hand.Hand;
-import frc.robot.subsystems.Hand.HandStates;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorStates;
-import frc.robot.subsystems.Climber.Climber;
-import frc.robot.subsystems.Climber.ClimberStates;
+import frc.robot.subsystems.hand.Hand;
+import frc.robot.subsystems.hand.HandStates;
 
 public class SS extends StateMachineSubsystemBase<SuperstructureStates>{
     private static SS instance;
@@ -179,7 +179,7 @@ public class SS extends StateMachineSubsystemBase<SuperstructureStates>{
                 && elbow.isState(ElbowStates.IDLE);
 
         if (clearToClimb) {
-            climber.requestState(ClimberStates.SHALLOW_CLIMBING);
+            climber.requestState(ClimberStates.SHALLOW_CLIMB_TRAVELLING);
         } else {
             climber.requestState(ClimberStates.IDLE);
         }
