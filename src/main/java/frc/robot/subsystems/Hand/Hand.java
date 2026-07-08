@@ -17,7 +17,7 @@ public class Hand extends StateMachineSubsystemBase<HandStates> {
   private Hand(HandIO io) {
     super("Hand");
     this.io = io;
-    queueState(HandStates.IDLE);
+    queueState(HandStates.GRIPPING_CORAL);
   }
 
   public static Hand getInstance() {
