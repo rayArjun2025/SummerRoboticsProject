@@ -18,7 +18,7 @@ public class ElbowConstants {
     public static final double MAX_VOLTAGE = 12.0;;
     public static final double MIN_VOLTAGE = -12.0;
     public static final int MOTOR_ID = 1;
-    public static final double TOLERANCE = 1.0;
+    public static final double TOLERANCE = 0.01;
     public static final double MOTION_MAGIC_CRUISE_VELOCITY = 0;
     public static final double MOTION_MAGIC_ACCELERATION = 0;
     public static final double MOTION_MAGIC_JERK = 0;

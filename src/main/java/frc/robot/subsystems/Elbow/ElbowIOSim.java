@@ -22,7 +22,6 @@ public class ElbowIOSim implements ElbowIO{
     public void updateInputs(ElbowIOInputs inputs){
         swivelAngle();
         elbowJoint.update(Constants.globalDelta_s);
-
         inputs.angularVelocityRad = elbowJoint.getVelocityRadPerSec();
         inputs.elbowRotateAngleRad = elbowJoint.getAngleRads();
         inputs.elbowCurrentAmps = elbowJoint.getCurrentDrawAmps();

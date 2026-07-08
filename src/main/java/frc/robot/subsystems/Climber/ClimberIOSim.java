@@ -5,6 +5,8 @@
 package frc.robot.subsystems.climber;
 
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
@@ -13,10 +15,11 @@ import frc.robot.subsystems.elbow.ElbowConstants;
 
 public class ClimberIOSim implements ClimberIO {
   private double climberVoltage = 0.00;
-
+  private final PIDController pid;
   private SingleJointedArmSim climberSim;
 
   public ClimberIOSim() {
+    pid = new PIDController(ClimberConstants.climberKP, ClimberConstants.climberKI, ClimberConstants.climberKD);
     double moi = SingleJointedArmSim.estimateMOI(ElbowConstants.ARM_LENGTH, ElbowConstants.ARM_MASS);
     climberSim = new SingleJointedArmSim(DCMotor.getKrakenX60Foc(2), ClimberConstants.GEAR_RATIO, moi, ClimberConstants.ARM_LENGTH, ClimberConstants.homeDegrees_deg, ClimberConstants.targetDegrees_deg, true, 0);
   }
@@ -44,11 +47,8 @@ public class ClimberIOSim implements ClimberIO {
   @Override
   public void climbTo(double climber_pos_deg) {
     double climberCurrentDeg = Math.toDegrees(climberSim.getAngleRads());
-    
-    climberVoltage =
-        Math.max(
-            -12.0, Math.min(12.0, ClimberConstants.hookKP * (climber_pos_deg - climberCurrentDeg)));
-
+    climberVoltage = pid.calculate(climberCurrentDeg, climber_pos_deg);
+    climberVoltage = MathUtil.clamp(climberVoltage, ClimberConstants.LOW_CLAMP, ClimberConstants.HIGH_CLAMP);
     climberSim.setInputVoltage(climberVoltage);
   }
 }

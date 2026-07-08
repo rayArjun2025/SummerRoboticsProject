@@ -22,21 +22,19 @@ public final class ClimberConstants {
   public static final double GEAR_RATIO = 3.0;
   public static final double ARM_LENGTH = 0.22;
   public static final double ARM_MASS = 1.8;
+  public static final double LOW_CLAMP = -12;
+  public static final double HIGH_CLAMP = 12;
+  
+  public static final double climberKP = 8.0;
+  public static final double climberKI = 0;
+  public static final double climberKD = 0.4;
+  public static final double climberKV = 1;
+  public static final double climberKS = 0.18;
+  public static final double climberKA = 0.08;
+
+
 
   
-  public static final double hookKP = 1.0;
-  public static final double hookKI = 0;
-  public static final double hookKD = 0;
-  public static final double hookKV = 0;
-  public static final double hookKS = 0;
-  public static final double hookKA = 0;
-
-  public static final double wheelKP = 1.0;
-  public static final double wheelKI = 0;
-  public static final double wheelKD = 0;
-  public static final double wheelKS = 0;
-  public static final double wheelKV = 0;
-  public static final double wheelKA = 0;
 
   // Raymond: this is where the tolerance and the target/home angles belong (TOLERANCE_DEG, etc),
   // not hardcoded as 1.0 / 90.0 inside Climber.java. also missing gear ratio and current limits -
