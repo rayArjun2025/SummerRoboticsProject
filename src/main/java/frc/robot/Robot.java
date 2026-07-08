@@ -14,22 +14,18 @@
 
 package frc.robot;
 
+import frc.robot.subsystems.Climber.Climber;
+import frc.robot.subsystems.Drive.Drive;
+import frc.robot.subsystems.Hand.Hand;
 import frc.robot.subsystems.elbow.Elbow;
-import frc.robot.subsystems.elbow.ElbowIOReal;
-import frc.robot.subsystems.elbow.ElbowIOSim;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.elevator.ElevatorIOReal;
-import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.shoulder.Shoulder;
-import frc.robot.subsystems.shoulder.ShoulderReal;
-import frc.robot.subsystems.shoulder.ShoulderSim;
 import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionIOSim;
+import frc.robot.superstructure.SS;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.MTimer;
 
@@ -57,6 +53,10 @@ public class Robot extends LoggedRobot {
     private Elbow elbow;
     private Shoulder shoulder;
     private Vision vision;
+    private SS superstructure;
+    private Drive drive;
+    private Climber climber;
+    private Hand hand;
 
     private boolean lastState = false;
 
@@ -92,26 +92,17 @@ public class Robot extends LoggedRobot {
         switch (Constants.currentMode) {
             case REAL:
                 // Running on a real robot, log to a USB stick ("/U/logs")
-                elevator = new Elevator(new ElevatorIOReal());
-                elbow = new Elbow(new ElbowIOReal());
-                shoulder = new Shoulder(new ShoulderReal());
                 Logger.addDataReceiver(new WPILOGWriter("U/logs/" + BuildConstants.GIT_BRANCH));
                 Logger.addDataReceiver(new NT4Publisher());
                 break;
 
             case SIM:
                 // Running a physics simulator, log to NT
-                elevator = new Elevator(new ElevatorIOSim());
-                elbow = new Elbow(new ElbowIOSim());
-                shoulder = new Shoulder(new ShoulderSim());
                 Logger.addDataReceiver(new NT4Publisher());
                 break;
 
             case REPLAY:
                 // Replaying a log, set up replay source
-                elevator = new Elevator(new ElevatorIOSim());
-                elbow = new Elbow(new ElbowIOSim());
-                shoulder = new Shoulder(new ShoulderSim());
                 setUseTiming(false); // Run as fast as possible
                 String logPath = LogFileUtil.findReplayLog();
                 Logger.setReplaySource(new WPILOGReader(logPath));
@@ -126,7 +117,15 @@ public class Robot extends LoggedRobot {
         // Start AdvantageKit logger
         Logger.start();
 
-        
+        elevator = Elevator.getInstance();
+        elbow = Elbow.getInstance();
+        shoulder = Shoulder.getInstance();
+        vision = Vision.getInstance();
+        superstructure = SS.getInstance();
+        drive = Drive.getInstance();
+        climber = Climber.getInstance();
+        hand = Hand.getInstance();
+
 
         // init subsystems
   
@@ -154,9 +153,16 @@ public class Robot extends LoggedRobot {
     public void robotPeriodic() {
         // Switch thread to high priority to improve loop timing
         Threads.setCurrentThreadPriority(true, 99);
+        
         elevator.periodic();
         elbow.periodic();
         shoulder.periodic();
+        vision.periodic();
+        superstructure.periodic();
+        drive.periodic();
+        climber.periodic();
+        hand.periodic();
+
         PerfTracker.periodic();
         Threads.setCurrentThreadPriority(false, 10);
     }
