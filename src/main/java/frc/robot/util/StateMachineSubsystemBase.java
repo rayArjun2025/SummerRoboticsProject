@@ -6,8 +6,6 @@ package frc.robot.util;
 
 import frc.robot.PerfTracker;
 
-import frc.robot.util.IState;
-import frc.robot.util.IStateMachine;
 import org.littletonrobotics.junction.Logger;
 
 /** States are now handled inside the respective subsystem */

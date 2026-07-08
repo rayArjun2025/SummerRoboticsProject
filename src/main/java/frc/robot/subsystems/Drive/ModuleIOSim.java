@@ -26,6 +26,7 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import frc.robot.Constants;
 
 /**
  * Physics sim implementation of module IO. The sim models are configured using a set of module
@@ -92,8 +93,8 @@ public class ModuleIOSim implements ModuleIO {
     // Update simulation state
     driveSim.setInputVoltage(MathUtil.clamp(driveAppliedVolts, -12.0, 12.0));
     turnSim.setInputVoltage(MathUtil.clamp(turnAppliedVolts, -12.0, 12.0));
-    driveSim.update(0.02);
-    turnSim.update(0.02);
+    driveSim.update(Constants.globalDelta_s);
+    turnSim.update(Constants.globalDelta_s);
 
     // Update drive inputs
     inputs.driveConnected = true;

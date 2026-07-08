@@ -1,6 +1,5 @@
 package frc.robot.subsystems.elbow;
 
-import edu.wpi.first.units.measure.Frequency;
 
 public class ElbowConstants {
     public static final double MAX_ANGLE = Math.toRadians(90);
