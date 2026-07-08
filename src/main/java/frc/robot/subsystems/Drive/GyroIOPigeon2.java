@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 
 // Raymond: lowercase package - frc.robot.subsystems.drive, rename the folder.
-package frc.robot.subsystems.Drive;
+package frc.robot.subsystems.drive;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
@@ -38,9 +38,10 @@ public class GyroIOPigeon2 implements GyroIO {
   private final StatusSignal<AngularVelocity> yawVelocity;
 
   public GyroIOPigeon2() {
-    pigeon = new Pigeon2(
-        TunerConstants.DrivetrainConstants.Pigeon2Id,
-        TunerConstants.DrivetrainConstants.CANBusName);
+    pigeon =
+        new Pigeon2(
+            TunerConstants.DrivetrainConstants.Pigeon2Id,
+            TunerConstants.DrivetrainConstants.CANBusName);
     pigeon.getConfigurator().apply(new Pigeon2Configuration());
     pigeon.getConfigurator().setYaw(0.0);
 
@@ -58,23 +59,25 @@ public class GyroIOPigeon2 implements GyroIO {
 
   @Override
   public void updateInputs(GyroIOInputs inputs) {
-    inputs.connected = BaseStatusSignal.refreshAll(yaw, pitch, roll, yawVelocity).equals(StatusCode.OK);
+    inputs.connected =
+        BaseStatusSignal.refreshAll(yaw, pitch, roll, yawVelocity).equals(StatusCode.OK);
     inputs.yaw_Rot2d = Rotation2d.fromDegrees(yaw.getValueAsDouble());
     inputs.pitch_Rot2d = Rotation2d.fromDegrees(pitch.getValueAsDouble());
     inputs.roll_Rot2d = Rotation2d.fromDegrees(roll.getValueAsDouble());
     inputs.yawVel_radps = Units.degreesToRadians(yawVelocity.getValueAsDouble());
 
-    inputs.odometryYawTimestamps = yawTimestampQueue.stream().mapToDouble((Double value) -> value).toArray();
-    inputs.odometryYawPositions = yawPositionQueue.stream()
-        .map((Double value) -> Rotation2d.fromDegrees(value))
-        .toArray(Rotation2d[]::new);
+    inputs.odometryYawTimestamps =
+        yawTimestampQueue.stream().mapToDouble((Double value) -> value).toArray();
+    inputs.odometryYawPositions =
+        yawPositionQueue.stream()
+            .map((Double value) -> Rotation2d.fromDegrees(value))
+            .toArray(Rotation2d[]::new);
     yawTimestampQueue.clear();
     yawPositionQueue.clear();
   }
 
-  // Raymond: this is the real bug. reference is zero(double angle) { pigeon.setYaw(angle); }. you hardcoded 180, so every zeroGyro() snaps the robot's heading to 180deg no matter what you actually want it to be. take the angle param back and setYaw(angle).
   @Override
-  public void zero() {
-    pigeon.setYaw(180);
+  public void zero(double angle) {
+    pigeon.setYaw(angle);
   }
 }

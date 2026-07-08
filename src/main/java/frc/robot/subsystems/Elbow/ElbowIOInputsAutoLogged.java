@@ -1,4 +1,7 @@
-// Raymond: delete this whole file. you already put @AutoLog on ElbowIOInputs, which GENERATES a class with this exact name - this hand-written copy collides with the generated one. let AutoLog do it, that's the whole point. on top of that this copy silently drops the `connected` field from toLog/fromLog/clone, so it's already out of sync. and lowercase the package.
+// Raymond: delete this whole file. you already put @AutoLog on ElbowIOInputs, which GENERATES a
+// class with this exact name - this hand-written copy collides with the generated one. let AutoLog
+// do it, that's the whole point. on top of that this copy silently drops the `connected` field from
+// toLog/fromLog/clone, so it's already out of sync. and lowercase the package.
 package frc.robot.subsystems.Elbow;
 
 import org.littletonrobotics.junction.LogTable;
@@ -31,8 +34,7 @@ public class ElbowIOInputsAutoLogged extends ElbowIO.ElbowIOInputs
 
   @Override
   public ElbowIOInputsAutoLogged clone() {
-    ElbowIOInputsAutoLogged copy =
-        new ElbowIOInputsAutoLogged();
+    ElbowIOInputsAutoLogged copy = new ElbowIOInputsAutoLogged();
 
     copy.elbowVoltage = elbowVoltage;
     copy.elbowCurrent = elbowCurrent;

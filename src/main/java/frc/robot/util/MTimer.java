@@ -4,70 +4,70 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class MTimer implements ITimed {
 
-    private boolean active;
-    private Timer timer;
+  private boolean active;
+  private Timer timer;
 
-    public MTimer() {
-        timer = new Timer();
-        timer.start();
-        active = false;
-    }
+  public MTimer() {
+    timer = new Timer();
+    timer.start();
+    active = false;
+  }
 
-    public double time() {
-        if (active) {
-            return timer.get();
-        } else {
-            return 0.0;
-        }
+  public double time() {
+    if (active) {
+      return timer.get();
+    } else {
+      return 0.0;
     }
+  }
 
-    public void reset() {
-        timer.restart();
-        active = true;
-    }
+  public void reset() {
+    timer.restart();
+    active = true;
+  }
 
-    public void stop() {
-        timer.stop();
-        active = false;
-    }
+  public void stop() {
+    timer.stop();
+    active = false;
+  }
 
-    public boolean after(double seconds) {
-        if (active) {
-            return timer.hasElapsed(seconds);
-        } else {
-            return false;
-        }
+  public boolean after(double seconds) {
+    if (active) {
+      return timer.hasElapsed(seconds);
+    } else {
+      return false;
     }
+  }
 
-    public boolean before(double seconds) {
-        if (active) {
-            return !timer.hasElapsed(seconds);
-        } else {
-            return true;
-        }
+  public boolean before(double seconds) {
+    if (active) {
+      return !timer.hasElapsed(seconds);
+    } else {
+      return true;
     }
+  }
 
-    public boolean between(double earlier, double later) {
-        if (active) {
-            double t = timer.get();
-            return earlier < t && t < later;
-        } else {
-            return false;
-        }
+  public boolean between(double earlier, double later) {
+    if (active) {
+      double t = timer.get();
+      return earlier < t && t < later;
+    } else {
+      return false;
     }
+  }
 
-    public double alpha(double earlier, double later) {
-        if (active) {
-            double t = timer.get();
-            if (t <= earlier) return 0.0;
-            if (t >= later) return 1.0;
-            return Util.unlerp(earlier, later, t);
-        } else {
-            return 0.0;
-        }
+  public double alpha(double earlier, double later) {
+    if (active) {
+      double t = timer.get();
+      if (t <= earlier) return 0.0;
+      if (t >= later) return 1.0;
+      return Util.unlerp(earlier, later, t);
+    } else {
+      return 0.0;
     }
+  }
 
-    public boolean active() {
-        return active;
-    }
+  public boolean active() {
+    return active;
+  }
 }

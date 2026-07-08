@@ -7,9 +7,10 @@ package frc.robot.subsystems.climber;
 import frc.robot.util.IState;
 
 public enum ClimberStates implements IState {
-    DISABLED,
-    IDLE,
-    SHALLOW_CLIMB_TRAVELLING,
-    HOLDING,
-    RELEASING,
+  DISABLED,
+  IDLE,
+  SHALLOW_CLIMB_TRAVELLING,
+  HOLDING,
+  RELEASING,
+  HOMING
 }

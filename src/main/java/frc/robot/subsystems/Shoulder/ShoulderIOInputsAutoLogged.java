@@ -1,5 +1,8 @@
 // Raymond: capitalized package - frc.robot.subsystems.shoulder, rename the folder.
-// Raymond: delete this whole file. you put @AutoLog on ShoulderIOInputs, which already generates a ShoulderIOInputsAutoLogged in this exact package - this hand-written one collides with the generated class. and your toLog/fromLog/clone here forget the `connected` field anyway, so it wouldn't even log correctly. let @AutoLog do it.
+// Raymond: delete this whole file. you put @AutoLog on ShoulderIOInputs, which already generates a
+// ShoulderIOInputsAutoLogged in this exact package - this hand-written one collides with the
+// generated class. and your toLog/fromLog/clone here forget the `connected` field anyway, so it
+// wouldn't even log correctly. let @AutoLog do it.
 package frc.robot.subsystems.Shoulder;
 
 import org.littletonrobotics.junction.LogTable;
@@ -32,8 +35,7 @@ public class ShoulderIOInputsAutoLogged extends ShoulderIO.ShoulderIOInputs
 
   @Override
   public ShoulderIOInputsAutoLogged clone() {
-    ShoulderIOInputsAutoLogged copy =
-        new ShoulderIOInputsAutoLogged();
+    ShoulderIOInputsAutoLogged copy = new ShoulderIOInputsAutoLogged();
 
     copy.shoulderVoltage = shoulderVoltage;
     copy.shoulderCurrent = shoulderCurrent;

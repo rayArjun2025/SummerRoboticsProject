@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 
 // Raymond: lowercase package - frc.robot.subsystems.drive, and rename the folder.
-package frc.robot.subsystems.Drive;
+package frc.robot.subsystems.drive;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
@@ -31,6 +31,5 @@ public interface GyroIO {
 
   public default void updateInputs(GyroIOInputs inputs) {}
 
-  // Raymond: reference signature is zero(double angle) - you dropped the param. that's the one real change in this file and it ripples through GyroIOPigeon2 and Drive.zeroGyro. put the angle back so you can zero to a chosen heading.
-  public default void zero() {}
+  public default void zero(double angle) {}
 }

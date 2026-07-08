@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 
 // Raymond: lowercase package - frc.robot.subsystems.drive, rename the folder.
-package frc.robot.subsystems.Drive;
+package frc.robot.subsystems.drive;
 
 import static frc.robot.util.PhoenixUtil.*;
 
@@ -63,9 +63,10 @@ public class ModuleIOTalonFX implements ModuleIO {
 
   // Voltage control requests
   private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(true);
-  // Raymond: you dropped .withEnableFOC(true) off both of these - reference has it. note voltageRequest right above still has FOC, so now FOC is on for some control requests and off for others on the same motor. that's inconsistent and costs you torque/efficiency. add it back to both.
-  private final PositionVoltage positionVoltageRequest = new PositionVoltage(0.0);
-  private final VelocityVoltage velocityVoltageRequest = new VelocityVoltage(0.0);
+  private final PositionVoltage positionVoltageRequest =
+      new PositionVoltage(0.0).withEnableFOC(true);
+  private final VelocityVoltage velocityVoltageRequest =
+      new VelocityVoltage(0.0).withEnableFOC(true);
 
   // Torque-current control requests
   private final TorqueCurrentFOC torqueCurrentRequest = new TorqueCurrentFOC(0);
@@ -258,8 +259,6 @@ public class ModuleIOTalonFX implements ModuleIO {
           case TorqueCurrentFOC -> velocityTorqueCurrentRequest.withVelocity(velocityRotPerSec);
         });
   }
-
-
 
   @Override
   public void setTurnPosition(Rotation2d rotation) {

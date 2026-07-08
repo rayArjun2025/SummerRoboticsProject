@@ -23,7 +23,9 @@ public class PhoenixUtil {
       var error = command.get();
       if (error.isOK()) break;
     }
-    try {Thread.sleep(10);} catch(Exception e){
+    try {
+      Thread.sleep(10);
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }

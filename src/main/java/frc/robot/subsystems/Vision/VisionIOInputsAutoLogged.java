@@ -1,13 +1,13 @@
 // Raymond: lowercase package - frc.robot.subsystems.vision.
-// Raymond: this file is a straight copy of the reference one (only the package differs) and it's normally auto-generated from @AutoLog anyway. heads up: it logs/clones the original reference fields, NOT the extra ones you bolted onto VisionIOInputs (estimatedPose, tagCount, timestampSeconds, avgTagDistance). so those silently don't get logged.
+// Raymond: this file is a straight copy of the reference one (only the package differs) and it's
+// normally auto-generated from @AutoLog anyway. heads up: it logs/clones the original reference
+// fields, NOT the extra ones you bolted onto VisionIOInputs (estimatedPose, tagCount,
+// timestampSeconds, avgTagDistance). so those silently don't get logged.
 package frc.robot.subsystems.Vision;
 
-import java.lang.Cloneable;
-import java.lang.Override;
+import frc.robot.subsystems.Vision.VisionIO.VisionIOInputs;
 import org.littletonrobotics.junction.LogTable;
 import org.littletonrobotics.junction.inputs.LoggableInputs;
-import frc.robot.subsystems.Vision.VisionIO.VisionIOInputs;
-
 
 public class VisionIOInputsAutoLogged extends VisionIOInputs implements LoggableInputs, Cloneable {
 

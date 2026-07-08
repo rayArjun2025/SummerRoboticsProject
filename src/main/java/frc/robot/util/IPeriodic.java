@@ -7,7 +7,7 @@ package frc.robot.util;
 /** Add your docs here. */
 public interface IPeriodic {
 
-    public default void init(){}
+  public default void init() {}
 
-    public default void periodic(){}
+  public default void periodic() {}
 }

@@ -1,23 +1,24 @@
-// Raymond: lowercase package here too (and every file in this folder) - frc.robot.subsystems.elevator.
+// Raymond: lowercase package here too (and every file in this folder) -
+// frc.robot.subsystems.elevator.
 package frc.robot.subsystems.Elevator;
 
 import org.littletonrobotics.junction.AutoLog;
 
-
 public interface ElevatorIO {
-    @AutoLog
-    public static class ElevatorIOInputs{
-        public double elevatorMotorVolts = 0.0;
-        public double elevatorMotorCurrent = 0.0;
-        public double elevatorPositionMeters = 0.0;
-        public double elevatorVelocityMetersPerSec = 0.0;
-        public boolean atTop = false;
-        public boolean atBottom = false;
-        public boolean connected = false;
-    }
+  @AutoLog
+  public static class ElevatorIOInputs {
+    public double elevatorMotorVolts = 0.0;
+    public double elevatorMotorCurrent = 0.0;
+    public double elevatorPositionMeters = 0.0;
+    public double elevatorVelocityMetersPerSec = 0.0;
+    public boolean atTop = false;
+    public boolean atBottom = false;
+    public boolean connected = false;
+  }
 
+  public default void updateInputs(ElevatorIOInputs inputs) {}
 
-    public default void updateInputs(ElevatorIOInputs inputs) {}
-    public default void setMotorVoltage(double volts) {}
-    public default void stopMoving() {}
+  public default void setMotorVoltage(double volts) {}
+
+  public default void stopMoving() {}
 }
