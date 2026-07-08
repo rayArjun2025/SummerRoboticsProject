@@ -25,6 +25,7 @@ public class ShoulderSim implements ShoulderIO{
         inputs.shoulderSwivelAngle_rad = shoulderJoint.getAngleRads();
         inputs.shoulderCurrent_amps = shoulderJoint.getCurrentDrawAmps();
         inputs.shoulderVoltage_volts = motorVoltage;
+        inputs.connected = true;
     }
 
    
