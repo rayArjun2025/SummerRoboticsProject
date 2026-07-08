@@ -9,7 +9,6 @@ import java.util.EnumSet;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.util.IState;
 import frc.robot.util.StateMachineSubsystemBase;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberStates;
