@@ -57,45 +57,41 @@ public class Climber extends StateMachineSubsystemBase<ClimberStates> {
         break;
 
       case SHALLOW_CLIMB_TRAVELLING:
-        if (isValueReached(inputs.hookPositionDeg, ClimberConstants.targetDegrees_deg, ClimberConstants.tolerance_deg) && 
-        isValueReached(inputs.wheelPositionDeg, ClimberConstants.targetDegrees_deg, ClimberConstants.tolerance_deg)) {
+        if (isValueReached(inputs.climberPositionDeg, ClimberConstants.targetDegrees_deg, ClimberConstants.tolerance_deg)) {
               queueState(ClimberStates.HOLDING);
             }
 
         else {
-          io.climbTo(ClimberConstants.targetDegrees_deg, ClimberConstants.targetDegrees_deg);
+          io.climbTo(ClimberConstants.targetDegrees_deg);
         }
         break;
 
       case HOLDING:
-        if (!isValueReached(inputs.hookPositionDeg, ClimberConstants.targetDegrees_deg, ClimberConstants.tolerance_deg) || 
-        !isValueReached(inputs.wheelPositionDeg, ClimberConstants.targetDegrees_deg, ClimberConstants.tolerance_deg)) {
+        if (!isValueReached(inputs.climberPositionDeg, ClimberConstants.targetDegrees_deg, ClimberConstants.tolerance_deg)) {
               queueState(ClimberStates.SHALLOW_CLIMB_TRAVELLING);
             }
         else {
-          io.climbTo(ClimberConstants.targetDegrees_deg, ClimberConstants.targetDegrees_deg);
+          io.climbTo(ClimberConstants.targetDegrees_deg);
         }
         break;
 
       case RELEASING:
-        if (isValueReached(inputs.hookPositionDeg, ClimberConstants.homeDegrees_deg, ClimberConstants.tolerance_deg) && 
-        isValueReached(inputs.wheelPositionDeg, ClimberConstants.homeDegrees_deg, ClimberConstants.tolerance_deg)) { 
+        if (isValueReached(inputs.climberPositionDeg, ClimberConstants.homeDegrees_deg, ClimberConstants.tolerance_deg)){ 
           queueState(ClimberStates.IDLE);
         }
         else {
-          io.climbTo(ClimberConstants.homeDegrees_deg, ClimberConstants.homeDegrees_deg); 
+          io.climbTo(ClimberConstants.homeDegrees_deg); 
         }
         break;
 
       case HOMING:
-        if (isValueReached(inputs.hookPositionDeg, ClimberConstants.homeDegrees_deg, ClimberConstants.tolerance_deg) && 
-        isValueReached(inputs.wheelPositionDeg, ClimberConstants.homeDegrees_deg, ClimberConstants.tolerance_deg)) { 
+        if (isValueReached(inputs.climberPositionDeg, ClimberConstants.homeDegrees_deg, ClimberConstants.tolerance_deg)){ 
           io.zeroPosition();
           io.stopClimb();
           queueState(ClimberStates.IDLE);
         }
         else {
-          io.climbTo(ClimberConstants.homeDegrees_deg, ClimberConstants.homeDegrees_deg);
+          io.climbTo(ClimberConstants.homeDegrees_deg);
         }
       default:
         io.stopClimb();

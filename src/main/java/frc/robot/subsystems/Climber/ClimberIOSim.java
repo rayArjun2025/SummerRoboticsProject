@@ -4,85 +4,51 @@
 
 package frc.robot.subsystems.climber;
 
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N2;
-import edu.wpi.first.math.system.LinearSystem;
+
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+
+import frc.robot.subsystems.elbow.ElbowConstants;
 
 public class ClimberIOSim implements ClimberIO {
-  private double hookVoltage = 0.00;
-  private double wheelVoltage = 0.00;
+  private double climberVoltage = 0.00;
 
-  private LinearSystem<N2, N1, N2> climberSystem;
-  private final DCMotorSim hookMotorSim;
-  private final DCMotorSim wheelMotorSim;
+  private SingleJointedArmSim climberSim;
 
   public ClimberIOSim() {
-    climberSystem = LinearSystemId.createDCMotorSystem(1.0, 1.0);
-    hookMotorSim = new DCMotorSim(climberSystem, DCMotor.getKrakenX60Foc(1));
-    wheelMotorSim = new DCMotorSim(climberSystem, DCMotor.getKrakenX60Foc(1));
+    double moi = SingleJointedArmSim.estimateMOI(ElbowConstants.ARM_LENGTH, ElbowConstants.ARM_MASS);
+    climberSim = new SingleJointedArmSim(DCMotor.getKrakenX60Foc(2), ClimberConstants.GEAR_RATIO, moi, ClimberConstants.ARM_LENGTH, ClimberConstants.homeDegrees_deg, ClimberConstants.targetDegrees_deg, true, 0);
   }
 
   @Override
   public void updateInputs(ClimberIOInputs inputs) {
-    hookMotorSim.update(ClimberConstants.loopPeriodSecs);
-    double hookMotorRadPerSec = hookMotorSim.getAngularVelocityRadPerSec();
+    inputs.connected = true;
 
-    inputs.hookOutputCurrent = hookMotorSim.getCurrentDrawAmps();
-    inputs.hookOutputVoltage = hookVoltage;
-    inputs.hookPositionDeg = Math.toDegrees(hookMotorSim.getAngularPositionRad());
-    inputs.hookVelocity_dps = Math.toDegrees(hookMotorRadPerSec);
-
-    wheelMotorSim.update(ClimberConstants.loopPeriodSecs);
-    double wheelMotorRadPerSec = wheelMotorSim.getAngularVelocityRadPerSec();
-
-    inputs.wheelOutputCurrent = wheelMotorSim.getCurrentDrawAmps();
-    inputs.wheelOutputVoltage = wheelVoltage;
-    inputs.wheelPositionDeg = Math.toDegrees(wheelMotorSim.getAngularPositionRad());
-    inputs.wheelVelocity_dps = Math.toDegrees(wheelMotorRadPerSec);
   }
 
   @Override
-  public void setHookVoltage(double volts_V, double ff_V) {
-    hookVoltage = volts_V + ff_V;
-    hookMotorSim.setInputVoltage(hookVoltage);
+  public void setClimberVoltage(double volts_V, double ff_V) {
+    climberVoltage = volts_V + ff_V;
+    climberSim.setInputVoltage(climberVoltage);
   }
 
   @Override
-  public void setHookVelocity(double velocity_rps) {}
-
-  @Override
-  public void setWheelVoltage(double volts_V, double ff_V) {
-    wheelVoltage = volts_V + ff_V;
-    wheelMotorSim.setInputVoltage(wheelVoltage);
-  }
-
-  @Override
-  public void setWheelVelocity(double velocity_rps) {}
+  public void setClimberVelocity(double velocity_rps) {}
 
   @Override
   public void stopClimb() {
-    setHookVoltage(0.0, 0.0);
-    setWheelVoltage(0.0, 0.0);
+    setClimberVoltage(0, 0);
   }
 
   @Override
-  public void climbTo(double hook_position_deg, double wheel_position_deg) {
-    double hookCurrentDeg = Math.toDegrees(hookMotorSim.getAngularPositionRad());
-    double wheelCurrentDeg = Math.toDegrees(wheelMotorSim.getAngularPositionRad());
-
-    hookVoltage =
+  public void climbTo(double climber_pos_deg) {
+    double climberCurrentDeg = Math.toDegrees(climberSim.getAngleRads());
+    
+    climberVoltage =
         Math.max(
-            -12.0, Math.min(12.0, ClimberConstants.hookKP * (hook_position_deg - hookCurrentDeg)));
-            
-    wheelVoltage =
-        Math.max(
-            -12.0,
-            Math.min(12.0, ClimberConstants.wheelKP * (wheel_position_deg - wheelCurrentDeg)));
+            -12.0, Math.min(12.0, ClimberConstants.hookKP * (climber_pos_deg - climberCurrentDeg)));
 
-    hookMotorSim.setInputVoltage(hookVoltage);
-    wheelMotorSim.setInputVoltage(wheelVoltage);
+    climberSim.setInputVoltage(climberVoltage);
   }
 }
