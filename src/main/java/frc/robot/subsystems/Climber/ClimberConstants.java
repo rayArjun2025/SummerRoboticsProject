@@ -26,11 +26,11 @@ public final class ClimberConstants {
 
   public static final double GEAR_RATIO = 150.0;
   public static final double ARM_LENGTH = 0.22;
-  public static final double ARM_MASS = 15;
+  public static final double ARM_MASS = 5;
   public static final double LOW_CLAMP = -12;
   public static final double HIGH_CLAMP = 12;
   
-  public static final double climberKP = 20;
+  public static final double climberKP = 8;
   public static final double climberKI = 0;
   public static final double climberKD = 0.5;
   public static final double climberKV = 1;
