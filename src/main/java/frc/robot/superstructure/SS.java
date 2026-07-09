@@ -13,7 +13,6 @@ import frc.robot.util.StateMachineSubsystemBase;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmStates;
 import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.subsystems.climber.ClimberStates;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorStates;

@@ -8,7 +8,6 @@ import frc.robot.subsystems.drive.PathingOverride;
 import frc.robot.subsystems.drive.SwerveInput;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.hand.Hand;
-import frc.robot.superstructure.IntentionStates;
 import frc.robot.superstructure.SS;
 import frc.robot.util.IPeriodic;
 import frc.robot.util.Util;

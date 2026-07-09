@@ -1,58 +1,95 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems.climber;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
-
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.Constants;
 
 public class ClimberIOSim implements ClimberIO {
-  private double climberVoltage = 0.00;
-  private final PIDController pid;
-  private SingleJointedArmSim climberSim;
+    private double climberVoltage = 0.0;
 
-  public ClimberIOSim() {
-    pid = new PIDController(ClimberConstants.climberKP, ClimberConstants.climberKI, ClimberConstants.climberKD);
-    double moi = SingleJointedArmSim.estimateMOI(ClimberConstants.ARM_LENGTH, ClimberConstants.ARM_MASS);
-    climberSim = new SingleJointedArmSim(DCMotor.getKrakenX60Foc(2), ClimberConstants.GEAR_RATIO, moi, ClimberConstants.ARM_LENGTH, Math.toRadians(ClimberConstants.homeDegrees_deg), Math.toRadians(ClimberConstants.targetDegrees_deg), true, 0);
-  }
+    private final PIDController climberPid;
+    private final TrapezoidProfile climbProfile;
+    private final ArmFeedforward climberFF;
+    private final SingleJointedArmSim climberSim;
 
-  @Override
-  public void updateInputs(ClimberIOInputs inputs) {
-    climberSim.update(Constants.globalDelta_s);
+    private TrapezoidProfile.State climbGoal;
+    private TrapezoidProfile.State climbCurrent;
 
-    inputs.connected = true;
-    inputs.climberCurrent = climberSim.getCurrentDrawAmps();
-    inputs.climberPositionDeg = Math.toDegrees(climberSim.getAngleRads());
-    inputs.climberVelocity_dps = Math.toDegrees(climberSim.getVelocityRadPerSec());
-    inputs.climberVoltage = climberVoltage;
-  }
+    public ClimberIOSim() {
+        climbProfile = new TrapezoidProfile(
+            new TrapezoidProfile.Constraints(ClimberConstants.MAX_VELOCITY, ClimberConstants.MAX_ACCELERATION));
 
-  @Override
-  public void setClimberVoltage(double volts_V, double ff_V) {
-    climberVoltage = volts_V + ff_V;
-    climberVoltage = MathUtil.clamp(climberVoltage, ClimberConstants.LOW_CLAMP, ClimberConstants.HIGH_CLAMP);
-    climberSim.setInputVoltage(climberVoltage);
-  }
+        climbGoal = new TrapezoidProfile.State(0, 0);
+        climbCurrent = new TrapezoidProfile.State(0, 0);
 
-  @Override
-  public void setClimberVelocity(double velocity_rps) {}
+        climberFF = new ArmFeedforward(
+            ClimberConstants.climberKS,
+            ClimberConstants.climberKG,
+            ClimberConstants.climberKV,
+            ClimberConstants.climberKA);
 
-  @Override
-  public void stopClimb() {
-    setClimberVoltage(0, 0);
-  }
+        climberPid = new PIDController(
+            ClimberConstants.climberKP,
+            ClimberConstants.climberKI,
+            ClimberConstants.climberKD);
 
-  @Override
-  public void climbTo(double climber_pos_deg) {
-    double climberCurrentDeg = Math.toDegrees(climberSim.getAngleRads());
-    climberVoltage = pid.calculate(Math.toRadians(climberCurrentDeg), Math.toRadians(climber_pos_deg));
-    climberVoltage = MathUtil.clamp(climberVoltage, ClimberConstants.LOW_CLAMP, ClimberConstants.HIGH_CLAMP);
-    climberSim.setInputVoltage(climberVoltage);
-  }
+        double moi = SingleJointedArmSim.estimateMOI(
+            ClimberConstants.ARM_LENGTH,
+            ClimberConstants.ARM_MASS);
+
+        climberSim = new SingleJointedArmSim(
+            DCMotor.getKrakenX60Foc(2),
+            ClimberConstants.GEAR_RATIO,
+            moi,
+            ClimberConstants.ARM_LENGTH,
+            Math.toRadians(ClimberConstants.MIN_DEG),
+            Math.toRadians(ClimberConstants.MAX_DEG),
+            true,
+            0);
+    }
+
+    @Override
+    public void updateInputs(ClimberIOInputs inputs) {
+        climberSim.update(Constants.globalDelta_s);
+
+        inputs.connected = true;
+        inputs.climberCurrent = climberSim.getCurrentDrawAmps();
+        inputs.climberPositionDeg = Math.toDegrees(climberSim.getAngleRads());
+        inputs.climberVelocity_dps = Math.toDegrees(climberSim.getVelocityRadPerSec());
+        inputs.climberVoltage = climberVoltage;
+    }
+
+    @Override
+    public void setClimberVoltage(double voltage) {
+        climberVoltage = MathUtil.clamp(voltage, ClimberConstants.LOW_CLAMP, ClimberConstants.HIGH_CLAMP);
+        climberSim.setInputVoltage(climberVoltage);
+    }
+
+    @Override
+    public void setClimberVelocity(double velocity_rps) {}
+
+    @Override
+    public void stopClimb() {
+        setClimberVoltage(0);
+    }
+
+    @Override
+    public void climbTo() {
+        climbCurrent = climbProfile.calculate(Constants.globalDelta_s, climbCurrent, climbGoal);
+
+        double pidOut = climberPid.calculate(climberSim.getAngleRads(), climbCurrent.position);
+        double ff = climberFF.calculate(climbCurrent.position, climbCurrent.velocity);
+        double voltage = MathUtil.clamp(pidOut + ff, ClimberConstants.LOW_CLAMP, ClimberConstants.HIGH_CLAMP);
+
+        setClimberVoltage(voltage);
+    }
+
+    @Override
+    public void setTargetAngle(double target_deg) {
+        climbGoal = new TrapezoidProfile.State(Math.toRadians(target_deg), 0);
+    }
 }

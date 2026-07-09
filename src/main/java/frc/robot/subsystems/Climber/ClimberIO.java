@@ -18,7 +18,7 @@ public interface ClimberIO {
 
   public default void updateInputs(ClimberIOInputs inputs) {}
 
-  public default void setClimberVoltage(double volts_V, double ff_V) {}
+  public default void setClimberVoltage(double volts_V) {}
 
   public default void setClimberVelocity(double velocity_rps) {}
 
@@ -26,5 +26,7 @@ public interface ClimberIO {
 
   public default void zeroPosition() {}
 
-  public default void climbTo(double climber_pos_deg) {}
+  public default void climbTo() {}
+  
+  public default void setTargetAngle(double targetAngle_RAD) {}
 }

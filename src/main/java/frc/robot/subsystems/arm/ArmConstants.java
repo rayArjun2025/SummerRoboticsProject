@@ -44,4 +44,11 @@ public class ArmConstants {
     public static final double GRAVITY_FF = 2.5;
     public static final double TOLERANCE_RAD = 0.01;
     
+   
+    public static final double SHOULDER_MAX_VELOCITY = Math.toRadians(120.0);      // rad/s
+    public static final double SHOULDER_MAX_ACCELERATION = Math.toRadians(240.0);  // rad/s²
+
+    
+    public static final double ELBOW_MAX_VELOCITY = Math.toRadians(180.0);         // rad/s
+    public static final double ELBOW_MAX_ACCELERATION = Math.toRadians(360.0);     // rad/s²
 }
