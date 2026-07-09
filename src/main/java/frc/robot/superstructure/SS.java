@@ -11,10 +11,12 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.util.StateMachineSubsystemBase;
 import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmStates;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberStates;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorStates;
 import frc.robot.subsystems.hand.Hand;
 import frc.robot.subsystems.hand.HandStates;
@@ -42,6 +44,8 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
     private boolean booted;
     private boolean homed;
 
+    private double elevatorTargetHeight_m;
+
     private static Arm arm;
     private static Elevator elevator;
     private static Hand hand;
@@ -59,6 +63,7 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
         booted = false;
         homed = false;
         readyToScore = false;
+        elevatorTargetHeight_m = 0.0;
 
         arm = Arm.getInstance();
         elevator = Elevator.getInstance();
@@ -76,7 +81,8 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
             case GRIPPING_CORAL -> InternalStates.GRIPPING_CORAL1;
             case GRIPPING_ALGAE -> InternalStates.GRIPPING_ALGAE1;
             case RELEASING -> InternalStates.RELEASING;
-            case HEIGHT_ADJUST -> InternalStates.HEIGHT_ADJUST;
+            case RAISING -> InternalStates.RAISING;
+            case LOWERING -> InternalStates.LOWERING;
         };
     }
 
@@ -174,6 +180,7 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
             case CLIMB2:
                 climber.queueState(ClimberStates.RELEASING);
                 break;
+
             case GRIPPING_CORAL1:
                 elevator.queueState(ElevatorStates.TRAVELLING);
                 arm.queueState(ArmStates.TRAVELLING_TO_POSITION);
@@ -200,18 +207,46 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
                 readyToScore = true;
                 break;
             
-            case HEIGHT_ADJUST:
+            case RAISING:
+                if (elevatorTargetHeight_m == 0)
+                    elevatorTargetHeight_m = ElevatorConstants.LevelOneTargetHeight_m;
+                else if (elevatorTargetHeight_m == ElevatorConstants.LevelOneTargetHeight_m)
+                    elevatorTargetHeight_m = ElevatorConstants.LevelTwoTargetHeight_m;
+                else if (elevatorTargetHeight_m == ElevatorConstants.LevelTwoTargetHeight_m)
+                    elevatorTargetHeight_m = ElevatorConstants.LevelThreeTargetHeight_m;
+                else if (elevatorTargetHeight_m == ElevatorConstants.LevelThreeTargetHeight_m || elevatorTargetHeight_m == ElevatorConstants.LevelFourTargetHeight_m)
+                    elevatorTargetHeight_m = ElevatorConstants.LevelFourTargetHeight_m;
+                
+                elevator.setTargetPosition(elevatorTargetHeight_m);
                 elevator.queueState(ElevatorStates.TRAVELLING);
+                arm.setArmTargetAngle(ArmConstants.ShoulderTargetAngle_Deg, ArmConstants.ElbowTargetAngle_Deg, true);
                 arm.queueState(ArmStates.HOLDING_POSITION);
-                if (elevator.isAtTargetPosition() && readyToScore) {
-                    queueState(InternalStates.RELEASING);
-                }
 
-                else if (elevator.isAtTargetPosition()) {
+                if (elevator.isAtTargetPosition()) {
                     queueState(InternalStates.IDLE);
                 }
 
                 break;
+
+            case LOWERING:
+                if (elevatorTargetHeight_m == ElevatorConstants.LevelFourTargetHeight_m)
+                    elevatorTargetHeight_m = ElevatorConstants.LevelThreeTargetHeight_m;
+                else if (elevatorTargetHeight_m == ElevatorConstants.LevelThreeTargetHeight_m)
+                    elevatorTargetHeight_m = ElevatorConstants.LevelTwoTargetHeight_m;
+                else if (elevatorTargetHeight_m == ElevatorConstants.LevelTwoTargetHeight_m || elevatorTargetHeight_m == ElevatorConstants.LevelOneTargetHeight_m)
+                    elevatorTargetHeight_m = ElevatorConstants.LevelOneTargetHeight_m;
+                else if (elevatorTargetHeight_m == 0.0)
+                    elevatorTargetHeight_m = 0.0;
+
+                elevator.setTargetPosition(elevatorTargetHeight_m);
+                elevator.queueState(ElevatorStates.TRAVELLING);
+                arm.setArmTargetAngle(ArmConstants.ShoulderTargetAngle_Deg, ArmConstants.ElbowTargetAngle_Deg, true);
+                arm.queueState(ArmStates.HOLDING_POSITION);
+
+                
+                if (elevator.isAtTargetPosition()) {
+                    queueState(InternalStates.IDLE);
+                }
 
             case RELEASING:
                 arm.queueState(ArmStates.HOLDING_POSITION);

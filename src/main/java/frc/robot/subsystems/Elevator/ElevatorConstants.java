@@ -3,6 +3,10 @@ package frc.robot.subsystems.elevator;
 public class ElevatorConstants {
     public static final double ELEVATOR_MAX_HEIGHT = 2.0;
     public static final double ELEVATOR_MIN_HEIGHT = 0.0;
+    public static final double LevelOneTargetHeight_m = 0.46;
+    public static final double LevelTwoTargetHeight_m = 0.81;
+    public static final double LevelThreeTargetHeight_m = 1.21;
+    public static final double LevelFourTargetHeight_m = 1.83;
 
     public static final double DRUM_RADIUS = 0.01905; // 0.75 in
     public static final double MAX_RPS = 100;

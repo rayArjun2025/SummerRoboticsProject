@@ -78,19 +78,5 @@ public class ControlScheme implements IPeriodic {
             defend = !defend;
         }
 
-        // if (OI.DR.getAButton()) {
-        //     servo.trackUp();
-        //     // servo.zero(45);
-        // } else if (OI.DR.getBButton()) {
-        //     servo.trackDown();
-        //     // servo.zero(45);
-        // } else if (OI.DR.getYButton()) {
-        //     servo.zero(45);
-        // }
-
-
-
-        // D-pad up (POV == 0) → zero intake encoder to down angle
-
     }
 }

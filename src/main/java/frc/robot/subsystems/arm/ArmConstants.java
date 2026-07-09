@@ -1,6 +1,9 @@
 package frc.robot.subsystems.arm;
 
 public class ArmConstants {
+    public static final double ElbowTargetAngle_Deg = 120;
+    public static final double ShoulderTargetAngle_Deg = 80;
+
     public static final double SHOULDER_MAX_ANGLE = Math.toRadians(180);
     public static final double SHOULDER_MIN_ANGLE = -Math.toRadians(90);
     public static final double SHOULDER_ZERO_REF = Math.toRadians(90);
@@ -44,7 +47,7 @@ public class ArmConstants {
     public static final double GRAVITY_FF = 2.5;
     public static final double TOLERANCE_RAD = 0.01;
     
-   
+
     public static final double SHOULDER_MAX_VELOCITY = Math.toRadians(120.0);      // rad/s
     public static final double SHOULDER_MAX_ACCELERATION = Math.toRadians(240.0);  // rad/s²
 

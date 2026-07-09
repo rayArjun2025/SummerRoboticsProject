@@ -84,7 +84,13 @@ public class Arm extends StateMachineSubsystemBase<ArmStates> {
         queueState(state);
     }
 
-    public void setArmTargetAngle(double shoulderAngle, double elbowAngle) {
+    public void setArmTargetAngle(double shoulderAngle, double elbowAngle, boolean isAngleInDegrees) {
+        
+        if (isAngleInDegrees) {
+            shoulderAngle = Math.toRadians(shoulderAngle);
+            elbowAngle = Math.toRadians(elbowAngle);
+        }
+
         shoulderTarget_RAD = MathUtil.clamp( shoulderAngle, ArmConstants.SHOULDER_MIN_ANGLE, ArmConstants.SHOULDER_MAX_ANGLE);
         elbowTarget_RAD = MathUtil.clamp(elbowAngle, ArmConstants.SHOULDER_MIN_ANGLE, ArmConstants.SHOULDER_MAX_ANGLE);
         
