@@ -4,11 +4,8 @@
 
 package frc.robot.superstructure;
 
-import java.util.EnumSet;
-
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.wpilibj.Timer;
 import frc.robot.util.StateMachineSubsystemBase;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmConstants;
@@ -19,10 +16,8 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorStates;
 import frc.robot.subsystems.hand.Hand;
+import frc.robot.subsystems.hand.HandConstants;
 import frc.robot.subsystems.hand.HandStates;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.drive.*;
-import frc.robot.util.MTimer;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 
@@ -39,8 +34,6 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
 
     private IntentionStates intention;
 
-    private MTimer timer = new MTimer();
-
     private boolean booted;
     private boolean homed;
 
@@ -50,8 +43,6 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
     private static Elevator elevator;
     private static Hand hand;
     private static Climber climber;
-    private static Vision vision;
-    private static Drive drive;
     private static boolean readyToScore;
 
     private Alert unimplementedStateAlert = new Alert("Unimplemented internal State", AlertType.kError);
@@ -69,10 +60,6 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
         elevator = Elevator.getInstance();
         hand = Hand.getInstance();
         climber = Climber.getInstance();
-        vision = Vision.getInstance();
-        drive = Drive.getInstance();
-
-        
     }
 
 
@@ -99,38 +86,71 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
                     case IDLE -> InternalStates.IDLE; //case Idle = intention, Internalstates.idle = internal
                     default -> defaultIntentionHandling();
                 });
+
             case CLIMB1:
                 queueState(switch (intention) {
                     case CLIMB -> InternalStates.CLIMB1;
                     default -> defaultIntentionHandling();
                 });
-            case GRIPPING_CORAL1:
-                queueState(switch (intention) {
-                    case GRIPPING_CORAL -> InternalStates.GRIPPING_CORAL1;
-                    default -> defaultIntentionHandling();
-                });
-            case GRIPPING_ALGAE1:
-                queueState(switch (intention) {
-                    case GRIPPING_ALGAE -> InternalStates.GRIPPING_ALGAE1;
-                    default -> defaultIntentionHandling();
-                });
-
+            
             case CLIMB2:
                 queueState(switch (intention) {
                     case CLIMB -> InternalStates.CLIMB2;
                     default -> defaultIntentionHandling();
                 });
+
+            case GRIPPING_CORAL1:
+                queueState(switch (intention) {
+                    case GRIPPING_CORAL -> InternalStates.GRIPPING_CORAL1;
+                    case RELEASING -> InternalStates.RELEASING;
+                    case GRIPPING_ALGAE -> InternalStates.GRIPPING_ALGAE1;
+                    default -> defaultIntentionHandling();
+                });
+
             case GRIPPING_CORAL2:
                 queueState(switch (intention) {
                     case GRIPPING_CORAL -> InternalStates.GRIPPING_CORAL2;
+                    case RELEASING -> InternalStates.RELEASING;
+                    case GRIPPING_ALGAE -> InternalStates.GRIPPING_ALGAE1;
                     default -> defaultIntentionHandling();
                 });
+
+            case GRIPPING_ALGAE1:
+                queueState(switch (intention) {
+                    case GRIPPING_ALGAE -> InternalStates.GRIPPING_ALGAE1;
+                    case RELEASING -> InternalStates.RELEASING;
+                    case GRIPPING_CORAL -> InternalStates.GRIPPING_CORAL1;
+                    default -> defaultIntentionHandling();
+                });
+
             case GRIPPING_ALGAE2:
                 queueState(switch (intention) {
                     case GRIPPING_ALGAE -> InternalStates.GRIPPING_ALGAE2;
+                    case RELEASING -> InternalStates.RELEASING;
+                    case GRIPPING_CORAL -> InternalStates.GRIPPING_CORAL1;
+                    default -> defaultIntentionHandling();
+                });
+
+            case LOWERING:
+                queueState(switch (intention) {
+                    case LOWERING -> InternalStates.LOWERING;
+                    case RAISING -> InternalStates.RAISING;
+                    default -> defaultIntentionHandling();
+                });
+
+            case RAISING:
+                queueState(switch (intention) {
+                    case LOWERING -> InternalStates.LOWERING;
+                    case RAISING -> InternalStates.RAISING;
                     default -> defaultIntentionHandling();
                 });
             
+            case RELEASING:
+                queueState(switch (intention) {
+                    case RELEASING -> InternalStates.RELEASING;
+                    default -> defaultIntentionHandling();
+                });
+
             default:
                 unimplementedStateAlert.set(true);
                 break;
@@ -250,6 +270,10 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
                 arm.queueState(ArmStates.HOLDING_POSITION);
                 hand.queueState(HandStates.RELEASING);
                 readyToScore = true;
+
+                if (hand.isAtTargetPosition(HandConstants.home_deg)) {
+                    queueState(InternalStates.IDLE);
+                }
                 break;
 
 
@@ -285,7 +309,6 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
         Logger.recordOutput("SS/Booted?", booted);
         Logger.recordOutput("SS/Intention", intention);
         Logger.recordOutput("SS/Homed?", isHomed());
-
     }
 
 }
