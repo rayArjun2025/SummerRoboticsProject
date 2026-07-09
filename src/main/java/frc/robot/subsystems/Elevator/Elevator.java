@@ -74,8 +74,10 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
         }
     
     }
-    
-   
+
+    public boolean isAtTargetPosition() {
+        return Math.abs(inputs.elevatorPositionMeters - targetPosition_m) < ElevatorConstants.TOLERANCE_METERS;
+    }
 
     public void setTargetPosition(double position) {
         targetPosition_m = MathUtil.clamp(position, ElevatorConstants.ELEVATOR_MIN_HEIGHT, ElevatorConstants.ELEVATOR_MAX_HEIGHT);

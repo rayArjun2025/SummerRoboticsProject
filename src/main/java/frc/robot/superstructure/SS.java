@@ -49,6 +49,7 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
     private static Climber climber;
     private static Vision vision;
     private static Drive drive;
+    private static boolean readyToScore;
 
     private Alert unimplementedStateAlert = new Alert("Unimplemented internal State", AlertType.kError);
 
@@ -58,6 +59,7 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
         queueState(InternalStates.IDLE);
         booted = false;
         homed = false;
+        readyToScore = false;
 
         arm = Arm.getInstance();
         elevator = Elevator.getInstance();
@@ -67,13 +69,6 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
         drive = Drive.getInstance();
     }
 
-    private boolean isHomed() {
-        if (climber.isHomed() && hand.isHomed()) {
-            return true;
-        }
-
-        return false;
-    }
 
     public InternalStates defaultIntentionHandling() {
         return switch (intention) {
@@ -82,6 +77,7 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
             case GRIPPING_CORAL -> InternalStates.GRIPPING_CORAL1;
             case GRIPPING_ALGAE -> InternalStates.GRIPPING_ALGAE1;
             case RELEASING -> InternalStates.RELEASING;
+            case HEIGHT_ADJUST -> InternalStates.HEIGHT_ADJUST;
         };
     }
 
@@ -167,6 +163,7 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
                 climber.queueState(ClimberStates.IDLE);
                 elevator.queueState(ElevatorStates.IDLE);
                 hand.queueState(HandStates.IDLE);
+                readyToScore = false;
                 break;
                 
             case CLIMB1:
@@ -177,16 +174,74 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
 
             case CLIMB2:
                 climber.queueState(ClimberStates.RELEASING);
-
                 break;
             case GRIPPING_CORAL1:
+                elevator.queueState(ElevatorStates.TRAVELLING);
+                arm.queueState(ArmStates.TRAVELLING_TO_POSITION);
+                if (elevator.isAtTargetPosition() && arm.isAtTargetPosition()) {
+                    queueState(InternalStates.GRIPPING_CORAL2);
+                }
                 break;
+            
+            case GRIPPING_CORAL2:
+                hand.queueState(HandStates.GRIPPING_CORAL);
+                readyToScore = true;
+                break;
+
             case GRIPPING_ALGAE1:
+                elevator.queueState(ElevatorStates.TRAVELLING);
+                arm.queueState(ArmStates.TRAVELLING_TO_POSITION);
+                if (elevator.isAtTargetPosition() && arm.isAtTargetPosition()) {
+                    queueState(InternalStates.GRIPPING_ALGAE2);
+                }
                 break;
+            
+            case GRIPPING_ALGAE2:
+                hand.queueState(HandStates.GRIPPING_ALGAE);
+                readyToScore = true;
+                break;
+            
+            case HEIGHT_ADJUST:
+                elevator.queueState(ElevatorStates.TRAVELLING);
+                arm.queueState(ArmStates.HOLDING_POSITION);
+                if (elevator.isAtTargetPosition() && readyToScore) {
+                    queueState(InternalStates.RELEASING);
+                }
+
+                else if (elevator.isAtTargetPosition()) {
+                    queueState(InternalStates.IDLE);
+                }
+
+                break;
+
+            case RELEASING:
+                arm.queueState(ArmStates.HOLDING_POSITION);
+                hand.queueState(HandStates.RELEASING);
+                readyToScore = true;
+                break;
+
+
             default:
                 unimplementedStateAlert.set(true);
                 break;
         }
+    }
+
+    public void intend(IntentionStates intention) {
+        this.intention = intention;
+    }
+
+    public IntentionStates getIntention() {
+        return intention;
+    }
+
+
+    private boolean isHomed() {
+        if (climber.isHomed() && hand.isHomed()) {
+            return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -195,6 +250,10 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
 
     @Override
     protected void outputPeriodic() {
+        Logger.recordOutput("SS/Booted?", booted);
+        Logger.recordOutput("SS/Intention", intention);
+        Logger.recordOutput("SS/Homed?", isHomed());
+
     }
 
 }

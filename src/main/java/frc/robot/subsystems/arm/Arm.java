@@ -109,6 +109,11 @@ public class Arm extends StateMachineSubsystemBase<ArmStates>{
             queueState(ArmStates.HOLDING_POSITION);
         }
     }
+
+    public boolean isAtTargetPosition() {
+        return isValueReached(inputs.elbowSwivelAngle_rad, elbowTarget_RAD, ArmConstants.TOLERANCE_RAD) && isValueReached(inputs.shoulderSwivelAngle_rad, shoulderTarget_RAD, ArmConstants.TOLERANCE_RAD);
+    }
+
     @Override
     protected void outputPeriodic(){
         Logger.recordOutput("Arm/State", getState());
