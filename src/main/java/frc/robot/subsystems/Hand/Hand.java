@@ -17,7 +17,7 @@ public class Hand extends StateMachineSubsystemBase<HandStates> {
   private Hand(HandIO io) {
     super("Hand");
     this.io = io;
-    queueState(HandStates.IDLE);
+    queueState(HandStates.GRIPPING_CORAL);
   }
 
   public static Hand getInstance() {
@@ -108,6 +108,10 @@ public class Hand extends StateMachineSubsystemBase<HandStates> {
 
   public boolean isValueReached(double position_deg, double target_deg, double tolerance_deg) {
     return (Math.abs(position_deg - target_deg) <= tolerance_deg);
+  }
+
+  public boolean isHomed() {
+    return isValueReached(inputs.handPositionDeg, HandConstants.home_deg, HandConstants.tolerance_deg);
   }
 
   @Override

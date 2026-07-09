@@ -13,65 +13,21 @@ import frc.robot.util.StateMachineSubsystemBase;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmStates;
 import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.subsystems.climber.ClimberStates;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorStates;
 import frc.robot.subsystems.hand.Hand;
 import frc.robot.subsystems.hand.HandStates;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.drive.*;
+import frc.robot.util.MTimer;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 
-public class SS extends StateMachineSubsystemBase<SuperstructureStates>{
+public class SS extends StateMachineSubsystemBase<InternalStates>{
+
     private static SS instance;
-
-    public static final double STOWED_ELEVATOR_POS = 0.0;
-    public static final double STOWED_SHOULDER_DEG = 0.0;
-    public static final double STOWED_ELBOW_DEG = 0.0;
-
-    public static final double INTAKE_ELEVATOR_POS = 5.0;
-    public static final double INTAKE_SHOULDER_DEG = 30.0;
-    public static final double INTAKE_ELBOW_DEG = 45.0;
-
-    public static final double SCORE_ELEVATOR_POS = 20.0;
-    public static final double SCORE_SHOULDER_DEG = 60.0;
-    public static final double SCORE_ELBOW_DEG = 90.0;
-
-    private enum Scoring {
-        RAISING,
-        SETTLING,
-        READY
-    }
-
-    private static final double SETTLE_TIME_S = 0.2;
-
-    private Scoring scoringSubstate;
-    private boolean scoringSubstateFirstLoop;
-    private final Timer substateTimer = new Timer();
-
-    private final EnumSet<Flag> flags = EnumSet.noneOf(Flag.class);
-
-    public enum Flag {
-        HOME,
-        SCORE_LOW,
-        SCORE_HIGH,
-        MANUAL_UP,
-        MANUAL_DOWN,
-        CLIMB
-    }
-
-    private final Elevator elevator;
-    private final Arm arm;
-    private final Hand hand;
-    private final Climber climber;
-
-    private double scoreElevatorTarget = STOWED_ELEVATOR_POS;
-
-    private SS() {
-        super("SS");
-        this.elevator = Elevator.getInstance();
-        this.arm = Arm.getInstance();
-        this.hand = Hand.getInstance();
-        this.climber = Climber.getInstance();
-        queueState(SuperstructureStates.STOWED);
-    }
 
     public static SS getInstance() {
         if (instance == null) {
@@ -80,156 +36,165 @@ public class SS extends StateMachineSubsystemBase<SuperstructureStates>{
         return instance;
     }
 
+    private IntentionStates intention;
 
-    public void enable(Flag flag) {
-        flags.add(flag);
+    private MTimer timer = new MTimer();
+
+    private boolean booted;
+    private boolean homed;
+
+    private static Arm arm;
+    private static Elevator elevator;
+    private static Hand hand;
+    private static Climber climber;
+    private static Vision vision;
+    private static Drive drive;
+
+    private Alert unimplementedStateAlert = new Alert("Unimplemented internal State", AlertType.kError);
+
+    private SS() {
+        super("SS");
+        intention = IntentionStates.IDLE;
+        queueState(InternalStates.IDLE);
+        booted = false;
+        homed = false;
+
+        arm = Arm.getInstance();
+        elevator = Elevator.getInstance();
+        hand = Hand.getInstance();
+        climber = Climber.getInstance();
+        vision = Vision.getInstance();
+        drive = Drive.getInstance();
     }
 
-    public void disable(Flag flag) {
-        flags.remove(flag);
+    private boolean isHomed() {
+        if (climber.isHomed() && hand.isHomed()) {
+            return true;
+        }
+
+        return false;
     }
 
-    public void set(Flag flag, boolean active) {
-        if (active) {
-            flags.add(flag);
-        } else {
-            flags.remove(flag);
+    public InternalStates defaultIntentionHandling() {
+        return switch (intention) {
+            case IDLE -> InternalStates.IDLE;
+            case CLIMB -> InternalStates.CLIMB1;
+            case GRIPPING_CORAL -> InternalStates.GRIPPING_CORAL1;
+            case GRIPPING_ALGAE -> InternalStates.GRIPPING_ALGAE1;
+            case RELEASING -> InternalStates.RELEASING;
+        };
+    }
+
+    private void handleIntention() {
+        switch (getState()) { //ts internal
+            case BOOT:
+                break;
+            case DISABLED:
+                break;
+            case IDLE: 
+                queueState(switch (intention) {
+                    case IDLE -> InternalStates.IDLE; //case Idle = intention, Internalstates.idle = internal
+                    default -> defaultIntentionHandling();
+                });
+            case CLIMB1:
+                queueState(switch (intention) {
+                    case CLIMB -> InternalStates.CLIMB1;
+                    default -> defaultIntentionHandling();
+                });
+            case GRIPPING_CORAL1:
+                queueState(switch (intention) {
+                    case GRIPPING_CORAL -> InternalStates.GRIPPING_CORAL1;
+                    default -> defaultIntentionHandling();
+                });
+            case GRIPPING_ALGAE1:
+                queueState(switch (intention) {
+                    case GRIPPING_ALGAE -> InternalStates.GRIPPING_ALGAE1;
+                    default -> defaultIntentionHandling();
+                });
+
+            case CLIMB2:
+                queueState(switch (intention) {
+                    case CLIMB -> InternalStates.CLIMB2;
+                    default -> defaultIntentionHandling();
+                });
+            case GRIPPING_CORAL2:
+                queueState(switch (intention) {
+                    case GRIPPING_CORAL -> InternalStates.GRIPPING_CORAL2;
+                    default -> defaultIntentionHandling();
+                });
+            case GRIPPING_ALGAE2:
+                queueState(switch (intention) {
+                    case GRIPPING_ALGAE -> InternalStates.GRIPPING_ALGAE2;
+                    default -> defaultIntentionHandling();
+                });
+            
+            default:
+                unimplementedStateAlert.set(true);
+                break;
         }
     }
 
-    public void toggle(Flag flag) {
-        set(flag, !has(flag));
-    }
 
-    public boolean has(Flag flag) {
-        return flags.contains(flag);
-    }
-
-    private void setScoringSubstate(Scoring next) {
-        if (scoringSubstate != next) {
-            scoringSubstate = next;
-            scoringSubstateFirstLoop = true;
-            substateTimer.restart();
-        } else {
-            scoringSubstateFirstLoop = false;
-        }
-    }
-
-    private boolean substateElapsed(double seconds) {
-        return substateTimer.hasElapsed(seconds);
-    }
 
     @Override
     public void handleStateMachine() {
-        
-        if (has(Flag.CLIMB)) {
-            queueState(SuperstructureStates.CLIMBING);
-        } else if (has(Flag.HOME)) {
-            queueState(SuperstructureStates.STOWED);
-        } else if (has(Flag.MANUAL_UP) || has(Flag.MANUAL_DOWN)) {
-            
-            queueState(SuperstructureStates.STOWED);
-
-            
-        } else if (has(Flag.SCORE_HIGH) || has(Flag.SCORE_LOW)) {
-            queueState(SuperstructureStates.SCORE);
-        } else {
-            queueState(SuperstructureStates.STOWED);
+        if (!booted && !isState(InternalStates.DISABLED)) {
+            queueState(InternalStates.BOOT);
+            hand.queueState(HandStates.HOMING);
+            climber.queueState(ClimberStates.HOMING);
         }
+
+        handleIntention();
 
         switch (getState()) {
-            case STOWED:
-                elevator.setTargetPosition(STOWED_ELEVATOR_POS);
-                arm.setShoulderTargetAngle(INTAKE_SHOULDER_DEG);
-                arm.setElbowTargetAngle(STOWED_ELBOW_DEG);
+            case DISABLED:
                 break;
-
-            case INTAKE_CORAL:
-                elevator.setTargetPosition(INTAKE_ELEVATOR_POS);
-                arm.setShoulderTargetAngle(INTAKE_SHOULDER_DEG);
-                arm.setElbowTargetAngle(INTAKE_ELBOW_DEG);
-                hand.requestState(HandStates.GRIPPING_CORAL);
+            case BOOT:
+                if (isHomed()) {
+                    homed = true;
+                    booted = true;
+                    queueState(InternalStates.IDLE);
+                }
+                else {
+                    homed = false;
+                    booted = true;
+                    hand.queueState(HandStates.HOMING);
+                    climber.queueState(ClimberStates.HOMING);
+                }
                 break;
-
-            case SCORE:
-                handleScoring();
+            case IDLE:
+                arm.queueState(ArmStates.IDLE);
+                climber.queueState(ClimberStates.IDLE);
+                elevator.queueState(ElevatorStates.IDLE);
+                hand.queueState(HandStates.IDLE);
                 break;
+                
+            case CLIMB1:
+                climber.queueState(ClimberStates.SHALLOW_CLIMB_TRAVELLING);
+                if (climber.isClimbComplete()) {
+                    queueState(InternalStates.CLIMB2);
+                }
 
-            case CLIMBING:
-                handleClimbing();
+            case CLIMB2:
+                climber.queueState(ClimberStates.RELEASING);
+
                 break;
-
+            case GRIPPING_CORAL1:
+                break;
+            case GRIPPING_ALGAE1:
+                break;
             default:
+                unimplementedStateAlert.set(true);
                 break;
         }
     }
 
-    private void handleClimbing() {
-        elevator.setTargetPosition(STOWED_ELEVATOR_POS);
-        arm.setShoulderTargetAngle(STOWED_SHOULDER_DEG);
-        arm.setElbowTargetAngle(STOWED_ELBOW_DEG);
-
-        boolean clearToClimb = elevator.isState(ElevatorStates.IDLE)
-                && arm.isState(ArmStates.IDLE);
-
-        if (clearToClimb) {
-            climber.requestState(ClimberStates.SHALLOW_CLIMB_TRAVELLING);
-        } else {
-            climber.requestState(ClimberStates.IDLE);
-        }
-    }
-
-    private void handleScoring() {
-        if (stateInit()) {
-            setScoringSubstate(Scoring.RAISING);
-        }
-
-        scoreElevatorTarget = SCORE_ELEVATOR_POS;
-
-        switch (scoringSubstate) {
-            case RAISING:
-                driveToScorePosition();
-                if (atScorePosition()) {
-                    setScoringSubstate(Scoring.SETTLING);
-                }
-                break;
-
-            case SETTLING:
-                driveToScorePosition();
-                if (!atScorePosition()) {
-                    setScoringSubstate(Scoring.RAISING);
-                } else if (substateElapsed(SETTLE_TIME_S)) {
-                    setScoringSubstate(Scoring.READY);
-                }
-                break;
-
-            case READY:
-                driveToScorePosition();
-                if (!atScorePosition()) {
-                    setScoringSubstate(Scoring.RAISING);
-                }
-                break;
-        }
-    }
-
-    //67
-
-    private void driveToScorePosition() {
-        elevator.setTargetPosition(scoreElevatorTarget);
-        arm.setShoulderTargetAngle(SCORE_SHOULDER_DEG);
-        arm.setElbowTargetAngle(SCORE_ELBOW_DEG);
-    }
-
-    private boolean atScorePosition() {
-        return elevator.isState(ElevatorStates.IDLE)
-                && arm.isState(ArmStates.IDLE);
+    @Override
+    public void inputPeriodic() {
     }
 
     @Override
     protected void outputPeriodic() {
-        Logger.recordOutput("Superstructure/State", getState());
-        String[] activeFlags = flags.stream().map(Enum::name).toArray(String[]::new);
-        Logger.recordOutput("Superstructure/Flags", activeFlags);
     }
-    
+
 }

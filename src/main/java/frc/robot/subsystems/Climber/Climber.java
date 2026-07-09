@@ -17,7 +17,7 @@ public class Climber extends StateMachineSubsystemBase<ClimberStates> {
   private Climber(ClimberIO io) {
     super("Climber");
     this.io = io;
-    queueState(ClimberStates.IDLE);
+    queueState(ClimberStates.SHALLOW_CLIMB_TRAVELLING);
   }
 
   public static Climber getInstance() {
@@ -101,6 +101,14 @@ public class Climber extends StateMachineSubsystemBase<ClimberStates> {
 
   public boolean isValueReached(double position_deg, double target_deg, double tolerance_deg) {
     return (Math.abs(position_deg - target_deg) <= tolerance_deg);
+  }
+
+  public boolean isHomed() {
+    return isValueReached(inputs.climberPositionDeg, ClimberConstants.homeDegrees_deg, ClimberConstants.tolerance_deg);
+  }
+
+  public boolean isClimbComplete() {
+    return isValueReached(inputs.climberPositionDeg, ClimberConstants.targetDegrees_deg, ClimberConstants.tolerance_deg);
   }
 
   @Override
