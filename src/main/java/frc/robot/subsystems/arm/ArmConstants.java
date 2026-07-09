@@ -15,9 +15,9 @@ public class ArmConstants {
     public static final double SHOULDER_KS = 0.2;
     public static final double SHOULDER_KV = 0.12;
     public static final double SHOULDER_KA = 0.01;
-    public static final double SHOULDER_MOTION_MAGIC_JERK = 20;
-    public static final double SHOULDER_MOTION_MAGIC_ACCELERATION = 2;
-    public static final double SHOULDER_MOTION_MAGIC_CRUISE_VELOCITY = 1;
+    public static final double SHOULDER_MOTION_MAGIC_JERK = 10;
+    public static final double SHOULDER_MOTION_MAGIC_ACCELERATION = 1.5;
+    public static final double SHOULDER_MOTION_MAGIC_CRUISE_VELOCITY = 0.75;
     
 
     public static final double ELBOW_MAX_ANGLE = Math.toRadians(90);
@@ -33,9 +33,9 @@ public class ArmConstants {
     public static final double ELBOW_KV = 0.12;
     public static final double ELBOW_KA = 0.01;
     public static final int ELBOW_MOTOR_ID = 2;
-    public static final double ELBOW_MOTION_MAGIC_CRUISE_VELOCITY = 0;
-    public static final double ELBOW_MOTION_MAGIC_ACCELERATION = 0;
-    public static final double ELBOW_MOTION_MAGIC_JERK = 0;
+    public static final double ELBOW_MOTION_MAGIC_CRUISE_VELOCITY = 1;
+    public static final double ELBOW_MOTION_MAGIC_ACCELERATION = 2;
+    public static final double ELBOW_MOTION_MAGIC_JERK = 15;
 
     public static final double UPDATE_RATE = 50.0;
     public static final double ARM_KG = 0.35;

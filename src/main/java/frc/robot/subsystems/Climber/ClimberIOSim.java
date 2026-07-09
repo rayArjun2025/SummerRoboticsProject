@@ -49,7 +49,7 @@ public class ClimberIOSim implements ClimberIO {
             Math.toRadians(ClimberConstants.MIN_DEG),
             Math.toRadians(ClimberConstants.MAX_DEG),
             true,
-            0);
+            Math.toRadians(ClimberConstants.homingDegrees_deg));
     }
 
     @Override
@@ -91,5 +91,6 @@ public class ClimberIOSim implements ClimberIO {
     @Override
     public void setTargetAngle(double target_deg) {
         climbGoal = new TrapezoidProfile.State(Math.toRadians(target_deg), 0);
+        climbCurrent = new TrapezoidProfile.State( climberSim.getAngleRads(), climberSim.getVelocityRadPerSec());
     }
 }

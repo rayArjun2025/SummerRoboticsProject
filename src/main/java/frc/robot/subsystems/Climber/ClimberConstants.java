@@ -18,26 +18,31 @@ public final class ClimberConstants {
   public static final double maxVoltage = 12.0;
 
   
-  public static final double homingDegrees_deg = 0.0;
+  public static final double STOW_ANGLE =  20;
+  public static final double CLIMB_ANGLE =  90;
+  public static final double homingDegrees_deg = 0;
   public static final double MIN_DEG = 0;
-  public static final double MAX_DEG = 0;
+  public static final double MAX_DEG = 90;
 
-  public static final double GEAR_RATIO = 50.0;
+  public static final double GEAR_RATIO = 150.0;
   public static final double ARM_LENGTH = 0.22;
-  public static final double ARM_MASS = 1.8;
+  public static final double ARM_MASS = 15;
   public static final double LOW_CLAMP = -12;
   public static final double HIGH_CLAMP = 12;
   
-  public static final double climberKP = 4.0;
+  public static final double climberKP = 20;
   public static final double climberKI = 0;
-  public static final double climberKD = 0.4;
+  public static final double climberKD = 0.5;
   public static final double climberKV = 1;
   public static final double climberKS = 0.18;
   public static final double climberKA = 0.08;
   public static final double climberKG = 0.35;
 
-  public static final double MAX_VELOCITY = Math.toRadians(180);   // rad/s
-  public static final double MAX_ACCELERATION = Math.toRadians(360); // rad/s^2
+  public static final double MAX_VELOCITY = Math.toRadians(90);   // rad/s
+  public static final double MAX_ACCELERATION = Math.toRadians(180); // rad/s^2
+  public static final double MOTION_MAGIC_ACCELERATION = 1;
+  public static final double MOTION_MAGIC_CRUISE_VELOCITY = 0.5;
+  public static final double MOTION_MAGIC_JERK = 5;
 
 
 

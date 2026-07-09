@@ -4,10 +4,10 @@ import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -38,13 +38,14 @@ public class ClimberIOReal implements ClimberIO {
     private final StatusSignal<AngularVelocity> wheelVel_rps;
     private final StatusSignal<Angle> wheelPos_r;
 
-    private final VoltageOut hookVoltOut_V;
-    private final VelocityVoltage hookVelOut;
-    private final PositionVoltage hookPosCtrl;
 
-    private final VoltageOut wheelVoltOut_V;
-    private final VelocityVoltage wheelVelOut;
-    private final PositionVoltage wheelPosCtrl;
+    private final MotionMagicVoltage hookPosCntrl;
+    private final MotionMagicVelocityVoltage hookVelOut;
+    
+
+    private final MotionMagicVoltage wheelPosCntrl;
+    private final MotionMagicVelocityVoltage wheelVelOut;
+   
 
     public ClimberIOReal() {
 
@@ -84,11 +85,17 @@ public class ClimberIOReal implements ClimberIO {
         hookConfig.Slot0.kA = ClimberConstants.climberKA;
         hookConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
+        var hookMagicConfigs = hookConfig.MotionMagic;
+        hookMagicConfigs.MotionMagicAcceleration = ClimberConstants.MOTION_MAGIC_ACCELERATION;
+        hookMagicConfigs.MotionMagicCruiseVelocity = ClimberConstants.MOTION_MAGIC_CRUISE_VELOCITY;
+        hookMagicConfigs.MotionMagicJerk = ClimberConstants.MOTION_MAGIC_JERK;
+
+        
+
         tryUntilOk(5, () -> hookMotor.getConfigurator().apply(hookConfig));
 
-        hookVoltOut_V = new VoltageOut(0).withEnableFOC(true);
-        hookVelOut = new VelocityVoltage(0).withEnableFOC(true);
-        hookPosCtrl = new PositionVoltage(0).withEnableFOC(true);
+        hookPosCntrl = new MotionMagicVoltage(0).withEnableFOC(true);
+        hookVelOut = new MotionMagicVelocityVoltage(0).withEnableFOC(true);
 
         var wheelConfig = new TalonFXConfiguration();
 
@@ -113,11 +120,15 @@ public class ClimberIOReal implements ClimberIO {
         wheelConfig.Slot0.kA = ClimberConstants.climberKA;
         wheelConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
+        var wheelMagicConfigs = wheelConfig.MotionMagic;
+        wheelMagicConfigs.MotionMagicAcceleration = ClimberConstants.MOTION_MAGIC_ACCELERATION;
+        wheelMagicConfigs.MotionMagicCruiseVelocity = ClimberConstants.MOTION_MAGIC_CRUISE_VELOCITY;
+        wheelMagicConfigs.MotionMagicJerk = ClimberConstants.MOTION_MAGIC_JERK;
+
         tryUntilOk(5, () -> wheelMotor.getConfigurator().apply(wheelConfig));
 
-        wheelVoltOut_V = new VoltageOut(0).withEnableFOC(true);
-        wheelVelOut = new VelocityVoltage(0).withEnableFOC(true);
-        wheelPosCtrl = new PositionVoltage(0).withEnableFOC(true);
+        wheelPosCntrl = new MotionMagicVoltage(0).withEnableFOC(true);
+        wheelVelOut = new MotionMagicVelocityVoltage(0).withEnableFOC(true);
     }
 
     @Override
@@ -140,12 +151,6 @@ public class ClimberIOReal implements ClimberIO {
         inputs.climberVelocity_dps = hookVel_rps.getValueAsDouble() * 360.0;
     }
 
-    @Override
-    public void setClimberVoltage(double volts_V) {
-        volts_V = MathUtil.clamp(volts_V, ClimberConstants.LOW_CLAMP, ClimberConstants.HIGH_CLAMP);
-        hookMotor.setControl(hookVoltOut_V.withOutput(volts_V));
-        wheelMotor.setControl(wheelVoltOut_V.withOutput(volts_V));
-    }
 
     @Override
     public void setClimberVelocity(double velocity_rps) {
@@ -160,8 +165,8 @@ public class ClimberIOReal implements ClimberIO {
 
     @Override
     public void climbTo() {
-        hookMotor.setControl(hookPosCtrl.withPosition(targetRotations));
-        wheelMotor.setControl(wheelPosCtrl.withPosition(targetRotations));
+        hookMotor.setControl(hookPosCntrl.withPosition(targetRotations));
+        wheelMotor.setControl(wheelPosCntrl.withPosition(targetRotations));
     }
 
     @Override
