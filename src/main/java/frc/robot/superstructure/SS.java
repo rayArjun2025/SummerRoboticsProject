@@ -71,6 +71,8 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
         climber = Climber.getInstance();
         vision = Vision.getInstance();
         drive = Drive.getInstance();
+
+        
     }
 
 
@@ -218,9 +220,7 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
                     elevatorTargetHeight_m = ElevatorConstants.LevelFourTargetHeight_m;
                 
                 elevator.setTargetPosition(elevatorTargetHeight_m);
-                elevator.queueState(ElevatorStates.TRAVELLING);
                 arm.setArmTargetAngle(ArmConstants.ShoulderTargetAngle_Deg, ArmConstants.ElbowTargetAngle_Deg, true);
-                arm.queueState(ArmStates.HOLDING_POSITION);
 
                 if (elevator.isAtTargetPosition()) {
                     queueState(InternalStates.IDLE);
@@ -239,9 +239,7 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
                     elevatorTargetHeight_m = 0.0;
 
                 elevator.setTargetPosition(elevatorTargetHeight_m);
-                elevator.queueState(ElevatorStates.TRAVELLING);
                 arm.setArmTargetAngle(ArmConstants.ShoulderTargetAngle_Deg, ArmConstants.ElbowTargetAngle_Deg, true);
-                arm.queueState(ArmStates.HOLDING_POSITION);
 
                 
                 if (elevator.isAtTargetPosition()) {
