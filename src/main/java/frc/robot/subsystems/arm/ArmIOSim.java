@@ -130,11 +130,13 @@ public class ArmIOSim implements ArmIO {
     @Override
     public void setShoulderTargetAngle(double angle_rad) {
         shoulderGoal = new TrapezoidProfile.State(angle_rad, 0);
+        shoulderCurrent = new TrapezoidProfile.State( shoulderJoint.getAngleRads(), shoulderJoint.getVelocityRadPerSec());
     }
 
     @Override
     public void setElbowTargetAngle(double angle_rad) {
         elbowGoal = new TrapezoidProfile.State(angle_rad, 0);
+        elbowCurrent = new TrapezoidProfile.State( elbowJoint.getAngleRads(), elbowJoint.getVelocityRadPerSec());
     }
 
     @Override
