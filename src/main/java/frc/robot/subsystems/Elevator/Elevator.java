@@ -48,7 +48,6 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
     public void handleStateMachine() {
         switch (getState()) {
             case TRAVELLING:
-
                 if (atLimit()) {
                     queueState(ElevatorStates.HOLDING);
                 }
