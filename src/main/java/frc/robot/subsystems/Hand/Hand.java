@@ -1,6 +1,7 @@
 package frc.robot.subsystems.hand;
 
 import frc.robot.Constants;
+import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.util.StateMachineSubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
@@ -119,6 +120,10 @@ public class Hand extends StateMachineSubsystemBase<HandStates> {
     io.updateInputs(inputs);
     Logger.processInputs("Hand", inputs);
   }
+
+  public boolean isAtTargetPosition(double targetDegrees) {
+      return isValueReached(inputs.handPositionDeg, targetDegrees, HandConstants.tolerance_deg);
+    }
 
   @Override
   protected void outputPeriodic() {
