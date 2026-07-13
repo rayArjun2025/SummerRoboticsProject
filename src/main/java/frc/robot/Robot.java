@@ -174,7 +174,8 @@ public class Robot extends LoggedRobot {
 
     /** This function is called periodically when disabled. */
     @Override
-    public void disabledPeriodic() {
+    public void disabledPeriodic() { // ethan - maybe have some functions on buttons when disabled
+                                     // ie. zeroing various subysstems.
         boolean buttonPressed = RobotController.getUserButton();
 
         if (buttonPressed && !lastState) {
