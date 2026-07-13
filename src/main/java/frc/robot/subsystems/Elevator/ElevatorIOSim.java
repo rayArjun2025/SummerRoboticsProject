@@ -88,7 +88,7 @@ public class ElevatorIOSim implements ElevatorIO {
     @Override
     public void moveElevator() {
         elevatorCurrent = elevatorProfile.calculate(
-            Constants.globalDelta_s,
+            Constants.globalDelta_s, // ethan - no.
             elevatorCurrent,
             elevatorGoal);
 
