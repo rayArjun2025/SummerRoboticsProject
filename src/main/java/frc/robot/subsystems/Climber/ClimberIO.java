@@ -9,9 +9,9 @@ import org.littletonrobotics.junction.AutoLog;
 public interface ClimberIO {
   @AutoLog
   public static class ClimberIOInputs {
-    public double climberCurrent = 0.0;
-    public double climberVoltage = 0.0;
-    public double climberPositionDeg = 0.0;
+    public double climberCurrent = 0.0; // measured in amps (A)
+    public double climberVoltage = 0.0; // measured in volts (v)
+    public double climberPositionDeg = 0.0; // underscore before units
     public double climberVelocity_dps = 0.0;
     public boolean connected = false;
   }

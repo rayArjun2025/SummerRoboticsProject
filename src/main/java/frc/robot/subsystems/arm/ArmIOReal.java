@@ -144,12 +144,15 @@ public class ArmIOReal implements ArmIO {
         
     }
     
-    public static double rotationsToRadians(double motorRotations) {
+    public static double rotationsToRadians(double motorRotations) { // ethan - why is this here?
         return motorRotations * 2.0 * Math.PI;
     }
 
     @Override
-    public void setShoulderTargetAngle(double targetAngle_RAD) {
+    /* ethan - setting target angles and moving to said target angle are different methods and 
+     * should therefore be named as such. these two methods look like moveToAngle() methods.
+     */
+    public void setShoulderTargetAngle(double targetAngle_RAD) { // ethan - lowercase/pascal case for units (eg. degsPerSecond)
         double rotations = targetAngle_RAD / (2.0 * Math.PI);
         shoulderMotor.setControl(shoulderVoltageControl.withPosition(rotations));
     }
@@ -164,14 +167,16 @@ public class ArmIOReal implements ArmIO {
     @Override
     public void setShoulderVelocity(double velocity_rad_per_sec) {
         double rotations_per_sec = velocity_rad_per_sec / (2.0 * Math.PI);
-        shoulderMotor.setControl(shoulderVelocityControl.withVelocity(rotations_per_sec));
+        shoulderMotor.setControl(shoulderVelocityControl.withVelocity(rotations_per_sec)); // look into VelocityVoltage
     }
 
      @Override
     public void setElbowVelocity(double velocity_rad_per_sec) {
         double rotations_per_sec = velocity_rad_per_sec / (2.0 * Math.PI);
-        elbowMotor.setControl(elbowVelocityControl.withVelocity(rotations_per_sec));
+        elbowMotor.setControl(elbowVelocityControl.withVelocity(rotations_per_sec)); // look into VelocityVoltage
     }
+
+    // no voltage control? look into VoltageOut
 
     @Override
     public void stopMotor(){

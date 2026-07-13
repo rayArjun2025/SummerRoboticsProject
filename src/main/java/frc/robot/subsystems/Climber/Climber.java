@@ -51,6 +51,7 @@ public class Climber extends StateMachineSubsystemBase<ClimberStates> {
     public void handleStateMachine() {
         switch (getState()) {
             case SHALLOW_CLIMB_TRAVELLING:
+                /* ethan - leave state switching outside of the switch case. just run io.moveToAngle() */
                 if (isValueReached(inputs.climberPositionDeg, targetDegrees_deg, ClimberConstants.tolerance_deg)) {
                     queueState(ClimberStates.HOLDING);
                 }
@@ -60,7 +61,7 @@ public class Climber extends StateMachineSubsystemBase<ClimberStates> {
                 break;
 
             case HOLDING:
-
+                /* ethan - leave state switching outside of the switch case. just run io.moveToAngle() */
                 if (!isValueReached(inputs.climberPositionDeg, targetDegrees_deg, ClimberConstants.tolerance_deg)) {
                     queueState(ClimberStates.SHALLOW_CLIMB_TRAVELLING);
                 }
@@ -69,7 +70,8 @@ public class Climber extends StateMachineSubsystemBase<ClimberStates> {
                 }
                 break;
 
-            case RELEASING:
+            case RELEASING: // ethan - what does this do? could you not just have this as a normal
+                            // travelling/holding state with our target angle at homingDegrees_deg?
                 setTargetAngle(ClimberConstants.homingDegrees_deg);
 
                 if (isValueReached(inputs.climberPositionDeg, targetDegrees_deg, ClimberConstants.tolerance_deg)) {
@@ -80,11 +82,11 @@ public class Climber extends StateMachineSubsystemBase<ClimberStates> {
                 }
                 break;
 
-            case HOMING:
+            case HOMING: // ethan - dupicate of RELEASING state. do we need this?
                 setTargetAngle(ClimberConstants.homingDegrees_deg);
 
                 if (isValueReached(inputs.climberPositionDeg, targetDegrees_deg, ClimberConstants.tolerance_deg)) {
-                    io.zeroPosition();
+                    io.zeroPosition(); // ethan - you're zeroing?
                     queueState(ClimberStates.IDLE);
                 }
                 break;
@@ -118,7 +120,8 @@ public class Climber extends StateMachineSubsystemBase<ClimberStates> {
         return Math.abs(position_deg - target_deg) <= tolerance_deg;
     }
 
-    public boolean isHomed() {
+    public boolean isHomed() { // ethan - same as isClimbComplete() at homingDegrees_deg. do we
+                               // really need this homing/releasing state?
       return isValueReached(inputs.climberPositionDeg, ClimberConstants.homingDegrees_deg, ClimberConstants.tolerance_deg);
     }
 

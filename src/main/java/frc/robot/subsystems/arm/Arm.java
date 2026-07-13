@@ -52,7 +52,7 @@ public class Arm extends StateMachineSubsystemBase<ArmStates> {
 
                 if (isValueReached(inputs.elbowSwivelAngle_rad, elbowTarget_RAD, ArmConstants.TOLERANCE_RAD) && isValueReached(inputs.shoulderSwivelAngle_rad, shoulderTarget_RAD, ArmConstants.TOLERANCE_RAD)) {
                     queueState(ArmStates.HOLDING_POSITION);
-                } else {
+                } else { // ethan - in real this will do aboslutely nothing. not good.
                     io.swivelElbow();
                     io.swivelShoulder();
                 }
@@ -61,7 +61,7 @@ public class Arm extends StateMachineSubsystemBase<ArmStates> {
             case HOLDING_POSITION:
                 if (!isValueReached(inputs.elbowSwivelAngle_rad, elbowTarget_RAD, ArmConstants.TOLERANCE_RAD) || !isValueReached(inputs.shoulderSwivelAngle_rad, shoulderTarget_RAD, ArmConstants.TOLERANCE_RAD)) {
                     queueState(ArmStates.TRAVELLING_TO_POSITION);
-                } else {
+                } else { // ethan - in real this will do absolutely nothing. not good.
                     io.swivelElbow();
                     io.swivelShoulder();
                 }
@@ -84,6 +84,7 @@ public class Arm extends StateMachineSubsystemBase<ArmStates> {
         queueState(state);
     }
 
+    /* ethan - honestly break this into 2 methods, one for elbow one for shoulder. */
     public void setArmTargetAngle(double shoulderAngle, double elbowAngle, boolean isAngleInDegrees) {
         
         if (isAngleInDegrees) {

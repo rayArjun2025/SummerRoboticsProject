@@ -37,7 +37,11 @@ public class ClimberIOSim implements ClimberIO {
             ClimberConstants.climberKI,
             ClimberConstants.climberKD);
 
-        double moi = SingleJointedArmSim.estimateMOI(
+        double moi = SingleJointedArmSim.estimateMOI( // ethan - good to have, but sometimes
+                                                      // we just want to see if the system
+                                                      // works code wise in sim so if 
+                                                      // you're missing some values you
+                                                      // can lie about this one.
             ClimberConstants.ARM_LENGTH,
             ClimberConstants.ARM_MASS);
 
@@ -70,7 +74,8 @@ public class ClimberIOSim implements ClimberIO {
     }
 
     @Override
-    public void setClimberVelocity(double velocity_rps) {}
+    public void setClimberVelocity(double velocity_rps) {} // ethan - woah this shouldn't be empty
+                                                           // DCMotorSim has setAngularVelocity()
 
     @Override
     public void stopClimb() {
@@ -78,7 +83,11 @@ public class ClimberIOSim implements ClimberIO {
     }
 
     @Override
-    public void climbTo() {
+    public void climbTo() { // ethan - you can honestly shove this in setTargetAngle()
+        /* ethan - the bot runs periodic every globalDelta_s (0.02) seconds. that's not the 
+         * argument you want to pass for how long it takes to reach target. instead run a timer
+         * which starts upon setting the new target degree and set that as your timer.
+         */
         climbCurrent = climbProfile.calculate(Constants.globalDelta_s, climbCurrent, climbGoal);
 
         double pidOut = climberPid.calculate(climberSim.getAngleRads(), climbCurrent.position);
@@ -89,7 +98,7 @@ public class ClimberIOSim implements ClimberIO {
     }
 
     @Override
-    public void setTargetAngle(double target_deg) {
+    public void setTargetAngle(double target_deg) { // ethan - match with real name
         climbGoal = new TrapezoidProfile.State(Math.toRadians(target_deg), 0);
         climbCurrent = new TrapezoidProfile.State( climberSim.getAngleRads(), climberSim.getVelocityRadPerSec());
     }

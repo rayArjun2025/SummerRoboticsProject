@@ -16,7 +16,7 @@ public interface HandIO {
 
   public default void setHandVoltage(double volts_V, double ff_V) {}
 
-  public default void setHandVelocity(double velocity_rps) {}
+  public default void setHandVelocity(double velocity_rps) {} 
 
   public default void stopMoving() {}
 

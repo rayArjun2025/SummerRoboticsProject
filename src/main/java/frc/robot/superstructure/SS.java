@@ -88,13 +88,13 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
                 });
 
             case CLIMB1:
-                queueState(switch (intention) {
-                    case CLIMB -> InternalStates.CLIMB1;
+                queueState(switch (intention) { // ethan - what happens if i'm in idle? do i lower?
+                    case CLIMB -> InternalStates.CLIMB1; 
                     default -> defaultIntentionHandling();
                 });
             
             case CLIMB2:
-                queueState(switch (intention) {
+                queueState(switch (intention) { // ethan - what happens if i'm in idle? do i lower?
                     case CLIMB -> InternalStates.CLIMB2;
                     default -> defaultIntentionHandling();
                 });
@@ -131,14 +131,14 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
                     default -> defaultIntentionHandling();
                 });
 
-            case LOWERING:
+            case LOWERING: // ethan - if i'm in idle i should definitely be lowering.
                 queueState(switch (intention) {
                     case LOWERING -> InternalStates.LOWERING;
-                    case RAISING -> InternalStates.RAISING;
+                    case RAISING -> InternalStates.RAISING; // ethan - do i go straight to raising if i'm lowering? misclick?
                     default -> defaultIntentionHandling();
                 });
 
-            case RAISING:
+            case RAISING: // ethan - if i'm in idle do i lower?
                 queueState(switch (intention) {
                     case LOWERING -> InternalStates.LOWERING;
                     case RAISING -> InternalStates.RAISING;
@@ -194,16 +194,18 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
                 break;
                 
             case CLIMB1:
+                // ethan - call climber.setTargetAngle() with your target angle
                 climber.queueState(ClimberStates.SHALLOW_CLIMB_TRAVELLING);
                 if (climber.isClimbComplete()) {
                     queueState(InternalStates.CLIMB2);
                 }
 
             case CLIMB2:
-                climber.queueState(ClimberStates.RELEASING);
+                climber.queueState(ClimberStates.RELEASING); // ethan - set your target angle instead of having new state.
                 break;
 
             case GRIPPING_CORAL1:
+                // ethan - you forgot to set your target positions man.
                 elevator.queueState(ElevatorStates.TRAVELLING);
                 arm.queueState(ArmStates.TRAVELLING_TO_POSITION);
                 if (elevator.isAtTargetPosition() && arm.isAtTargetPosition()) {
@@ -212,11 +214,14 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
                 break;
             
             case GRIPPING_CORAL2:
+                // ethan - set target value and queue HOLDING instead.
                 hand.queueState(HandStates.GRIPPING_CORAL);
+                // ethan - trigger readyToScore when hand.isTargetReached() is true. queue idle too.
                 readyToScore = true;
                 break;
 
             case GRIPPING_ALGAE1:
+                // ethan - set target positions too
                 elevator.queueState(ElevatorStates.TRAVELLING);
                 arm.queueState(ArmStates.TRAVELLING_TO_POSITION);
                 if (elevator.isAtTargetPosition() && arm.isAtTargetPosition()) {
@@ -225,7 +230,9 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
                 break;
             
             case GRIPPING_ALGAE2:
+                // ethan - set target value and queue HOLDING instead.
                 hand.queueState(HandStates.GRIPPING_ALGAE);
+                // ethan - trigger readyToScore when hand.isTargetReached() is true. queue idle too.
                 readyToScore = true;
                 break;
             
@@ -240,15 +247,17 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
                     elevatorTargetHeight_m = ElevatorConstants.LevelFourTargetHeight_m;
                 
                 elevator.setTargetPosition(elevatorTargetHeight_m);
+                // ethan - you might want to think aobut what your target values actually are.
                 arm.setArmTargetAngle(ArmConstants.ShoulderTargetAngle_Deg, ArmConstants.ElbowTargetAngle_Deg, true);
 
                 if (elevator.isAtTargetPosition()) {
-                    queueState(InternalStates.IDLE);
+                    queueState(InternalStates.IDLE); // ethan - so we immediately lower everything
+                                                     // and not queue releasing?
                 }
 
                 break;
 
-            case LOWERING:
+            case LOWERING: // ethan - this state takes elevator. straight to zero
                 if (elevatorTargetHeight_m == ElevatorConstants.LevelFourTargetHeight_m)
                     elevatorTargetHeight_m = ElevatorConstants.LevelThreeTargetHeight_m;
                 else if (elevatorTargetHeight_m == ElevatorConstants.LevelThreeTargetHeight_m)
@@ -259,6 +268,7 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
                     elevatorTargetHeight_m = 0.0;
 
                 elevator.setTargetPosition(elevatorTargetHeight_m);
+                // should take arm straight to zero. do we want this to be sequential or simultaneous?
                 arm.setArmTargetAngle(ArmConstants.ShoulderTargetAngle_Deg, ArmConstants.ElbowTargetAngle_Deg, true);
 
                 
@@ -272,7 +282,7 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
                 readyToScore = true;
 
                 if (hand.isAtTargetPosition(HandConstants.home_deg)) {
-                    queueState(InternalStates.IDLE);
+                    queueState(InternalStates.IDLE); // ethan - queue lowering instead.
                 }
                 break;
 

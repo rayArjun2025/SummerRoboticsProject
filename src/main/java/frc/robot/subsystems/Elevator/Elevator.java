@@ -12,7 +12,8 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
     private final ElevatorIO io;
     private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
-    private double targetPosition_m = 0;
+    private double targetPosition_m = 0; // ethan - use this instead of the targetPosition in
+                                         // your io.
 
     private Elevator(ElevatorIO io) {
         super("Elevator");
@@ -47,13 +48,15 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
     @Override
     public void handleStateMachine() {
         switch (getState()) {
-            case TRAVELLING:
+            case TRAVELLING: // ethan - just run io.moveToPosition()
                 if (atLimit()) {
-                    queueState(ElevatorStates.HOLDING);
+                    queueState(ElevatorStates.HOLDING); // ethan - redundant. state switching is
+                                                        // already handled in setTargetPosition()
                 }
 
                 if (isAtTargetPosition()) {
-                    queueState(ElevatorStates.HOLDING);
+                    queueState(ElevatorStates.HOLDING); // ethan - redundant. state switching is
+                                                        // already handled in setTargetPosition()
                 }
                 else{
                     io.moveElevator();

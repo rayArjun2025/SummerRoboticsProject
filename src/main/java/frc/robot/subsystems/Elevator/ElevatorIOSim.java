@@ -57,7 +57,7 @@ public class ElevatorIOSim implements ElevatorIO {
 
     @Override
     public void updateInputs(ElevatorIOInputs inputs) {
-        moveElevator();
+        moveElevator(); // ethan - ?
         elevatorSim.update(Constants.globalDelta_s);
 
         inputs.elevatorVelocityMetersPerSec = elevatorSim.getVelocityMetersPerSecond();
@@ -67,11 +67,18 @@ public class ElevatorIOSim implements ElevatorIO {
         inputs.connected = true;
     }
 
+    /* ethan - what happened to your moveToPosition()/movetoHeight()? just run straight pid */
+
     @Override
-    public void setMotorVoltage(double voltage) {
+    public void setMotorVoltage(double voltage) { // ethan - the proper voltage control method woah
         motorVoltage = voltage;
         elevatorSim.setInputVoltage(motorVoltage);
     }
+
+    /* ethan - what happened to your setMotorVelocity()? if you have it in real you probably
+     * want it in sim too. it's slightly less relevant in elevator but if you have it in one
+     * have it in both. plus it's useful to find ffw variables with velocity control.
+     */
 
     @Override
     public void stopMoving() {
@@ -102,7 +109,8 @@ public class ElevatorIOSim implements ElevatorIO {
     }
 
     @Override
-    public void setTargetPosition(double targetPosition_m) {
+    public void setTargetPosition(double targetPosition_m) { // ethan - once again, handle this
+                                                             // in Elevator.java.
         elevatorGoal = new TrapezoidProfile.State(targetPosition_m, 0);
         elevatorCurrent = new TrapezoidProfile.State( elevatorSim.getPositionMeters(), elevatorSim.getVelocityMetersPerSecond());
     }

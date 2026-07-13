@@ -70,7 +70,11 @@ public class ArmIOSim implements ArmIO {
             ArmConstants.ELBOW_KV,
             ArmConstants.ELBOW_KA);
 
-        double shoulderMoi = SingleJointedArmSim.estimateMOI(
+        double shoulderMoi = SingleJointedArmSim.estimateMOI( // ethan - good to have, but sometimes
+                                                              // we just want to see if the system
+                                                              // works code wise in sim so if 
+                                                              // you're missing some values you
+                                                              // can lie about this one.
             ArmConstants.SHOULDER_ARM_LENGTH,
             ArmConstants.SHOULDER_ARM_MASS);
 
@@ -128,21 +132,31 @@ public class ArmIOSim implements ArmIO {
     }
 
     @Override
-    public void setShoulderTargetAngle(double angle_rad) {
+    public void setShoulderTargetAngle(double angle_rad) { // ethan - looks like you're just setting
+                                                           // the current and goal positions, 
+                                                           // but aren't actually moving them to
+                                                           // the target position? this is 
+                                                           // different from the real implementation.
         shoulderGoal = new TrapezoidProfile.State(angle_rad, 0);
         shoulderCurrent = new TrapezoidProfile.State( shoulderJoint.getAngleRads(), shoulderJoint.getVelocityRadPerSec());
     }
 
     @Override
-    public void setElbowTargetAngle(double angle_rad) {
+    public void setElbowTargetAngle(double angle_rad) { // ethan - same as shoulder
         elbowGoal = new TrapezoidProfile.State(angle_rad, 0);
         elbowCurrent = new TrapezoidProfile.State( elbowJoint.getAngleRads(), elbowJoint.getVelocityRadPerSec());
     }
 
     @Override
-    public void swivelElbow() {
+    public void swivelElbow() { // ethan - so this is where you move your elbow given the positions
+                                // from setElbowTargetAngle()? this method is unnecessary, you
+                                // can handle this in setElbowTargetAngle() so real and sim have
+                                // the same functionality.
         elbowCurrent = elbowProfile.calculate(
-            Constants.globalDelta_s,
+            Constants.globalDelta_s, // ethan - this is how long it takes before robot runs periodic()
+                                     // again... you'd create a timer at the moment of setting
+                                     // your new target angle and this timer's current time would
+                                     // be your argument here. check intake from frc2k26 when you can.
             elbowCurrent,
             elbowGoal);
 
@@ -156,14 +170,14 @@ public class ArmIOSim implements ArmIO {
 
         double voltage = MathUtil.clamp(
             pidOut + ff,
-            ArmConstants.LOW_CLAMP,
+            ArmConstants.LOW_CLAMP, // ethan - volts typically always go from -12 to 12 btw.
             ArmConstants.HIGH_CLAMP);
 
         setElbowVoltage(voltage);
     }
 
     @Override
-    public void swivelShoulder() {
+    public void swivelShoulder() { // ethan - same comments from elbow.
         shoulderCurrent = shoulderProfile.calculate(
             Constants.globalDelta_s,
             shoulderCurrent,
@@ -198,10 +212,11 @@ public class ArmIOSim implements ArmIO {
     }
 
     @Override
-    public void setShoulderVelocity(double velocity_rps) {}
+    public void setShoulderVelocity(double velocity_rps) {} // ethan - woah this shouldn't be 
+                                                            // empty. DCMotorSim has setAngularVelocity()
 
     @Override
-    public void setElbowVelocity(double velocity_rps) {}
+    public void setElbowVelocity(double velocity_rps) {} // ethan - same as shoulder.
 
     @Override
     public void stopMotor() {

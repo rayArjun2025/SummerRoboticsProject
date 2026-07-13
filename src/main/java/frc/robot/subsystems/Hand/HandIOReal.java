@@ -52,6 +52,10 @@ public class HandIOReal implements HandIO {
     handMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     handMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
+    /* ethan - i think pid is less important here? unless we reach a case where we need to run
+     * the rollers at a set velocity for controlled grabbing/dropping it's kinda optional. not
+     * bad to have though.
+     */
     handMotorConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.02;
     handMotorConfig.Slot0.kP = HandConstants.kP;
     handMotorConfig.Slot0.kI = HandConstants.kI;
@@ -78,7 +82,7 @@ public class HandIOReal implements HandIO {
   }
 
   @Override
-  public void setHandVoltage(double volts_V, double ff_V) {
+  public void setHandVoltage(double volts_V, double ff_V) { // ethan -  just say volts, no ff.
     volts_V = MathUtil.clamp(volts_V + ff_V, HandConstants.LOW_CLAMP, HandConstants.HIGH_CLAMP);
     handMotor.setControl(handVoltOut_V.withOutput(volts_V));
   }
@@ -94,7 +98,8 @@ public class HandIOReal implements HandIO {
   }
 
   @Override
-  public void grip(double position_deg) {
+  public void grip(double position_deg) { // ethan - ig that's one way to only grab up coral.
+                                          // it might slip.
     double pos_r = position_deg / 360.0;
     handMotor.setControl(handPosCtrl.withPosition(pos_r));
   }

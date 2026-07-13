@@ -96,6 +96,10 @@ public class ClimberIOReal implements ClimberIO {
         hookPosCntrl = new MotionMagicVoltage(0).withEnableFOC(true);
         hookVelOut = new MotionMagicVelocityVoltage(0).withEnableFOC(true);
 
+        /* ethan - there's a thing called a Follower() control system. it follows a leader motor
+         * and you just need to control the leader motor for the follower motor to do the same.
+         * Saves you a lot of lines haha.
+         */
         var wheelConfig = new TalonFXConfiguration();
 
         wheelConfig.CurrentLimits.SupplyCurrentLimit = ClimberConstants.SUPPLY_CURRENT_LIMIT_A;
@@ -154,7 +158,7 @@ public class ClimberIOReal implements ClimberIO {
     @Override
     public void setClimberVelocity(double velocity_rps) {
         hookMotor.setControl(hookVelOut.withVelocity(velocity_rps));
-        wheelMotor.setControl(wheelVelOut.withVelocity(velocity_rps));
+        wheelMotor.setControl(wheelVelOut.withVelocity(velocity_rps)); // ethan - remove when you have follower
     }
 
     @Override
@@ -163,13 +167,14 @@ public class ClimberIOReal implements ClimberIO {
     }
 
     @Override
-    public void climbTo() {
+    public void climbTo() { // ethan - just shove this in setTargetAngle. you shouldn't hold target
+                            // values in the io layer.
         hookMotor.setControl(hookPosCntrl.withPosition(targetRotations));
         wheelMotor.setControl(wheelPosCntrl.withPosition(targetRotations));
     }
 
     @Override
-    public void setTargetAngle(double targetAngleDeg) {
+    public void setTargetAngle(double targetAngleDeg) { // ethan - more appropriate to name as moveToAngle()
         targetAngleDeg = MathUtil.clamp(targetAngleDeg, ClimberConstants.MIN_DEG, ClimberConstants.MAX_DEG);
         targetRotations = targetAngleDeg / 360.0;
         climbTo();

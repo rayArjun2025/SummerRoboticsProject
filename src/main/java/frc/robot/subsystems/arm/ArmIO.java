@@ -3,9 +3,9 @@ import org.littletonrobotics.junction.AutoLog;
 
 
 public interface ArmIO {
-
     @AutoLog
-   public static class ArmIOInputs{
+    public static class ArmIOInputs { // ethan - prefer degrees as these are the values you're
+                                    // reading in advantagescope
         public double shoulderSwivelAngle_rad = 0;
         public double elbowSwivelAngle_rad = 0;
 
@@ -24,9 +24,11 @@ public interface ArmIO {
     public default void setElbowVoltage(double volts) {}
     public default void setShoulderVoltage(double volts) {}
 
-    public default void swivelElbow() {}
-    public default void swivelShoulder() {} 
+    /* ethan - All methods should work for both real and sim. these two don't follow that. very bad */
+    public default void swivelElbow() {} // what does this do?
+    public default void swivelShoulder() {} // what does this do?
 
+    /* ethan - you will want a method to zero your elbow and shoulder individually */
     public default void setElbowTargetAngle(double angle_rad){}
     public default void setShoulderTargetAngle(double angle_rad) {}
 

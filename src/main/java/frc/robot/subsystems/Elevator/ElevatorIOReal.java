@@ -76,23 +76,27 @@ public class ElevatorIOReal implements ElevatorIO{
         inputs.elevatorPositionMeters = convertToMeters(elevatorPosition.getValueAsDouble());
     }
 
-    private double convertToLinearVel(double aVelocity){
+    private double convertToLinearVel(double aVelocity){ // ethan - (omega * r)/g = v. not sure
+                                                         // where you got the circomference from.
         return aVelocity / ElevatorConstants.GEAR_RATIO * 2 * Math.PI * ElevatorConstants.DRUM_RADIUS;
     }
 
-    private double convertToMeters(double aPos){
+    private double convertToMeters(double aPos){ //  ethan - same for converting to linear vel.
          return aPos / ElevatorConstants.GEAR_RATIO * 2 * Math.PI * ElevatorConstants.DRUM_RADIUS;
     }
 
+    /* ethan - very misleading name. looks more like moveToPosition() or moveToHeight() */
     @Override
     public void setMotorVoltage(double position) {
         elevatorMotor.setControl(voltageControl.withPosition(position));
     }
 
     @Override
-    public void setMotorVelocity(double velocity) {
+    public void setMotorVelocity(double velocity) { // ethan - look into VelocityOut
         elevatorMotor.setControl(velocityControl.withVelocity(velocity));
     }
+
+    /* ethan - no actual direct voltage control? look into VoltageOut. */
 
     @Override
     public void stopMoving() {
@@ -100,12 +104,17 @@ public class ElevatorIOReal implements ElevatorIO{
     }
 
     @Override
-    public void moveElevator() {
+    public void moveElevator() { // ethan - pretty unnecessary. you have setMotorVoltage() already.
+                                 // the name is also pretty misleading.
         setMotorVoltage(targetPosition_m);
     }
 
     @Override
-    public void setTargetPosition(double targetPosition_m) {
+    public void setTargetPosition(double targetPosition_m) { // ethan - only motor and sensor
+                                                             // control stuff should be handled
+                                                             // here; target position and more
+                                                             // abstract (?) aspects should be
+                                                             // dealt with in Elevator.java
         this.targetPosition_m = targetPosition_m;
     }
 }
