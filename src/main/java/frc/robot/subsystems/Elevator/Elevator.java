@@ -55,17 +55,11 @@ public class Elevator extends StateMachineSubsystemBase<ElevatorStates> {
                 if (isAtTargetPosition()) {
                     queueState(ElevatorStates.HOLDING);
                 }
-                else{
-                    io.moveElevator();
-                }
                 break;
 
             case HOLDING:
                 if (!isAtTargetPosition()) {
                     queueState(ElevatorStates.TRAVELLING);
-                }
-                else{
-                    io.moveElevator();
                 }
                 break;
 

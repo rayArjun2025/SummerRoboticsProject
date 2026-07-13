@@ -52,18 +52,12 @@ public class Arm extends StateMachineSubsystemBase<ArmStates> {
 
                 if (isValueReached(inputs.elbowSwivelAngle_rad, elbowTarget_RAD, ArmConstants.TOLERANCE_RAD) && isValueReached(inputs.shoulderSwivelAngle_rad, shoulderTarget_RAD, ArmConstants.TOLERANCE_RAD)) {
                     queueState(ArmStates.HOLDING_POSITION);
-                } else {
-                    io.swivelElbow();
-                    io.swivelShoulder();
                 }
                 break;
 
             case HOLDING_POSITION:
                 if (!isValueReached(inputs.elbowSwivelAngle_rad, elbowTarget_RAD, ArmConstants.TOLERANCE_RAD) || !isValueReached(inputs.shoulderSwivelAngle_rad, shoulderTarget_RAD, ArmConstants.TOLERANCE_RAD)) {
                     queueState(ArmStates.TRAVELLING_TO_POSITION);
-                } else {
-                    io.swivelElbow();
-                    io.swivelShoulder();
                 }
                 break;
 
@@ -92,7 +86,7 @@ public class Arm extends StateMachineSubsystemBase<ArmStates> {
         }
 
         shoulderTarget_RAD = MathUtil.clamp( shoulderAngle, ArmConstants.SHOULDER_MIN_ANGLE, ArmConstants.SHOULDER_MAX_ANGLE);
-        elbowTarget_RAD = MathUtil.clamp(elbowAngle, ArmConstants.SHOULDER_MIN_ANGLE, ArmConstants.SHOULDER_MAX_ANGLE);
+        elbowTarget_RAD = MathUtil.clamp(elbowAngle, ArmConstants.ELBOW_MIN_ANGLE, ArmConstants.ELBOW_MAX_ANGLE);
         
         io.setShoulderTargetAngle(shoulderTarget_RAD);
         io.setElbowTargetAngle(elbowTarget_RAD);

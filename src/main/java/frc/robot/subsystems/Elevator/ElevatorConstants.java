@@ -36,4 +36,7 @@ public class ElevatorConstants {
 
     public static final double MAX_VELOCITY = 1.5;
     public static final double MAX_ACCELERATION = 3.0;
+
+    public static final double CoralHeight_m = 0.45;
+    public static final double AlgaeHeight_m = 0.85;
 }

@@ -11,6 +11,7 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmConstants;
 import frc.robot.subsystems.arm.ArmStates;
 import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.subsystems.climber.ClimberStates;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorConstants;
@@ -86,18 +87,21 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
                     case IDLE -> InternalStates.IDLE; //case Idle = intention, Internalstates.idle = internal
                     default -> defaultIntentionHandling();
                 });
+                break;
 
             case CLIMB1:
                 queueState(switch (intention) {
                     case CLIMB -> InternalStates.CLIMB1;
                     default -> defaultIntentionHandling();
                 });
+                break;
             
             case CLIMB2:
                 queueState(switch (intention) {
                     case CLIMB -> InternalStates.CLIMB2;
                     default -> defaultIntentionHandling();
                 });
+                break;
 
             case GRIPPING_CORAL1:
                 queueState(switch (intention) {
@@ -106,6 +110,7 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
                     case GRIPPING_ALGAE -> InternalStates.GRIPPING_ALGAE1;
                     default -> defaultIntentionHandling();
                 });
+                break;
 
             case GRIPPING_CORAL2:
                 queueState(switch (intention) {
@@ -114,6 +119,7 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
                     case GRIPPING_ALGAE -> InternalStates.GRIPPING_ALGAE1;
                     default -> defaultIntentionHandling();
                 });
+                break;
 
             case GRIPPING_ALGAE1:
                 queueState(switch (intention) {
@@ -122,6 +128,7 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
                     case GRIPPING_CORAL -> InternalStates.GRIPPING_CORAL1;
                     default -> defaultIntentionHandling();
                 });
+                break;
 
             case GRIPPING_ALGAE2:
                 queueState(switch (intention) {
@@ -130,6 +137,7 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
                     case GRIPPING_CORAL -> InternalStates.GRIPPING_CORAL1;
                     default -> defaultIntentionHandling();
                 });
+                break;
 
             case LOWERING:
                 queueState(switch (intention) {
@@ -137,6 +145,7 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
                     case RAISING -> InternalStates.RAISING;
                     default -> defaultIntentionHandling();
                 });
+                break;
 
             case RAISING:
                 queueState(switch (intention) {
@@ -144,12 +153,14 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
                     case RAISING -> InternalStates.RAISING;
                     default -> defaultIntentionHandling();
                 });
+                break;
             
             case RELEASING:
                 queueState(switch (intention) {
                     case RELEASING -> InternalStates.RELEASING;
                     default -> defaultIntentionHandling();
                 });
+                break;
 
             default:
                 unimplementedStateAlert.set(true);
@@ -194,19 +205,23 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
                 break;
                 
             case CLIMB1:
-                climber.queueState(ClimberStates.SHALLOW_CLIMB_TRAVELLING);
+                climber.setTargetAngle(ClimberConstants.MAX_DEG);
                 if (climber.isClimbComplete()) {
                     queueState(InternalStates.CLIMB2);
                 }
+                break;
 
             case CLIMB2:
                 climber.queueState(ClimberStates.RELEASING);
                 break;
 
             case GRIPPING_CORAL1:
-                elevator.queueState(ElevatorStates.TRAVELLING);
-                arm.queueState(ArmStates.TRAVELLING_TO_POSITION);
-                if (elevator.isAtTargetPosition() && arm.isAtTargetPosition()) {
+                if (!arm.isAtTargetPosition() || !elevator.isAtTargetPosition()) {
+                    elevator.setTargetPosition(ElevatorConstants.CoralHeight_m);
+                    arm.setArmTargetAngle(ArmConstants.CoralShoulderAngle_Deg, ArmConstants.CoralElbowAngle_Deg,true);
+
+                }
+                else {
                     queueState(InternalStates.GRIPPING_CORAL2);
                 }
                 break;
@@ -217,10 +232,12 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
                 break;
 
             case GRIPPING_ALGAE1:
-                elevator.queueState(ElevatorStates.TRAVELLING);
-                arm.queueState(ArmStates.TRAVELLING_TO_POSITION);
-                if (elevator.isAtTargetPosition() && arm.isAtTargetPosition()) {
-                    queueState(InternalStates.GRIPPING_ALGAE2);
+                if (!arm.isAtTargetPosition() || !elevator.isAtTargetPosition()) {
+                    elevator.setTargetPosition(ElevatorConstants.AlgaeHeight_m);
+                    arm.setArmTargetAngle(ArmConstants.AlgaeShoulderAngle_Deg, ArmConstants.AlgaeElbowAngle_Deg, true);
+                }
+                else {
+                    queueState(InternalStates.GRIPPING_CORAL2);
                 }
                 break;
             
@@ -265,6 +282,7 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
                 if (elevator.isAtTargetPosition()) {
                     queueState(InternalStates.IDLE);
                 }
+                break;
 
             case RELEASING:
                 arm.queueState(ArmStates.HOLDING_POSITION);
@@ -284,6 +302,7 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
     }
 
     public void intend(IntentionStates intention) {
+        System.out.println("New intention: " + intention);
         this.intention = intention;
     }
 
@@ -309,6 +328,9 @@ public class SS extends StateMachineSubsystemBase<InternalStates>{
         Logger.recordOutput("SS/Booted?", booted);
         Logger.recordOutput("SS/Intention", intention);
         Logger.recordOutput("SS/Homed?", isHomed());
+        Logger.recordOutput("SS/ArmState", arm.getState());
+        Logger.recordOutput("SS/ElevatorState", elevator.getState());
+        Logger.recordOutput("SS/ClimberState", climber.getState());
     }
 
 }

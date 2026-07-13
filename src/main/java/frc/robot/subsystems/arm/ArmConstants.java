@@ -12,9 +12,9 @@ public class ArmConstants {
     public static final double SHOULDER_ARM_MASS = 5.669;
     public static final int SHOULDER_MOTOR_ID = 1;
 
-    public static final double SHOULDER_KP = 40.0;
+    public static final double SHOULDER_KP = 8.0;
     public static final double SHOULDER_KI = 0.0;
-    public static final double SHOULDER_KD = 1.0;
+    public static final double SHOULDER_KD = 0.03;
     public static final double SHOULDER_KS = 0.2;
     public static final double SHOULDER_KV = 0.12;
     public static final double SHOULDER_KA = 0.01;
@@ -29,9 +29,9 @@ public class ArmConstants {
     public static final double ELBOW_GEAR_RATIO = 105;
     public static final double ELBOW_ARM_LENGTH = 0.8128;
     public static final double ELBOW_ARM_MASS = 3.2;
-    public static final double ELBOW_KP = 45.0;
+    public static final double ELBOW_KP = 8.0;
     public static final double ELBOW_KI = 0.0;
-    public static final double ELBOW_KD = 1.2;
+    public static final double ELBOW_KD = 0.4;
     public static final double ELBOW_KS = 0.20;
     public static final double ELBOW_KV = 0.12;
     public static final double ELBOW_KA = 0.01;
@@ -54,4 +54,10 @@ public class ArmConstants {
     
     public static final double ELBOW_MAX_VELOCITY = Math.toRadians(180.0);         // rad/s
     public static final double ELBOW_MAX_ACCELERATION = Math.toRadians(360.0);     // rad/s²
+
+    public static final double CoralShoulderAngle_Deg = 35.0;
+    public static final double CoralElbowAngle_Deg = 60.0;
+
+    public static final double AlgaeShoulderAngle_Deg = 55.0;
+    public static final double AlgaeElbowAngle_Deg = 80.0;
 }

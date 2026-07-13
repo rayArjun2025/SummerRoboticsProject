@@ -24,6 +24,8 @@ import frc.robot.superstructure.SS;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Threads;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.MTimer;
@@ -61,7 +63,7 @@ public class Robot extends LoggedRobot {
 
     private MTimer pipelineSwitch = new MTimer();
 
-    //private CommandXboxController cmdController = new CommandXboxController(0);
+    private CommandXboxController cmdController = new CommandXboxController(0);
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -118,12 +120,13 @@ public class Robot extends LoggedRobot {
 
         elevator = Elevator.getInstance();
         vision = Vision.getInstance();
-        superstructure = SS.getInstance();
         drive = Drive.getInstance();
         climber = Climber.getInstance();
         hand = Hand.getInstance();
         arm = Arm.getInstance();
+        superstructure = SS.getInstance();
         controlScheme = new ControlScheme();
+        controlScheme.init();
 
 
         // init subsystems
@@ -144,7 +147,8 @@ public class Robot extends LoggedRobot {
         }
 
         
-
+        System.out.println("Simulation: " + RobotBase.isSimulation());
+        System.out.println("Mode: " + Constants.currentMode);
     }
 
     /** This function is called periodically during all modes. */
@@ -152,7 +156,7 @@ public class Robot extends LoggedRobot {
     public void robotPeriodic() {
         // Switch thread to high priority to improve loop timing
         Threads.setCurrentThreadPriority(true, 99);
-        
+
         controlScheme.periodic();
         elevator.periodic();
         vision.periodic();

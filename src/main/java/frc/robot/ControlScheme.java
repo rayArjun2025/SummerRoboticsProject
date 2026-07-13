@@ -8,6 +8,7 @@ import frc.robot.subsystems.drive.PathingOverride;
 import frc.robot.subsystems.drive.SwerveInput;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.hand.Hand;
+import frc.robot.superstructure.IntentionStates;
 import frc.robot.superstructure.SS;
 import frc.robot.util.IPeriodic;
 import frc.robot.util.Util;
@@ -76,6 +77,31 @@ public class ControlScheme implements IPeriodic {
 
         if (OI.DR.getAButtonPressed()) {
             defend = !defend;
+        }
+
+                // Coral pickup
+        if (OI.DR.getBButtonPressed()) {
+            ss.intend(IntentionStates.GRIPPING_CORAL);
+        }
+
+        // Algae pickup
+        if (OI.DR.getXButtonPressed()) {
+            ss.intend(IntentionStates.GRIPPING_ALGAE);
+        }
+
+        // Raise scoring position
+        if (OI.DR.getYButtonPressed()) {
+            ss.intend(IntentionStates.RAISING);
+        }
+
+        // Lower
+        if (OI.DR.getLeftBumperButtonPressed()) {
+            ss.intend(IntentionStates.LOWERING);
+        }
+
+        // Climb
+        if (OI.DR.getRightBumperButtonPressed()) {
+            ss.intend(IntentionStates.CLIMB);
         }
 
     }

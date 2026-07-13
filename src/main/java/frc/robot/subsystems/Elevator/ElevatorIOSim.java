@@ -104,6 +104,5 @@ public class ElevatorIOSim implements ElevatorIO {
     @Override
     public void setTargetPosition(double targetPosition_m) {
         elevatorGoal = new TrapezoidProfile.State(targetPosition_m, 0);
-        elevatorCurrent = new TrapezoidProfile.State( elevatorSim.getPositionMeters(), elevatorSim.getVelocityMetersPerSecond());
     }
 }
