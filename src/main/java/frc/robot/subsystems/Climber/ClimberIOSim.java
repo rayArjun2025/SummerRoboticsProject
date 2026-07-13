@@ -91,6 +91,5 @@ public class ClimberIOSim implements ClimberIO {
     @Override
     public void setTargetAngle(double target_deg) {
         climbGoal = new TrapezoidProfile.State(Math.toRadians(target_deg), 0);
-        climbCurrent = new TrapezoidProfile.State( climberSim.getAngleRads(), climberSim.getVelocityRadPerSec());
     }
 }

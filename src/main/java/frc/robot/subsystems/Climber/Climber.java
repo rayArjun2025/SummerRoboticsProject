@@ -60,7 +60,6 @@ public class Climber extends StateMachineSubsystemBase<ClimberStates> {
                 break;
 
             case HOLDING:
-
                 if (!isValueReached(inputs.climberPositionDeg, targetDegrees_deg, ClimberConstants.tolerance_deg)) {
                     queueState(ClimberStates.SHALLOW_CLIMB_TRAVELLING);
                 }
@@ -71,7 +70,6 @@ public class Climber extends StateMachineSubsystemBase<ClimberStates> {
 
             case RELEASING:
                 setTargetAngle(ClimberConstants.homingDegrees_deg);
-
                 if (isValueReached(inputs.climberPositionDeg, targetDegrees_deg, ClimberConstants.tolerance_deg)) {
                     queueState(ClimberStates.IDLE);
                 }
